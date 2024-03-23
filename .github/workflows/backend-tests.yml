@@ -35,9 +35,9 @@ jobs:
 
     - name: Run MongoDB
       run: |
-      # Wait for MongoDB to be ready
-      while ! nc -z localhost 27017; do sleep 1; done
-      echo "MongoDB is ready!"
+        # Wait for MongoDB to be ready
+        while ! nc -z localhost 27017; do sleep 1; done
+        echo "MongoDB is ready!"
 
     - name: Set MongoDB URI environment variable
       run: echo "export TEST_MONGODB_URI=$TEST_MONGODB_URI" >> $GITHUB_ENV
