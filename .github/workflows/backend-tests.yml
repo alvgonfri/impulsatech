@@ -1,0 +1,39 @@
+name: Backend Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      TEST_MONGODB_URI: mongodb://localhost:27017/impulsatech_test
+      TOKEN_SECRET: testsecret
+
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.10.0
+      with:
+        mongodb-version: '7.0'
+
+    - name: Install backend dependencies
+      run: npm install
+      working-directory: backend
+
+    - name: Run backend tests
+      run: npm test
+      working-directory: backend
+      env:
+        CI: true
