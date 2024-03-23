@@ -20,7 +20,7 @@ describe("Auth tests", () => {
                 email: "test@gmail.com",
                 password: "12345678",
             });
-            console.log("Test response: ", response);
+            console.log("Test response: ", response.body);
             expect(response.statusCode).toBe(201);
         });
 
@@ -41,7 +41,7 @@ describe("Auth tests", () => {
                 email: "test@gmail.com",
                 password: "12345678",
             });
-            console.log("Test response: ", response);
+            console.log("Test response: ", response.body);
             expect(response.statusCode).toBe(200);
         });
 
