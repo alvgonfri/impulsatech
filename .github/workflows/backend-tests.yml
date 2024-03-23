@@ -7,21 +7,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
-    services:
-      mongodb:
-        image: mongo
-        ports:
-          - 27017:27017
-        options: --name mongo-test
-
     env:
-      TEST_MONGODB_URI: mongodb://localhost:27017/impulsatech_test 
+      TEST_MONGODB_URI: mongodb://localhost:27017/impulsatech_test
 
     steps:
-    - name: Checkout code
+    - name: Git checkout
       uses: actions/checkout@v3
 
     - name: Setup Node.js
@@ -29,19 +22,17 @@ jobs:
       with:
         node-version: '20'
 
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.10.0
+      with:
+        mongodb-version: '7.0'
+
     - name: Install backend dependencies
       run: npm install
       working-directory: backend
 
-    - name: Run MongoDB
-      run: |
-        # Wait for MongoDB to be ready
-        while ! nc -z localhost 27017; do sleep 1; done
-        echo "MongoDB is ready!"
-
-    - name: Set MongoDB URI environment variable
-      run: echo "export TEST_MONGODB_URI=$TEST_MONGODB_URI" >> $GITHUB_ENV
-
     - name: Run backend tests
       run: npm test
       working-directory: backend
+      env:
+        CI: true
