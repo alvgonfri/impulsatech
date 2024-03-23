@@ -12,6 +12,7 @@ jobs:
 
     env:
       TEST_MONGODB_URI: mongodb://localhost:27017/impulsatech_test
+      TOKEN_SECRET: testsecret
 
     steps:
     - name: Git checkout
