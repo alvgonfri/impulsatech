@@ -10,6 +10,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+        options: --name mongo-test
+
     env:
       TEST_MONGODB_URI: mongodb://localhost:27017/impulsatech_test 
 
@@ -25,6 +32,15 @@ jobs:
     - name: Install backend dependencies
       run: npm install
       working-directory: backend
+
+    - name: Run MongoDB
+      run: |
+      # Wait for MongoDB to be ready
+      while ! nc -z localhost 27017; do sleep 1; done
+      echo "MongoDB is ready!"
+
+    - name: Set MongoDB URI environment variable
+      run: echo "export TEST_MONGODB_URI=$TEST_MONGODB_URI" >> $GITHUB_ENV
 
     - name: Run backend tests
       run: npm test
