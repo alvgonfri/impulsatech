@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEST_MONGODB_URI: mongodb://localhost:27017/impulsatech_test
+      TEST_MONGODB_URI: mongodb://localhost:27017/impulsatech-test
       TOKEN_SECRET: testsecret
 
     steps:
