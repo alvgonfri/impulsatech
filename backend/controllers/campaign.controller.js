@@ -51,6 +51,17 @@ export const createCampaign = async (req, res) => {
 
 export const updateCampaign = async (req, res) => {
     try {
+        if (req.body.status) {
+            if (
+                req.body.status !== "ongoing" &&
+                req.body.status !== "completed" &&
+                req.body.status !== "cancelled"
+            ) {
+                return res
+                    .status(400)
+                    .json({ message: "Estado de campaña no válido" });
+            }
+        }
         const campaign = await Campaign.findByIdAndUpdate(
             req.params.id,
             req.body,

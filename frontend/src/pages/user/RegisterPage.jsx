@@ -1,7 +1,7 @@
-import { useForm } from "react-hook-form";
-import { useAuth } from "../../context/AuthContext";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 
 function RegisterPage() {
@@ -14,7 +14,6 @@ function RegisterPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(isAuthenticated);
         if (isAuthenticated) navigate("/");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated]);
@@ -22,10 +21,14 @@ function RegisterPage() {
     const onSubmit = handleSubmit(async (data) => {
         const trimmedData = {};
         Object.keys(data).forEach((key) => {
-            trimmedData[key] = data[key].trim();
+            if (typeof data[key] === "string") {
+                trimmedData[key] = data[key].trim();
+            } else {
+                trimmedData[key] = data[key];
+            }
         });
 
-        // Verify if the phone and bio fields are empty and delete them from the data object
+        // Verify if optional fields are empty and delete them
         if (!trimmedData.phone) {
             delete trimmedData.phone;
         }

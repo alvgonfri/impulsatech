@@ -5,28 +5,44 @@ import ProtectedRoute from "./ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/user/RegisterPage";
 import LoginPage from "./pages/user/LoginPage";
+import CampaignsPage from "./pages/campaign/CampaignsPage";
+import CampaignPage from "./pages/campaign/CampaignPage";
 import CampaignFormPage from "./pages/campaign/CampaignFormPage";
+import { CampaignProvider } from "./context/CampaignContext";
 
 function App() {
     return (
         <AuthProvider>
-            <BrowserRouter>
-                <Navbar />
-                <main className="mt-24">
-                    <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/register" element={<RegisterPage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route element={<ProtectedRoute />}>
+            <CampaignProvider>
+                <BrowserRouter>
+                    <Navbar />
+                    <main className="mt-24">
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
                             <Route
-                                path="/campaign/create"
-                                element={<CampaignFormPage />}
+                                path="/register"
+                                element={<RegisterPage />}
                             />
-                        </Route>
-                        <Route path="*" element={<h1>Not Found</h1>} />
-                    </Routes>
-                </main>
-            </BrowserRouter>
+                            <Route path="/login" element={<LoginPage />} />
+                            <Route
+                                path="/campaigns"
+                                element={<CampaignsPage />}
+                            />
+                            <Route
+                                path="/campaigns/:id"
+                                element={<CampaignPage />}
+                            />
+                            <Route element={<ProtectedRoute />}>
+                                <Route
+                                    path="/campaigns/create"
+                                    element={<CampaignFormPage />}
+                                />
+                            </Route>
+                            <Route path="*" element={<h1>Not Found</h1>} />
+                        </Routes>
+                    </main>
+                </BrowserRouter>
+            </CampaignProvider>
         </AuthProvider>
     );
 }
