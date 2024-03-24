@@ -15,14 +15,19 @@ function CampaignsPage() {
             <div className="grid grid-cols-2 gap-4">
                 {campaigns.map((campaign) => (
                     <div
-                        key={campaign.id}
+                        key={campaign._id}
                         className="bg-teal-100 mb-4 border border-teal-600 rounded-md p-4"
                     >
                         <h1 className="text-teal-800 text-xl font-bold">
                             {campaign.title}
                         </h1>
                         <p className="text-teal-600">{campaign.description}</p>
-                        <div className="mt-2 sharethis-inline-share-buttons"></div>
+                        <a
+                            href={`/campaigns/${campaign._id}`}
+                            className="text-teal-800 font-semibold"
+                        >
+                            Ver más
+                        </a>
                     </div>
                 ))}
             </div>

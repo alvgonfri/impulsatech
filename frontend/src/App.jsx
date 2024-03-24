@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/user/RegisterPage";
 import LoginPage from "./pages/user/LoginPage";
 import CampaignsPage from "./pages/campaign/CampaignsPage";
+import CampaignPage from "./pages/campaign/CampaignPage";
 import CampaignFormPage from "./pages/campaign/CampaignFormPage";
 import { CampaignProvider } from "./context/CampaignContext";
 
@@ -26,6 +27,10 @@ function App() {
                             <Route
                                 path="/campaigns"
                                 element={<CampaignsPage />}
+                            />
+                            <Route
+                                path="/campaigns/:id"
+                                element={<CampaignPage />}
                             />
                             <Route element={<ProtectedRoute />}>
                                 <Route

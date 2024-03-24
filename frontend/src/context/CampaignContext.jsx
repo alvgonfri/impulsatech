@@ -1,5 +1,9 @@
 import { createContext, useContext, useState } from "react";
-import { getCampaignsRequest, createCampaignRequest } from "../api/campaign";
+import {
+    getCampaignsRequest,
+    getCampaignRequest,
+    createCampaignRequest,
+} from "../api/campaign.js";
 import PropTypes from "prop-types";
 
 const CampaignContext = createContext();
@@ -26,6 +30,15 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const getCampaign = async (id) => {
+        try {
+            const res = await getCampaignRequest(id);
+            return res.data;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const createCampaign = async (campaign) => {
         try {
             const res = await createCampaignRequest(campaign);
@@ -41,6 +54,7 @@ export const CampaignProvider = ({ children }) => {
             value={{
                 campaigns,
                 getCampaigns,
+                getCampaign,
                 createCampaign,
                 errors,
             }}
