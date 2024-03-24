@@ -22,6 +22,7 @@ function CampaignsPage() {
                             {campaign.title}
                         </h1>
                         <p className="text-teal-600">{campaign.description}</p>
+                        <div className="mt-2 sharethis-inline-share-buttons"></div>
                     </div>
                 ))}
             </div>
