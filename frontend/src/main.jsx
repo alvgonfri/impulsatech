@@ -5,7 +5,7 @@ import "./index.css";
 
 const sharethis = document.createElement("script");
 sharethis.src =
-    "https://platform-api.sharethis.com/js/sharethis.js#property=6600840658eed300122e7c63&product=inline-share-buttons&source=platform";
+    "https://platform-api.sharethis.com/js/sharethis.js#property=6600abb588484200124fca4e&product=inline-share-buttons&source=platform";
 sharethis.async = true;
 document.head.appendChild(sharethis);
 
