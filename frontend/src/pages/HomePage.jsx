@@ -1,5 +1,5 @@
 function HomePage() {
-    return <div>HomePage</div>;
+    return <div>Página de inicio</div>;
 }
 
 export default HomePage;
