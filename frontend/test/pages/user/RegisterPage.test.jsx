@@ -1,7 +1,7 @@
 import RegisterPage from "../../../src/pages/user/RegisterPage";
 import { render, screen } from "@testing-library/react";
-import { AuthProvider } from "../../../src/context/AuthContext";
 import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "../../../src/context/AuthContext";
 
 describe("RegisterPage", () => {
     it("should render the RegisterPage component correctly", () => {

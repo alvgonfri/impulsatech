@@ -1,7 +1,7 @@
 import LoginPage from "../../../src/pages/user/LoginPage";
 import { render, screen } from "@testing-library/react";
-import { AuthProvider } from "../../../src/context/AuthContext";
 import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "../../../src/context/AuthContext";
 
 describe("LoginPage", () => {
     it("should render the LoginPage component correctly", () => {
