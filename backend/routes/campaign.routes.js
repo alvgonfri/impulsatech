@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
 import { validateSchema } from "../middlewares/validator.js";
-import { campaignSchema } from "../schemas/campaign.schema.js";
+import {
+    createCampaignSchema,
+    updateCampaignSchema,
+} from "../schemas/campaign.schema.js";
 import {
     getCampaigns,
     getCampaign,
@@ -16,12 +19,17 @@ router.get("", getCampaigns);
 
 router.get("/:id", getCampaign);
 
-router.post("", authRequired, validateSchema(campaignSchema), createCampaign);
+router.post(
+    "",
+    authRequired,
+    validateSchema(createCampaignSchema),
+    createCampaign
+);
 
 router.patch(
     "/:id",
     authRequired,
-    validateSchema(campaignSchema),
+    validateSchema(updateCampaignSchema),
     updateCampaign
 );
 
