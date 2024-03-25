@@ -24,7 +24,9 @@ export const register = async (req, res) => {
 
         const token = await createAccessToken({ id: userSaved._id });
 
-        res.cookie("token", token);
+        res.cookie("token", token, {
+            secure: true,
+        });
 
         res.status(201).json({
             _id: userSaved._id,
@@ -62,7 +64,9 @@ export const login = async (req, res) => {
 
         const token = await createAccessToken({ id: userFound._id });
 
-        res.cookie("token", token);
+        res.cookie("token", token, {
+            secure: true,
+        });
 
         res.status(200).json({
             _id: userFound._id,
