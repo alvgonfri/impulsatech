@@ -24,7 +24,14 @@ export const register = async (req, res) => {
 
         const token = await createAccessToken({ id: userSaved._id });
 
-        res.cookie("token", token);
+        console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+
+        if (process.env.NODE_ENV === "production") {
+            res.cookie("token", token, {
+                secure: true,
+                sameSite: "none",
+            });
+        } else res.cookie("token", token);
 
         res.status(201).json({
             _id: userSaved._id,
@@ -62,7 +69,14 @@ export const login = async (req, res) => {
 
         const token = await createAccessToken({ id: userFound._id });
 
-        res.cookie("token", token);
+        console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+
+        if (process.env.NODE_ENV === "production") {
+            res.cookie("token", token, {
+                secure: true,
+                sameSite: "none",
+            });
+        } else res.cookie("token", token);
 
         res.status(200).json({
             _id: userFound._id,
