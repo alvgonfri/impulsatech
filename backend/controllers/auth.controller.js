@@ -100,7 +100,14 @@ export const verifyToken = async (req, res) => {
 
         return res.json({
             id: userFound._id,
+            name: userFound.name,
+            surname: userFound.surname,
             email: userFound.email,
+            phone: userFound.phone,
+            picture: userFound.picture,
+            bio: userFound.bio,
+            createdAt: userFound.createdAt,
+            updatedAt: userFound.updatedAt,
         });
     });
 };
