@@ -35,9 +35,11 @@ function CampaignFormPage() {
             delete processedData.deadline;
         }
 
-        await createCampaign(processedData);
+        const status = await createCampaign(processedData);
 
-        navigate("/campaigns");
+        if (status === 201) {
+            navigate("/campaigns");
+        }
     });
 
     return (

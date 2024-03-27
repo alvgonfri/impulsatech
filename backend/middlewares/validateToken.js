@@ -6,10 +6,9 @@ export const authRequired = (req, res, next) => {
         const { token } = req.cookies;
 
         if (!token)
-            return res.status(401).json({
-                message: "Se requiere autenticación 1",
-                reqCookies: req.cookies,
-            });
+            return res
+                .status(401)
+                .json({ message: "Se requiere autenticación" });
 
         jwt.verify(token, TOKEN_SECRET, (error, user) => {
             if (error) {
