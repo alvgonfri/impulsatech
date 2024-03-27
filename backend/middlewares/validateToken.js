@@ -8,13 +8,13 @@ export const authRequired = (req, res, next) => {
         if (!token)
             return res
                 .status(401)
-                .json({ message: "Se requiere autenticación" });
+                .json({ message: "Se requiere autenticación 1" });
 
         jwt.verify(token, TOKEN_SECRET, (error, user) => {
             if (error) {
                 return res
                     .status(401)
-                    .json({ message: "Se requiere autenticación" });
+                    .json({ message: "Se requiere autenticación 2" });
             }
             req.user = user;
             next();
