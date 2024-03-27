@@ -2,13 +2,21 @@ import express from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import dotenv from "dotenv";
 
 import authRoutes from "./routes/auth.routes.js";
 import campaignRoutes from "./routes/campaign.routes.js";
 
+dotenv.config();
+
 const app = express();
 
-app.use(cors({ credentials: true, origin: process.env.CORS_ORIGIN }));
+const corsOptions = {
+    credentials: true,
+    origin: process.env.CORS_ORIGIN,
+};
+
+app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
