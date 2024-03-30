@@ -28,7 +28,8 @@ export const register = async (req, res) => {
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: true,
-                sameSite: "strict",
+                sameSite: "none",
+                domain: process.env.CORS_ORIGIN,
             });
         } else res.cookie("token", token);
 
@@ -72,7 +73,8 @@ export const login = async (req, res) => {
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: true,
-                sameSite: "strict",
+                sameSite: "none",
+                domain: process.env.CORS_ORIGIN,
             });
         } else res.cookie("token", token);
 
