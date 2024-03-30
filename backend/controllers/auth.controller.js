@@ -26,8 +26,9 @@ export const register = async (req, res) => {
 
         if (process.env.NODE_ENV === "production") {
             res.cookie("token", token, {
+                httpOnly: true,
                 secure: true,
-                sameSite: "none",
+                sameSite: "strict",
             });
         } else res.cookie("token", token);
 
@@ -69,8 +70,9 @@ export const login = async (req, res) => {
 
         if (process.env.NODE_ENV === "production") {
             res.cookie("token", token, {
+                httpOnly: true,
                 secure: true,
-                sameSite: "none",
+                sameSite: "strict",
             });
         } else res.cookie("token", token);
 
