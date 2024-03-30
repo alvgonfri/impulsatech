@@ -29,7 +29,6 @@ export const register = async (req, res) => {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
-                maxAge: 24 * 60 * 60 * 1000,
             });
         } else res.cookie("token", token);
 
@@ -70,13 +69,11 @@ export const login = async (req, res) => {
         const token = await createAccessToken({ id: userFound._id });
 
         if (process.env.NODE_ENV === "production") {
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "none",
-                maxAge: 24 * 60 * 60 * 1000,
-            });
-        } else res.cookie("token", token);
+            res.setHeader(
+                "Set-Cookie",
+                `token=${token}; HttpOnly; Secure; SameSite=None; Path=/`
+            );
+        } else res.header("Set-Cookie", `token=${token}; Path=/`);
 
         res.status(200).json({
             _id: userFound._id,
