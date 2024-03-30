@@ -26,7 +26,6 @@ export const register = async (req, res) => {
 
         if (process.env.NODE_ENV === "production") {
             res.cookie("token", token, {
-                httpOnly: true,
                 secure: true,
                 sameSite: "none",
             });
@@ -69,11 +68,11 @@ export const login = async (req, res) => {
         const token = await createAccessToken({ id: userFound._id });
 
         if (process.env.NODE_ENV === "production") {
-            res.setHeader(
-                "Set-Cookie",
-                `token=${token}; HttpOnly; Secure; SameSite=None; Path=/`
-            );
-        } else res.header("Set-Cookie", `token=${token}; Path=/`);
+            res.cookie("token", token, {
+                secure: true,
+                sameSite: "none",
+            });
+        } else res.cookie("token", token);
 
         res.status(200).json({
             _id: userFound._id,
