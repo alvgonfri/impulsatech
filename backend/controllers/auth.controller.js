@@ -24,24 +24,19 @@ export const register = async (req, res) => {
 
         const token = await createAccessToken({ id: userSaved._id });
 
-        if (process.env.NODE_ENV === "production") {
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "none",
-            });
-        } else res.cookie("token", token);
-
         res.status(201).json({
-            _id: userSaved._id,
-            name: userSaved.name,
-            surname: userSaved.surname,
-            email: userSaved.email,
-            phone: userSaved.phone,
-            picture: userSaved.picture,
-            bio: userSaved.bio,
-            createdAt: userSaved.createdAt,
-            updatedAt: userSaved.updatedAt,
+            user: {
+                _id: userSaved._id,
+                name: userSaved.name,
+                surname: userSaved.surname,
+                email: userSaved.email,
+                phone: userSaved.phone,
+                picture: userSaved.picture,
+                bio: userSaved.bio,
+                createdAt: userSaved.createdAt,
+                updatedAt: userSaved.updatedAt,
+            },
+            token,
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -68,24 +63,19 @@ export const login = async (req, res) => {
 
         const token = await createAccessToken({ id: userFound._id });
 
-        if (process.env.NODE_ENV === "production") {
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "none",
-            });
-        } else res.cookie("token", token);
-
         res.status(200).json({
-            _id: userFound._id,
-            name: userFound.name,
-            surname: userFound.surname,
-            email: userFound.email,
-            phone: userFound.phone,
-            picture: userFound.picture,
-            bio: userFound.bio,
-            createdAt: userFound.createdAt,
-            updatedAt: userFound.updatedAt,
+            user: {
+                _id: userFound._id,
+                name: userFound.name,
+                surname: userFound.surname,
+                email: userFound.email,
+                phone: userFound.phone,
+                picture: userFound.picture,
+                bio: userFound.bio,
+                createdAt: userFound.createdAt,
+                updatedAt: userFound.updatedAt,
+            },
+            token,
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
