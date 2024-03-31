@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
             const cookies = Cookies.get();
             console.log("Cookies: ", cookies);
             if (!cookies.token) {
+                console.log("No token found");
                 setIsAuthenticated(false);
                 setLoading(false);
                 return;
