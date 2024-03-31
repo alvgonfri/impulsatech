@@ -29,7 +29,7 @@ export const register = async (req, res) => {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
-                domain: process.env.CORS_ORIGIN,
+                domain: "impulsatech.vercel.app",
             });
         } else res.cookie("token", token);
 
@@ -74,7 +74,7 @@ export const login = async (req, res) => {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
-                domain: process.env.CORS_ORIGIN,
+                domain: "impulsatech.vercel.app",
             });
         } else res.cookie("token", token);
 
