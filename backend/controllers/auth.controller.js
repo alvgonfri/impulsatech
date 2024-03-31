@@ -92,7 +92,7 @@ export const logout = (req, res) => {
 export const verifyToken = async (req, res) => {
     const { token } = req.cookies;
 
-    if (!token) return res.sendStatus(400).json({ token: token });
+    if (!token) return res.status(400).json({ token: token });
 
     jwt.verify(token, TOKEN_SECRET, async (error, user) => {
         if (error) return res.sendStatus(401);
