@@ -90,7 +90,7 @@ export const logout = (req, res) => {
 };
 
 export const verifyToken = async (req, res) => {
-    const { token } = req.cookies;
+    const token = req.headers.authorization;
 
     if (!token) return res.status(400).json({ token: token });
 
