@@ -54,7 +54,10 @@ export const AuthProvider = ({ children }) => {
             if (res.status === 201) {
                 setUser(res.data.user);
                 setIsAuthenticated(true);
-                Cookies.set("token", res.data.token);
+                Cookies.set("token", res.data.token, {
+                    secure: true,
+                    sameSite: "none",
+                });
             }
         } catch (error) {
             console.error(error);
@@ -67,7 +70,10 @@ export const AuthProvider = ({ children }) => {
             const res = await loginRequest(user);
             setUser(res.data.user);
             setIsAuthenticated(true);
-            Cookies.set("token", res.data.token);
+            Cookies.set("token", res.data.token, {
+                secure: true,
+                sameSite: "none",
+            });
         } catch (error) {
             console.log(error);
             setErrors(error.response.data);
