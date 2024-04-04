@@ -30,8 +30,14 @@ function Navbar() {
     }, [location]);
 
     return (
-        <nav className="bg-teal-600 text-white flex gap-x-5 px-10 py-5 mb-2 fixed top-0 left-0 right-0">
-            <h1 className="text-2xl font-bold">ImpulsaTech</h1>
+        <nav className="bg-teal-600 text-white flex gap-x-5 px-10 py-3 mb-2 fixed top-0 left-0 right-0">
+            <Link to="/">
+                <img
+                    src="/assets/impulsatech_logo.png"
+                    alt="logo"
+                    className="h-10 mr-3 hover:opacity-50 transition duration-500"
+                />
+            </Link>
             <div className="flex lg:hidden flex-grow justify-end">
                 <button
                     className="bg-teal-700 hover:bg-teal-800 px-3 py-1 rounded-md border"
