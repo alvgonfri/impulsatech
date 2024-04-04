@@ -1,13 +1,8 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const organizationSchema = new mongoose.Schema(
     {
         name: {
-            type: String,
-            required: true,
-            trim: true,
-        },
-        surname: {
             type: String,
             required: true,
             trim: true,
@@ -21,10 +16,6 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true,
-        },
-        isAdmin: {
-            type: Boolean,
-            default: false,
         },
         phone: {
             type: String,
@@ -44,4 +35,4 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("Organization", organizationSchema);

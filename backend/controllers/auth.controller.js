@@ -1,7 +1,8 @@
 import User from "../models/user.model.js";
+import Organization from "../models/organization.model.js";
 import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt.js";
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import { TOKEN_SECRET } from "../config.js";
 
 export const register = async (req, res) => {
@@ -43,6 +44,43 @@ export const register = async (req, res) => {
     }
 };
 
+export const registerOrganization = async (req, res) => {
+    const { name, email, password, phone, picture, bio } = req.body;
+
+    try {
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const newOrganization = await Organization.create({
+            name,
+            email,
+            password: passwordHash,
+            phone,
+            picture,
+            bio,
+        });
+
+        const organizationSaved = await newOrganization.save();
+
+        const token = await createAccessToken({ id: organizationSaved._id });
+
+        res.status(201).json({
+            organization: {
+                _id: organizationSaved._id,
+                name: organizationSaved.name,
+                email: organizationSaved.email,
+                phone: organizationSaved.phone,
+                picture: organizationSaved.picture,
+                bio: organizationSaved.bio,
+                createdAt: organizationSaved.createdAt,
+                updatedAt: organizationSaved.updatedAt,
+            },
+            token,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -51,32 +89,62 @@ export const login = async (req, res) => {
             email,
         });
 
-        if (!userFound) {
-            return res.status(400).json(["Credenciales incorrectas"]);
-        }
-
-        const isMatch = await bcrypt.compare(password, userFound.password);
-
-        if (!isMatch) {
-            return res.status(400).json(["Credenciales incorrectas"]);
-        }
-
-        const token = await createAccessToken({ id: userFound._id });
-
-        res.status(200).json({
-            user: {
-                _id: userFound._id,
-                name: userFound.name,
-                surname: userFound.surname,
-                email: userFound.email,
-                phone: userFound.phone,
-                picture: userFound.picture,
-                bio: userFound.bio,
-                createdAt: userFound.createdAt,
-                updatedAt: userFound.updatedAt,
-            },
-            token,
+        const organizationFound = await Organization.findOne({
+            email,
         });
+
+        if (!userFound && !organizationFound) {
+            return res.status(400).json(["Credenciales incorrectas"]);
+        }
+
+        if (userFound) {
+            const isMatch = await bcrypt.compare(password, userFound.password);
+
+            if (!isMatch) {
+                return res.status(400).json(["Credenciales incorrectas"]);
+            }
+
+            const token = await createAccessToken({ id: userFound._id });
+
+            return res.status(200).json({
+                user: {
+                    _id: userFound._id,
+                    name: userFound.name,
+                    surname: userFound.surname,
+                    email: userFound.email,
+                    phone: userFound.phone,
+                    picture: userFound.picture,
+                    bio: userFound.bio,
+                    createdAt: userFound.createdAt,
+                    updatedAt: userFound.updatedAt,
+                },
+                token,
+            });
+        }
+
+        if (organizationFound) {
+            const isMatch = await bcrypt.compare(password, organizationFound.password);
+
+            if (!isMatch) {
+                return res.status(400).json(["Credenciales incorrectas"]);
+            }
+
+            const token = await createAccessToken({ id: organizationFound._id });
+
+            return res.status(200).json({
+                organization: {
+                    _id: organizationFound._id,
+                    name: organizationFound.name,
+                    email: organizationFound.email,
+                    phone: organizationFound.phone,
+                    picture: organizationFound.picture,
+                    bio: organizationFound.bio,
+                    createdAt: organizationFound.createdAt,
+                    updatedAt: organizationFound.updatedAt,
+                },
+                token,
+            });
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -94,22 +162,44 @@ export const verifyToken = async (req, res) => {
 
     if (!token) return res.status(400).json({ token: token });
 
-    jwt.verify(token, TOKEN_SECRET, async (error, user) => {
+    jwt.verify(token, TOKEN_SECRET, async (error, decoded) => {
         if (error) return res.sendStatus(401);
 
-        const userFound = await User.findById(user.id);
-        if (!userFound) return res.sendStatus(401);
+        const userFound = await User.findById(decoded.id);
 
-        return res.json({
-            id: userFound._id,
-            name: userFound.name,
-            surname: userFound.surname,
-            email: userFound.email,
-            phone: userFound.phone,
-            picture: userFound.picture,
-            bio: userFound.bio,
-            createdAt: userFound.createdAt,
-            updatedAt: userFound.updatedAt,
-        });
+        const organizationFound = await Organization.findById(decoded.id);
+
+        if (!userFound && !organizationFound) return res.sendStatus(401);
+
+        if (userFound) {
+            return res.status(200).json({
+                user: {
+                    _id: userFound._id,
+                    name: userFound.name,
+                    surname: userFound.surname,
+                    email: userFound.email,
+                    phone: userFound.phone,
+                    picture: userFound.picture,
+                    bio: userFound.bio,
+                    createdAt: userFound.createdAt,
+                    updatedAt: userFound.updatedAt,
+                },
+            });
+        }
+
+        if (organizationFound) {
+            return res.status(200).json({
+                organization: {
+                    _id: organizationFound._id,
+                    name: organizationFound.name,
+                    email: organizationFound.email,
+                    phone: organizationFound.phone,
+                    picture: organizationFound.picture,
+                    bio: organizationFound.bio,
+                    createdAt: organizationFound.createdAt,
+                    updatedAt: organizationFound.updatedAt,
+                },
+            });
+        }
     });
 };

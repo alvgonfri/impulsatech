@@ -9,12 +9,14 @@ describe("Campaign tests", () => {
         await mongoose.connect(process.env.TEST_MONGODB_URI);
 
         agent = request.agent(app);
+
         const res = await agent.post("/api/v1/register").send({
             name: "campaign-test",
             surname: "campaign-test",
             email: "campaign-test@gmail.com",
             password: "12345678",
         });
+
         const token = res.body.token;
         agent.set("Authorization", token);
     });
