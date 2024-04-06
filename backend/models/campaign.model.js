@@ -31,9 +31,15 @@ const campaignSchema = new mongoose.Schema(
             type: Date,
         },
         promoter: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
+            type: {
+                type: String,
+                enum: ["User", "Organization"],
+                required: true,
+            },
+            id: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: true,
+            },
         },
     },
     {

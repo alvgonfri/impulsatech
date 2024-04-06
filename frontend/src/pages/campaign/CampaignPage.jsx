@@ -6,6 +6,7 @@ import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 function CampaignPage() {
     const [campaign, setCampaign] = useState({});
+    const [promoter, setPromoter] = useState({});
     const { getCampaign } = useCampaign();
     const params = useParams();
 
@@ -14,6 +15,7 @@ function CampaignPage() {
             if (params.id) {
                 const campaign = await getCampaign(params.id);
                 setCampaign(campaign);
+                setPromoter(campaign.promoter);
             }
         }
         loadCampaign();
@@ -56,6 +58,11 @@ function CampaignPage() {
                     <span className="ml-2">{campaign.deadline}</span>
                 </div>
             )}
+            <div className="mb-4 flex">
+                <p>Promotor:</p>
+                <span className="ml-2">{promoter.name}</span>
+            </div>
+
             <div className="mb-4 flex gap-2">
                 <div>Compartir</div>
                 <div className="has-tooltip inline-block">

@@ -1,4 +1,4 @@
-import LoginPage from "../../../src/pages/user/LoginPage";
+import LoginPage from "../../../src/pages/auth/LoginPage";
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "../../../src/context/AuthContext";

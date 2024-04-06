@@ -123,13 +123,18 @@ export const login = async (req, res) => {
         }
 
         if (organizationFound) {
-            const isMatch = await bcrypt.compare(password, organizationFound.password);
+            const isMatch = await bcrypt.compare(
+                password,
+                organizationFound.password
+            );
 
             if (!isMatch) {
                 return res.status(400).json(["Credenciales incorrectas"]);
             }
 
-            const token = await createAccessToken({ id: organizationFound._id });
+            const token = await createAccessToken({
+                id: organizationFound._id,
+            });
 
             return res.status(200).json({
                 organization: {
@@ -173,32 +178,28 @@ export const verifyToken = async (req, res) => {
 
         if (userFound) {
             return res.status(200).json({
-                user: {
-                    _id: userFound._id,
-                    name: userFound.name,
-                    surname: userFound.surname,
-                    email: userFound.email,
-                    phone: userFound.phone,
-                    picture: userFound.picture,
-                    bio: userFound.bio,
-                    createdAt: userFound.createdAt,
-                    updatedAt: userFound.updatedAt,
-                },
+                _id: userFound._id,
+                name: userFound.name,
+                surname: userFound.surname,
+                email: userFound.email,
+                phone: userFound.phone,
+                picture: userFound.picture,
+                bio: userFound.bio,
+                createdAt: userFound.createdAt,
+                updatedAt: userFound.updatedAt,
             });
         }
 
         if (organizationFound) {
             return res.status(200).json({
-                organization: {
-                    _id: organizationFound._id,
-                    name: organizationFound.name,
-                    email: organizationFound.email,
-                    phone: organizationFound.phone,
-                    picture: organizationFound.picture,
-                    bio: organizationFound.bio,
-                    createdAt: organizationFound.createdAt,
-                    updatedAt: organizationFound.updatedAt,
-                },
+                _id: organizationFound._id,
+                name: organizationFound.name,
+                email: organizationFound.email,
+                phone: organizationFound.phone,
+                picture: organizationFound.picture,
+                bio: organizationFound.bio,
+                createdAt: organizationFound.createdAt,
+                updatedAt: organizationFound.updatedAt,
             });
         }
     });

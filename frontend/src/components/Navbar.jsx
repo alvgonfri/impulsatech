@@ -12,7 +12,7 @@ import {
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const { user, isAuthenticated, logOut } = useAuth();
+    const { subject, isAuthenticated, logOut } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -73,7 +73,8 @@ function Navbar() {
                             onClick={toggleDropdown}
                             className="bg-teal-700 hover:bg-teal-800 rounded-md border border-white px-3 py-1 transition duration-500"
                         >
-                            <FontAwesomeIcon icon={faUser} /> &nbsp; {user.name}
+                            <FontAwesomeIcon icon={faUser} /> &nbsp;{" "}
+                            {subject.name}
                         </button>
                         <div
                             className={`${

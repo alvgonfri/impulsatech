@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import { TOKEN_SECRET } from "../config.js";
 
 export const authRequired = (req, res, next) => {
@@ -10,13 +10,13 @@ export const authRequired = (req, res, next) => {
                 .status(401)
                 .json({ message: "Se requiere autenticación" });
 
-        jwt.verify(token, TOKEN_SECRET, (error, user) => {
+        jwt.verify(token, TOKEN_SECRET, (error, decoded) => {
             if (error) {
                 return res
                     .status(401)
                     .json({ message: "Se requiere autenticación" });
             }
-            req.user = user;
+            req.subject = decoded;
             next();
         });
     } catch (error) {

@@ -1,5 +1,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { registerRequest, loginRequest } from "../api/auth.js";
+import {
+    registerRequest,
+    registerOrganizationRequest,
+    loginRequest,
+} from "../api/auth.js";
 import { verifyTokenRequest } from "../api/auth.js";
 import Cookies from "js-cookie";
 import PropTypes from "prop-types";
@@ -16,7 +20,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [subject, setSubject] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState([]);
@@ -34,7 +38,7 @@ export const AuthProvider = ({ children }) => {
                 const res = await verifyTokenRequest(cookies.token);
                 if (!res.data) return setIsAuthenticated(false);
                 setIsAuthenticated(true);
-                setUser(res.data);
+                setSubject(res.data);
                 setLoading(false);
             } catch (error) {
                 setIsAuthenticated(false);
@@ -48,7 +52,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const res = await registerRequest(user);
             if (res.status === 201) {
-                setUser(res.data.user);
+                setSubject(res.data.user);
                 setIsAuthenticated(true);
                 Cookies.set("token", res.data.token, {
                     secure: true,
@@ -61,10 +65,28 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const signIn = async (user) => {
+    const signUpOrganization = async (organization) => {
         try {
-            const res = await loginRequest(user);
-            setUser(res.data.user);
+            const res = await registerOrganizationRequest(organization);
+            if (res.status === 201) {
+                setSubject(res.data.organization);
+                setIsAuthenticated(true);
+                Cookies.set("token", res.data.token, {
+                    secure: true,
+                    sameSite: "none",
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            setErrors(error.response.data);
+        }
+    };
+
+    const signIn = async (subject) => {
+        try {
+            const res = await loginRequest(subject);
+            if (res.data.user) setSubject(res.data.user);
+            if (res.data.organization) setSubject(res.data.organization);
             setIsAuthenticated(true);
             Cookies.set("token", res.data.token, {
                 secure: true,
@@ -78,7 +100,7 @@ export const AuthProvider = ({ children }) => {
 
     const logOut = () => {
         Cookies.remove("token");
-        setUser(null);
+        setSubject(null);
         setIsAuthenticated(false);
     };
 
@@ -86,9 +108,10 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 signUp,
+                signUpOrganization,
                 signIn,
                 logOut,
-                user,
+                subject,
                 isAuthenticated,
                 loading,
                 errors,
