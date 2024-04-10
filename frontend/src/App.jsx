@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import ProtectedRoute from "./ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -41,6 +42,7 @@ function App() {
                             <Route path="*" element={<h1>Not Found</h1>} />
                         </Routes>
                     </main>
+                    <Footer />
                 </BrowserRouter>
             </CampaignProvider>
         </AuthProvider>

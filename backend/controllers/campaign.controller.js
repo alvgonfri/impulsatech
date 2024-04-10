@@ -1,7 +1,9 @@
+import fs from "fs-extra";
 import Campaign from "../models/campaign.model.js";
 import User from "../models/user.model.js";
 import Organization from "../models/organization.model.js";
 import { isOrganization } from "../libs/isOrganization.js";
+import { uploadCampaignImage } from "../libs/cloudinary.js";
 
 export const getCampaigns = async (req, res) => {
     try {
@@ -39,8 +41,9 @@ export const getCampaign = async (req, res) => {
 
 export const createCampaign = async (req, res) => {
     try {
-        const { title, description, timeGoal, financialGoal, image, deadline } =
+        const { title, description, timeGoal, financialGoal, deadline } =
             req.body;
+        let image;
 
         if (!timeGoal && !financialGoal) {
             return res
@@ -53,6 +56,16 @@ export const createCampaign = async (req, res) => {
         const promoterType = (await isOrganization(req.subject.id))
             ? "Organization"
             : "User";
+
+        if (req.files && req.files.image) {
+            const { public_id, secure_url } = await uploadCampaignImage(
+                req.files.image.tempFilePath
+            );
+
+            await fs.remove(req.files.image.tempFilePath);
+
+            image = { public_id, secure_url };
+        }
 
         const newCampaign = new Campaign({
             title,

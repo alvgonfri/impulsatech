@@ -38,7 +38,6 @@ export const createCampaignSchema = z.object({
                 "El objetivo financiero no puede ser mayor de 100.000.000 €",
         })
         .optional(),
-    image: z.string().optional(),
     deadline: z
         .string()
         .refine(
@@ -91,7 +90,6 @@ export const updateCampaignSchema = z.object({
                 "El objetivo financiero no puede ser mayor de 100.000.000 €",
         })
         .optional(),
-    image: z.string().optional(),
     deadline: z
         .string()
         .refine(

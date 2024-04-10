@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useCampaign } from "../../context/CampaignContext";
 
 function CampaignFormPage() {
+    const [image, setImage] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         register,
         handleSubmit,
@@ -12,30 +15,30 @@ function CampaignFormPage() {
     const navigate = useNavigate();
 
     const onSubmit = handleSubmit(async (data) => {
-        const processedData = {};
-        Object.keys(data).forEach((key) => {
-            processedData[key] = data[key].trim();
-        });
+        if (isSubmitting) return;
+        setIsSubmitting(true);
 
-        if (processedData.timeGoal) {
-            processedData.timeGoal = parseInt(processedData.timeGoal);
-        } else {
-            delete processedData.timeGoal;
+        const formData = new FormData();
+
+        formData.append("title", data.title);
+        formData.append("description", data.description);
+
+        if (data.timeGoal) {
+            formData.append("timeGoal", data.timeGoal);
+        }
+        if (data.financialGoal) {
+            formData.append("financialGoal", data.financialGoal);
+        }
+        if (data.deadline) {
+            formData.append("deadline", data.deadline);
+        }
+        if (image) {
+            formData.append("image", image);
         }
 
-        if (processedData.financialGoal) {
-            processedData.financialGoal = parseInt(processedData.financialGoal);
-        } else {
-            delete processedData.financialGoal;
-        }
+        const status = await createCampaign(formData);
 
-        if (processedData.deadline) {
-            processedData.deadline = new Date(processedData.deadline);
-        } else {
-            delete processedData.deadline;
-        }
-
-        const status = await createCampaign(processedData);
+        setIsSubmitting(false);
 
         if (status === 201) {
             navigate("/campaigns");
@@ -99,6 +102,14 @@ function CampaignFormPage() {
                     />
 
                     <input
+                        type="file"
+                        {...register("image")}
+                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                        accept="image/*"
+                        onChange={(e) => setImage(e.target.files[0])}
+                    />
+
+                    <input
                         type="date"
                         {...register("deadline")}
                         placeholder="Fecha límite"
@@ -109,8 +120,11 @@ function CampaignFormPage() {
                         <button
                             type="submit"
                             className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
+                            disabled={isSubmitting}
                         >
-                            Crear campaña
+                            {isSubmitting
+                                ? "Creando campaña..."
+                                : "Crear campaña"}
                         </button>
                     </div>
                 </form>

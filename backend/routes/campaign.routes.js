@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
 import { validateSchema } from "../middlewares/validator.js";
+import { parseCampign } from "../middlewares/parseCampaign.js";
 import {
     createCampaignSchema,
     updateCampaignSchema,
@@ -22,6 +23,7 @@ router.get("/:id", getCampaign);
 router.post(
     "",
     authRequired,
+    parseCampign,
     validateSchema(createCampaignSchema),
     createCampaign
 );
@@ -29,6 +31,7 @@ router.post(
 router.patch(
     "/:id",
     authRequired,
+    parseCampign,
     validateSchema(updateCampaignSchema),
     updateCampaign
 );

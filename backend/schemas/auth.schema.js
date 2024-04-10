@@ -24,10 +24,6 @@ export const registerSchema = z.object({
         .min(9, { message: "El teléfono no es válido" })
         .max(9, { message: "El teléfono no es válido" })
         .optional(),
-    picture: z.object({
-        public_id: z.string(),
-        secure_url: z.string(),
-    }).optional(),
     bio: z
         .string()
         .max(200, {
@@ -56,10 +52,6 @@ export const registerOrganizationSchema = z.object({
         .min(9, { message: "El teléfono no es válido" })
         .max(9, { message: "El teléfono no es válido" })
         .optional(),
-    picture: z.object({
-        public_id: z.string(),
-        secure_url: z.string(),
-    }).optional(),
     bio: z
         .string()
         .max(200, {

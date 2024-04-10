@@ -9,5 +9,6 @@ export const createCampaignRequest = async (campaign) =>
     axios.post(`/campaigns`, campaign, {
         headers: {
             Authorization: `${Cookies.get("token")}`,
+            ContentType: "multipart/form-data",
         },
     });

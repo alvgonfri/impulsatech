@@ -24,8 +24,8 @@ const campaignSchema = new mongoose.Schema(
             type: Number,
         },
         image: {
-            type: String,
-            trim: true,
+            public_id: String,
+            secure_url: String,
         },
         deadline: {
             type: Date,

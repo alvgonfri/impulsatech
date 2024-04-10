@@ -6,14 +6,22 @@ import { faClock } from "@fortawesome/free-solid-svg-icons";
 function CampaignCard({ campaign }) {
     return (
         <a
-            href="#"
+            href={`/campaigns/${campaign._id}`}
             className="block rounded-lg p-4 shadow bg-teal-50 hover:bg-teal-100"
         >
-            <img
-                alt=""
-                src="https://images.unsplash.com/photo-1613545325278-f24b0cae1224?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                className="h-56 w-full rounded-md object-cover"
-            />
+            {campaign.image ? (
+                <img
+                    alt="Campaign"
+                    src={campaign.image && campaign.image.secure_url}
+                    className="h-56 w-full rounded-md object-cover"
+                />
+            ) : (
+                <img
+                    alt="Campaign"
+                    src="assets/campaign/no_image.png"
+                    className="h-56 w-full rounded-md object-cover"
+                />
+            )}
 
             <div className="mt-2">
                 <div className="text-sm text-gray-500">Tags</div>
