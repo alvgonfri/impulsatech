@@ -7,7 +7,7 @@ function CampaignCard({ campaign }) {
     return (
         <a
             href={`/campaigns/${campaign._id}`}
-            className="block rounded-lg p-4 shadow bg-teal-50 hover:bg-teal-100"
+            className="block rounded-lg p-4 shadow bg-teal-50 border border-teal-200 hover:bg-teal-100"
         >
             {campaign.image ? (
                 <img
@@ -30,29 +30,76 @@ function CampaignCard({ campaign }) {
                     {campaign.title}
                 </div>
 
-                <div className="mt-2 flex justify-between gap-2">
-                    <FontAwesomeIcon icon={faCoins} className="text-teal-600" />
-                    <div className="h-5 w-full bg-neutral-200 rounded-full">
-                        <div
-                            className="h-5 bg-teal-600 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                            style={{ width: "60%" }}
-                        >
-                            60%
+                {campaign.financialGoal ? (
+                    <div className="mt-2 flex justify-between items-center gap-2">
+                        <div className="text-lg text-teal-500 font-medium flex flex-row">
+                            {campaign.financialGoal} <span>&nbsp;€</span>
                         </div>
+                        <div className="h-5 w-full bg-neutral-200 rounded-full">
+                            <div
+                                className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                style={{ width: "60%" }}
+                            >
+                                60%
+                            </div>
+                        </div>
+                        <FontAwesomeIcon
+                            icon={faCoins}
+                            className="text-teal-500"
+                        />
                     </div>
-                </div>
+                ) : (
+                    <div className="mt-2 flex justify-between items-center gap-2">
+                        <div className="h-5 w-full bg-neutral-200 rounded-full">
+                            <div
+                                className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                style={{ width: "100%" }}
+                            >
+                                Sin objetivo económico
+                            </div>
+                        </div>
+                        <FontAwesomeIcon
+                            icon={faCoins}
+                            className="text-gray-400"
+                        />
+                    </div>
+                )}
 
-                <div className="mt-2 flex justify-between gap-2">
-                    <FontAwesomeIcon icon={faClock} className="text-teal-600" />
-                    <div className="h-5 w-full bg-neutral-200 rounded-full">
-                        <div
-                            className="h-5 bg-teal-600 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                            style={{ width: "48%" }}
-                        >
-                            48%
+                {campaign.timeGoal ? (
+                    <div className="mt-2 flex justify-between items-center gap-2">
+                        <div className="text-lg text-indigo-500 font-medium flex flex-row">
+                            {campaign.timeGoal} <span>&nbsp;h</span>
                         </div>
+
+                        <div className="h-5 w-full bg-neutral-200 rounded-full">
+                            <div
+                                className="h-5 bg-indigo-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                style={{ width: "48%" }}
+                            >
+                                48%
+                            </div>
+                        </div>
+                        <FontAwesomeIcon
+                            icon={faClock}
+                            className="text-indigo-500"
+                        />
                     </div>
-                </div>
+                ) : (
+                    <div className="mt-2 flex justify-between items-center gap-2">
+                        <div className="h-5 w-full bg-neutral-200 rounded-full">
+                            <div
+                                className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                style={{ width: "100%" }}
+                            >
+                                Sin objetivo de tiempo
+                            </div>
+                        </div>
+                        <FontAwesomeIcon
+                            icon={faClock}
+                            className="text-gray-400"
+                        />
+                    </div>
+                )}
             </div>
         </a>
     );
