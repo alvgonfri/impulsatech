@@ -11,7 +11,7 @@ function CampaignsPage() {
     }, []);
 
     return (
-        <div className="container mx-auto px-20">
+        <div className="container mx-auto px-10 md:px-40">
             <h1 className="text-3xl font-bold text-teal-800 mb-4">Campañas</h1>
             <div className="grid grid-cols-3 gap-4">
                 {campaigns.map((campaign) => (
