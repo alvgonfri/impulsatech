@@ -1,6 +1,17 @@
 import FinancialDonation from "../models/financialDonation.model.js";
 import { isOrganization } from "../libs/isOrganization.js";
 
+export const getFinancialDonationsByCampaign = async (req, res) => {
+    try {
+        const financialDonations = await FinancialDonation.find({
+            campaign: req.params.campaignId,
+        });
+        res.status(200).json(financialDonations);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const createFinancialDonation = async (req, res) => {
     try {
         const { amount, anonymous, campaignId } = req.body;
