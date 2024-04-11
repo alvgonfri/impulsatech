@@ -6,6 +6,7 @@ import fileUpload from "express-fileupload";
 
 import authRoutes from "./routes/auth.routes.js";
 import campaignRoutes from "./routes/campaign.routes.js";
+import financialDonationRoutes from "./routes/financialDonation.routes.js";
 
 const app = express();
 
@@ -27,5 +28,6 @@ app.use(
 
 app.use("/api/v1", authRoutes);
 app.use("/api/v1/campaigns", campaignRoutes);
+app.use("/api/v1/financial-donations", financialDonationRoutes);
 
 export default app;
