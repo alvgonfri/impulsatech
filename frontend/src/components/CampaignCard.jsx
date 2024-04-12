@@ -32,15 +32,17 @@ function CampaignCard({ campaign }) {
 
                 {campaign.financialGoal ? (
                     <div className="mt-2 flex justify-between items-center gap-2">
-                        <div className="text-lg text-teal-500 font-medium flex flex-row">
-                            {campaign.financialGoal} <span>&nbsp;€</span>
+                        <div className="text-lg text-teal-500 font-medium">
+                            {campaign.financialGoal}&nbsp;€
                         </div>
                         <div className="h-5 w-full bg-neutral-200 rounded-full">
                             <div
                                 className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                style={{ width: "60%" }}
+                                style={{
+                                    width: `${campaign.percentageDonated}%`,
+                                }}
                             >
-                                60%
+                                {campaign.percentageDonated}%
                             </div>
                         </div>
                         <FontAwesomeIcon
@@ -67,8 +69,8 @@ function CampaignCard({ campaign }) {
 
                 {campaign.timeGoal ? (
                     <div className="mt-2 flex justify-between items-center gap-2">
-                        <div className="text-lg text-indigo-500 font-medium flex flex-row">
-                            {campaign.timeGoal} <span>&nbsp;h</span>
+                        <div className="text-lg text-indigo-500 font-medium">
+                            {campaign.timeGoal}&nbsp;h
                         </div>
 
                         <div className="h-5 w-full bg-neutral-200 rounded-full">

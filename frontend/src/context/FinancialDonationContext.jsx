@@ -1,0 +1,63 @@
+import { createContext, useContext, useState } from "react";
+import {
+    getFinancialDonationsByCampaignRequest,
+    createFinancialDonationRequest,
+} from "../api/financialDonation.js";
+import PropTypes from "prop-types";
+
+const FinancialDonationContext = createContext();
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useFinancialDonation = () => {
+    const context = useContext(FinancialDonationContext);
+    if (!context) {
+        throw new Error("useCampaign must be used within a CampaignProvider");
+    }
+    return context;
+};
+
+export const FinancialDonationProvider = ({ children }) => {
+    const [financialDonations, setFinancialDonations] = useState([]);
+    const [errors, setErrors] = useState([]);
+
+    const getFinancialDonationsByCampaign = async (campaignId) => {
+        try {
+            const res = await getFinancialDonationsByCampaignRequest(
+                campaignId
+            );
+            setFinancialDonations(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const createFinancialDonation = async (financialDonation) => {
+        try {
+            const res = await createFinancialDonationRequest(financialDonation);
+            setFinancialDonations([...financialDonations, res.data]);
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setErrors(error.response.data);
+        }
+    };
+
+    return (
+        <FinancialDonationContext.Provider
+            value={{
+                financialDonations,
+                getFinancialDonationsByCampaign,
+                createFinancialDonation,
+                errors,
+            }}
+        >
+            {children}
+        </FinancialDonationContext.Provider>
+    );
+};
+
+FinancialDonationProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+};
+
+export default FinancialDonationContext;

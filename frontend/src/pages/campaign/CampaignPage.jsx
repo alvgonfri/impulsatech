@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { useCampaign } from "../../context/CampaignContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { faCoins } from "@fortawesome/free-solid-svg-icons";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
 
 function CampaignPage() {
     const [campaign, setCampaign] = useState({});
@@ -18,6 +20,7 @@ function CampaignPage() {
                 setPromoter(campaign.promoter);
             }
         }
+
         loadCampaign();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -66,6 +69,82 @@ function CampaignPage() {
                         <span className="ml-2">{promoter.name}</span>
                     </div>
 
+                    {campaign.financialGoal ? (
+                        <>
+                            <div className="text-lg text-teal-500 font-medium px-4 pt-2">
+                                {campaign.moneyDonated} € de&nbsp;
+                                {campaign.financialGoal} €
+                            </div>
+                            <div className="mt-2 flex justify-between items-center gap-2 px-4 pb-2">
+                                <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                    <div
+                                        className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                        style={{
+                                            width: `${campaign.percentageDonated}%`,
+                                        }}
+                                    >
+                                        {campaign.percentageDonated}%
+                                    </div>
+                                </div>
+                                <FontAwesomeIcon
+                                    icon={faCoins}
+                                    className="text-teal-500"
+                                />
+                            </div>
+                        </>
+                    ) : (
+                        <div className="mt-2 flex justify-between items-center gap-2 px-4 py-2">
+                            <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                <div
+                                    className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                    style={{ width: "100%" }}
+                                >
+                                    Sin objetivo económico
+                                </div>
+                            </div>
+                            <FontAwesomeIcon
+                                icon={faCoins}
+                                className="text-gray-400"
+                            />
+                        </div>
+                    )}
+
+                    {campaign.timeGoal ? (
+                        <div className="mt-2 flex justify-between items-center gap-2 px-4 py-2">
+                            <div className="text-lg text-indigo-500 font-medium flex flex-row">
+                                {campaign.timeGoal} <span>&nbsp;h</span>
+                            </div>
+
+                            <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                <div
+                                    className="h-5 bg-indigo-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                    style={{ width: "48%" }}
+                                >
+                                    48%
+                                </div>
+                            </div>
+                            <FontAwesomeIcon
+                                icon={faClock}
+                                className="text-indigo-500"
+                            />
+                        </div>
+                    ) : (
+                        <div className="mt-2 flex justify-between items-center gap-2 px-4 py-2">
+                            <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                <div
+                                    className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                    style={{ width: "100%" }}
+                                >
+                                    Sin objetivo de tiempo
+                                </div>
+                            </div>
+                            <FontAwesomeIcon
+                                icon={faClock}
+                                className="text-gray-400"
+                            />
+                        </div>
+                    )}
+
                     <div className="flex px-4 py-2">
                         <p>Estado:</p>
                         {campaign.status === "ongoing" && (
@@ -90,15 +169,6 @@ function CampaignPage() {
                         </div>
                     )}
 
-                    {campaign.financialGoal && (
-                        <div className="flex px-4 py-2">
-                            <p>Objetivo financiero:</p>
-                            <span className="ml-2">
-                                {campaign.financialGoal} €
-                            </span>
-                        </div>
-                    )}
-
                     {campaign.deadline && (
                         <div className="flex px-4 py-2">
                             <p>Fecha límite:</p>
@@ -117,13 +187,13 @@ function CampaignPage() {
                                 htmlFor="donationAmount"
                                 className="block text-gray-700 font-bold mb-2"
                             >
-                                Cantidad de donación:
+                                Realizar donación económica (€)
                             </label>
                             <input
                                 type="number"
                                 name="donationAmount"
-                                placeholder="Escribe la cantidad de donación"
-                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                placeholder="Introduce la cantidad a donar"
+                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-teal-500"
                                 required
                             />
                         </div>
@@ -144,9 +214,38 @@ function CampaignPage() {
                         </div>
                         <button
                             type="submit"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
-                            Enviar Donación
+                            Enviar donación
+                        </button>
+                    </form>
+
+                    <form
+                        onSubmit={() => {
+                            console.log("Donation submitted");
+                        }}
+                        className="border-t-2 border-teal-600 px-4 py-2"
+                    >
+                        <div className="mb-4">
+                            <label
+                                htmlFor="donationAmount"
+                                className="block text-gray-700 font-bold mb-2"
+                            >
+                                Realizar donación de tiempo (h)
+                            </label>
+                            <input
+                                type="number"
+                                name="donationAmount"
+                                placeholder="Introduce la cantidad a donar"
+                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-indigo-500"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        >
+                            Enviar donación
                         </button>
                     </form>
                 </div>

@@ -3,12 +3,28 @@ import Campaign from "../models/campaign.model.js";
 import User from "../models/user.model.js";
 import Organization from "../models/organization.model.js";
 import { isOrganization } from "../libs/isOrganization.js";
+import {
+    getMoneyDonated,
+    getMoneyDonatedPercentage,
+} from "../libs/getAmountDonated.js";
 import { uploadCampaignImage } from "../libs/cloudinary.js";
 
 export const getCampaigns = async (req, res) => {
     try {
         const campaigns = await Campaign.find();
-        res.status(200).json(campaigns);
+        const campaignsWithDonationsInfo = await Promise.all(
+            campaigns.map(async (campaign) => {
+                const moneyDonated = await getMoneyDonated(campaign._id);
+                const percentageDonated = await getMoneyDonatedPercentage(
+                    campaign._id
+                );
+                return Object.assign(campaign.toObject(), {
+                    moneyDonated,
+                    percentageDonated,
+                });
+            })
+        );
+        res.status(200).json(campaignsWithDonationsInfo);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -21,6 +37,9 @@ export const getCampaign = async (req, res) => {
             return res.status(404).json({ message: "Campaña no encontrada" });
         }
 
+        const moneyDonated = await getMoneyDonated(campaign._id);
+        const percentageDonated = await getMoneyDonatedPercentage(campaign._id);
+
         let promoter = null;
         if (campaign.promoter.type === "User") {
             promoter = await User.findById(campaign.promoter.id);
@@ -31,9 +50,12 @@ export const getCampaign = async (req, res) => {
         promoter = promoter.toObject();
         delete promoter.password;
 
-        res.status(200).json(
-            Object.assign(campaign.toObject(), { promoter: promoter })
-        );
+        res.status(200).json({
+            ...campaign.toObject(),
+            moneyDonated,
+            percentageDonated,
+            promoter,
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
