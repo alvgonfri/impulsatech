@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { checkIfEmailExists } from "../libs/checkIfEmailExists.js";
+import { checkIfEmailExists } from "../libs/checks.js";
 
 export const registerSchema = z.object({
     name: z

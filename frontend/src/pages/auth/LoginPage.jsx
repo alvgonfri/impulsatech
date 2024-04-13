@@ -23,7 +23,7 @@ function LoginPage() {
 
     return (
         <div className="flex justify-center">
-            <div className="max-w-md p-10 rounded-md border border-teal-600">
+            <div className="w-1/3 p-10 rounded-md border border-teal-600">
                 <h1 className="text-teal-600 text-2xl font-bold mb-4">
                     Inicia sesión
                 </h1>

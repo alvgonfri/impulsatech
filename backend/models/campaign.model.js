@@ -20,6 +20,10 @@ const campaignSchema = new mongoose.Schema(
         timeGoal: {
             type: Number,
         },
+        timeGoalPeriod: {
+            startDate: Date,
+            endDate: Date,
+        },
         financialGoal: {
             type: Number,
         },

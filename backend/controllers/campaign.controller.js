@@ -63,8 +63,14 @@ export const getCampaign = async (req, res) => {
 
 export const createCampaign = async (req, res) => {
     try {
-        const { title, description, timeGoal, financialGoal, deadline } =
-            req.body;
+        const {
+            title,
+            description,
+            timeGoal,
+            timeGoalPeriod,
+            financialGoal,
+            deadline,
+        } = req.body;
         let image;
 
         if (!timeGoal && !financialGoal) {
@@ -72,6 +78,22 @@ export const createCampaign = async (req, res) => {
                 .status(400)
                 .json([
                     "La campaña debe tener al menos un objetivo, ya sea de tiempo o económico",
+                ]);
+        }
+
+        if (timeGoal && !timeGoalPeriod) {
+            return res
+                .status(400)
+                .json([
+                    "Si se establece un objetivo de tiempo, se debe indicar el periodo de tiempo",
+                ]);
+        }
+
+        if (timeGoal && timeGoalPeriod.startDate >= timeGoalPeriod.endDate) {
+            return res
+                .status(400)
+                .json([
+                    "La fecha de inicio debe ser anterior a la fecha de fin",
                 ]);
         }
 
@@ -93,6 +115,7 @@ export const createCampaign = async (req, res) => {
             title,
             description,
             timeGoal,
+            timeGoalPeriod,
             financialGoal,
             image,
             deadline,
