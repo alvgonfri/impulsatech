@@ -6,6 +6,8 @@ import { isOrganization } from "../libs/isOrganization.js";
 import {
     getMoneyDonated,
     getMoneyDonatedPercentage,
+    getTimeDonated,
+    getTimeDonatedPercentage,
 } from "../libs/getAmountDonated.js";
 import { uploadCampaignImage } from "../libs/cloudinary.js";
 
@@ -15,12 +17,18 @@ export const getCampaigns = async (req, res) => {
         const campaignsWithDonationsInfo = await Promise.all(
             campaigns.map(async (campaign) => {
                 const moneyDonated = await getMoneyDonated(campaign._id);
-                const percentageDonated = await getMoneyDonatedPercentage(
+                const moneyDonatedPercetage = await getMoneyDonatedPercentage(
+                    campaign._id
+                );
+                const timeDonated = await getTimeDonated(campaign._id);
+                const timeDonatedPercentage = await getTimeDonatedPercentage(
                     campaign._id
                 );
                 return Object.assign(campaign.toObject(), {
                     moneyDonated,
-                    percentageDonated,
+                    moneyDonatedPercetage,
+                    timeDonated,
+                    timeDonatedPercentage,
                 });
             })
         );
@@ -38,7 +46,14 @@ export const getCampaign = async (req, res) => {
         }
 
         const moneyDonated = await getMoneyDonated(campaign._id);
-        const percentageDonated = await getMoneyDonatedPercentage(campaign._id);
+        const moneyDonatedPercetage = await getMoneyDonatedPercentage(
+            campaign._id
+        );
+
+        const timeDonated = await getTimeDonated(campaign._id);
+        const timeDonatedPercentage = await getTimeDonatedPercentage(
+            campaign._id
+        );
 
         let promoter = null;
         if (campaign.promoter.type === "User") {
@@ -53,7 +68,9 @@ export const getCampaign = async (req, res) => {
         res.status(200).json({
             ...campaign.toObject(),
             moneyDonated,
-            percentageDonated,
+            moneyDonatedPercetage,
+            timeDonated,
+            timeDonatedPercentage,
             promoter,
         });
     } catch (error) {

@@ -12,6 +12,8 @@ function CampaignPage() {
     const { getCampaign } = useCampaign();
     const params = useParams();
 
+    console.log(campaign);
+
     useEffect(() => {
         async function loadCampaign() {
             if (params.id) {
@@ -80,10 +82,10 @@ function CampaignPage() {
                                     <div
                                         className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
                                         style={{
-                                            width: `${campaign.percentageDonated}%`,
+                                            width: `${campaign.moneyDonatedPercetage}%`,
                                         }}
                                     >
-                                        {campaign.percentageDonated}%
+                                        {campaign.moneyDonatedPercetage}%
                                     </div>
                                 </div>
                                 <FontAwesomeIcon
@@ -110,24 +112,28 @@ function CampaignPage() {
                     )}
 
                     {campaign.timeGoal ? (
-                        <div className="mt-2 flex justify-between items-center gap-2 px-4 py-2">
-                            <div className="text-lg text-indigo-500 font-medium flex flex-row">
-                                {campaign.timeGoal} <span>&nbsp;h</span>
+                        <>
+                            <div className="text-lg text-indigo-500 font-medium px-4 pt-2">
+                                {campaign.timeDonated} h de&nbsp;
+                                {campaign.timeGoal} h
                             </div>
-
-                            <div className="h-5 w-full bg-neutral-200 rounded-full">
-                                <div
-                                    className="h-5 bg-indigo-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                    style={{ width: "48%" }}
-                                >
-                                    48%
+                            <div className="mt-2 flex justify-between items-center gap-2 px-4 pb-2">
+                                <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                    <div
+                                        className="h-5 bg-indigo-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                        style={{
+                                            width: `${campaign.timeDonatedPercentage}%`,
+                                        }}
+                                    >
+                                        {campaign.timeDonatedPercentage}%
+                                    </div>
                                 </div>
+                                <FontAwesomeIcon
+                                    icon={faCoins}
+                                    className="text-indigo-500"
+                                />
                             </div>
-                            <FontAwesomeIcon
-                                icon={faClock}
-                                className="text-indigo-500"
-                            />
-                        </div>
+                        </>
                     ) : (
                         <div className="mt-2 flex justify-between items-center gap-2 px-4 py-2">
                             <div className="h-5 w-full bg-neutral-200 rounded-full">

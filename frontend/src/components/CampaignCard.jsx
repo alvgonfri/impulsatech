@@ -39,10 +39,10 @@ function CampaignCard({ campaign }) {
                             <div
                                 className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
                                 style={{
-                                    width: `${campaign.percentageDonated}%`,
+                                    width: `${campaign.moneyDonatedPercetage}%`,
                                 }}
                             >
-                                {campaign.percentageDonated}%
+                                {campaign.moneyDonatedPercetage}%
                             </div>
                         </div>
                         <FontAwesomeIcon
@@ -76,9 +76,11 @@ function CampaignCard({ campaign }) {
                         <div className="h-5 w-full bg-neutral-200 rounded-full">
                             <div
                                 className="h-5 bg-indigo-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                style={{ width: "48%" }}
+                                style={{
+                                    width: `${campaign.timeDonatedPercentage}%`,
+                                }}
                             >
-                                48%
+                                {campaign.timeDonatedPercentage}%
                             </div>
                         </div>
                         <FontAwesomeIcon
