@@ -1,6 +1,5 @@
 export const parseCampign = (req, res, next) => {
     try {
-        console.log(req.body);
         if (req.body.timeGoal) {
             req.body.timeGoal = parseInt(req.body.timeGoal);
         }
@@ -22,7 +21,6 @@ export const parseCampign = (req, res, next) => {
         if (req.body.financialGoal) {
             req.body.financialGoal = parseInt(req.body.financialGoal);
         }
-        console.log(req.body);
         next();
     } catch (error) {
         return res.status(500).json({ message: error.message });

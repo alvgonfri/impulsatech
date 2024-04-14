@@ -16,6 +16,18 @@ export const createFinancialDonation = async (req, res) => {
     try {
         const { amount, anonymous, campaignId } = req.body;
 
+        const campaign = await Campaign.findById(campaignId);
+
+        if (!campaign) {
+            return res.status(404).json(["Campaña no encontrada"]);
+        }
+
+        if (!campaign.financialGoal) {
+            return res
+                .status(400)
+                .json(["La campaña no tiene un objetivo financiero"]);
+        }
+
         let collaboratorType = null;
         if (!anonymous) {
             collaboratorType = (await isOrganization(req.subject.id))

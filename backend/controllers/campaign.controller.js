@@ -89,11 +89,11 @@ export const createCampaign = async (req, res) => {
                 ]);
         }
 
-        if (timeGoal && timeGoalPeriod.startDate >= timeGoalPeriod.endDate) {
+        if (timeGoal && timeGoalPeriod.startDate > timeGoalPeriod.endDate) {
             return res
                 .status(400)
                 .json([
-                    "La fecha de inicio debe ser anterior a la fecha de fin",
+                    "La fecha de inicio no puede ser mayor a la fecha de fin",
                 ]);
         }
 
