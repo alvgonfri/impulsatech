@@ -26,3 +26,14 @@ export const parseCampign = (req, res, next) => {
         return res.status(500).json({ message: error.message });
     }
 };
+
+export const parseTimeDonation = (req, res, next) => {
+    try {
+        if (req.body.amount) {
+            req.body.amount = parseInt(req.body.amount);
+        }
+        next();
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};

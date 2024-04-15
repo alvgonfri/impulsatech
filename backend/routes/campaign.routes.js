@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
 import { validateSchema } from "../middlewares/validator.js";
-import { parseCampign } from "../middlewares/parseCampaign.js";
+import { parseCampign } from "../middlewares/parse.js";
 import {
     createCampaignSchema,
     updateCampaignSchema,

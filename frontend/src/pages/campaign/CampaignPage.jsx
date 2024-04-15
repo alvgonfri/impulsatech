@@ -1,23 +1,50 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { useCampaign } from "../../context/CampaignContext";
+import { useTimeDonation } from "../../context/TimeDonationContext";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
+import Tooltip from "../../components/Tooltip";
 
 function CampaignPage() {
     const [campaign, setCampaign] = useState({});
     const [promoter, setPromoter] = useState({});
     const { getCampaign } = useCampaign();
+    const { createTimeDonation, errors: timeDonationErrors } =
+        useTimeDonation();
+    const { isAuthenticated } = useAuth();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
+    const navigate = useNavigate();
     const params = useParams();
-
-    console.log(campaign);
 
     useEffect(() => {
         async function loadCampaign() {
             if (params.id) {
                 const campaign = await getCampaign(params.id);
+
+                // Format dates
+                if (campaign.timeGoalPeriod) {
+                    campaign.timeGoalPeriod.startDate = new Date(
+                        campaign.timeGoalPeriod.startDate
+                    ).toLocaleDateString();
+                    campaign.timeGoalPeriod.endDate = new Date(
+                        campaign.timeGoalPeriod.endDate
+                    ).toLocaleDateString();
+                }
+
+                if (campaign.deadline) {
+                    campaign.deadline = new Date(
+                        campaign.deadline
+                    ).toLocaleDateString();
+                }
+
                 setCampaign(campaign);
                 setPromoter(campaign.promoter);
             }
@@ -26,6 +53,30 @@ function CampaignPage() {
         loadCampaign();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const onSubmitTimeDonation = handleSubmit(async (data) => {
+        if (!isAuthenticated) {
+            navigate("/login");
+            return;
+        }
+
+        const period = {
+            startDate: data.startDate,
+            endDate: data.endDate,
+        };
+
+        const timeDonation = {
+            amount: data.timeDonated,
+            period,
+            campaignId: campaign._id,
+        };
+
+        const status = await createTimeDonation(timeDonation);
+
+        if (status === 201) {
+            window.location.reload();
+        }
+    });
 
     return (
         <div className="container mx-auto px-10 md:px-40 mb-10">
@@ -50,18 +101,15 @@ function CampaignPage() {
 
                     <p className="mb-4">{campaign.description}</p>
 
-                    <div className="mb-4 flex gap-2">
-                        <div>Compartir</div>
-                        <div className="has-tooltip inline-block">
-                            <span className="tooltip rounded bg-teal-700 text-white text-xs p-2 -mt-9">
-                                Para poder compartir por correo electrónico,
+                    <div className="mb-2 flex gap-2 items-center">
+                        <p className="text-teal-600 text-lg font-bold">
+                            Compartir
+                        </p>
+                        <Tooltip
+                            text="Para poder compartir por correo electrónico,
                                 debes tener configurado un cliente de correo
-                                electrónico por defecto en tu sistema.
-                            </span>
-                            <p className="bg-teal-700 text-white text-sm mx-auto cursor-pointer rounded-2xl px-2 py-1">
-                                <FontAwesomeIcon icon={faCircleInfo} />
-                            </p>
-                        </div>
+                                electrónico por defecto en tu sistema"
+                        />
                     </div>
                     <div className="mt-2 sharethis-inline-share-buttons"></div>
                 </div>
@@ -71,7 +119,7 @@ function CampaignPage() {
                         <span className="ml-2">{promoter.name}</span>
                     </div>
 
-                    {campaign.financialGoal ? (
+                    {campaign.financialGoal && (
                         <>
                             <div className="text-lg text-teal-500 font-medium px-4 pt-2">
                                 {campaign.moneyDonated} € de&nbsp;
@@ -94,24 +142,9 @@ function CampaignPage() {
                                 />
                             </div>
                         </>
-                    ) : (
-                        <div className="mt-2 flex justify-between items-center gap-2 px-4 py-2">
-                            <div className="h-5 w-full bg-neutral-200 rounded-full">
-                                <div
-                                    className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                    style={{ width: "100%" }}
-                                >
-                                    Sin objetivo económico
-                                </div>
-                            </div>
-                            <FontAwesomeIcon
-                                icon={faCoins}
-                                className="text-gray-400"
-                            />
-                        </div>
                     )}
 
-                    {campaign.timeGoal ? (
+                    {campaign.timeGoal && (
                         <>
                             <div className="text-lg text-indigo-500 font-medium px-4 pt-2">
                                 {campaign.timeDonated} h de&nbsp;
@@ -129,131 +162,177 @@ function CampaignPage() {
                                     </div>
                                 </div>
                                 <FontAwesomeIcon
-                                    icon={faCoins}
+                                    icon={faClock}
                                     className="text-indigo-500"
                                 />
                             </div>
                         </>
-                    ) : (
-                        <div className="mt-2 flex justify-between items-center gap-2 px-4 py-2">
-                            <div className="h-5 w-full bg-neutral-200 rounded-full">
-                                <div
-                                    className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                    style={{ width: "100%" }}
-                                >
-                                    Sin objetivo de tiempo
-                                </div>
-                            </div>
-                            <FontAwesomeIcon
-                                icon={faClock}
-                                className="text-gray-400"
-                            />
-                        </div>
                     )}
 
-                    <div className="flex px-4 py-2">
-                        <p>Estado:</p>
+                    <div className="px-4 py-2 mt-2">
                         {campaign.status === "ongoing" && (
-                            <span className="text-teal-800 ml-2">En curso</span>
+                            <span className="bg-amber-500 text-white px-2 py-1 rounded">
+                                Campaña en curso
+                            </span>
                         )}
                         {campaign.status === "completed" && (
-                            <span className="text-green-800 ml-2">
-                                Completada
+                            <span className="bg-green-800 text-white px-2 py-1 rounded">
+                                Campaña completada
                             </span>
                         )}
                         {campaign.status === "cancelled" && (
-                            <span className="text-red-800 ml-2">Cancelada</span>
+                            <span className="bg-red-800 text-white px-2 py-1 rounded">
+                                Campaña cancelada
+                            </span>
                         )}
                     </div>
 
                     {campaign.timeGoal && (
-                        <div className="flex px-4 py-2">
-                            <p>Objetivo de tiempo:</p>
-                            <span className="ml-2">
-                                {campaign.timeGoal} horas
-                            </span>
-                        </div>
+                        <>
+                            <div className="px-4 py-2">
+                                <p className="block text-sm text-gray-700">
+                                    Periodo de recibimiento tiempo:
+                                </p>
+                                <span>
+                                    {campaign.timeGoalPeriod?.startDate} -{" "}
+                                    {campaign.timeGoalPeriod?.endDate}
+                                </span>
+                            </div>
+                        </>
                     )}
 
                     {campaign.deadline && (
-                        <div className="flex px-4 py-2">
-                            <p>Fecha límite:</p>
-                            <span className="ml-2">{campaign.deadline}</span>
+                        <div className="px-4 py-2">
+                            <p className="block text-sm text-gray-700">
+                                Fecha límite:
+                            </p>
+                            <span>{campaign.deadline}</span>
                         </div>
                     )}
 
-                    <form
-                        onSubmit={() => {
-                            console.log("Donation submitted");
-                        }}
-                        className="border-t-2 border-teal-600 px-4 py-2"
-                    >
-                        <div className="mb-4">
-                            <label
-                                htmlFor="donationAmount"
-                                className="block text-gray-700 font-bold mb-2"
-                            >
-                                Realizar donación económica (€)
-                            </label>
-                            <input
-                                type="number"
-                                name="donationAmount"
-                                placeholder="Introduce la cantidad a donar"
-                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-teal-500"
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label
-                                htmlFor="anonymous"
-                                className="flex items-center cursor-pointer"
-                            >
-                                <input
-                                    type="checkbox"
-                                    name="anonymous"
-                                    className="mr-2 leading-tight"
-                                />
-                                <span className="text-sm text-gray-700">
-                                    Donación anónima
-                                </span>
-                            </label>
-                        </div>
-                        <button
-                            type="submit"
-                            className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    {campaign.financialGoal && (
+                        <form
+                            onSubmit={() => {
+                                console.log("Donation submitted");
+                            }}
+                            className="border-t-2 border-teal-600 px-4 py-2"
                         >
-                            Enviar donación
-                        </button>
-                    </form>
+                            <div className="mb-4">
+                                <p className="block text-gray-700 font-bold mb-1">
+                                    Realizar donación económica
+                                </p>
 
-                    <form
-                        onSubmit={() => {
-                            console.log("Donation submitted");
-                        }}
-                        className="border-t-2 border-teal-600 px-4 py-2"
-                    >
-                        <div className="mb-4">
-                            <label
-                                htmlFor="donationAmount"
-                                className="block text-gray-700 font-bold mb-2"
+                                <label className="block text-sm text-gray-700">
+                                    Cantidad a donar (€)
+                                </label>
+                                <input
+                                    type="number"
+                                    className="w-full px-4 py-2 rounded-md border border-teal-500"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label
+                                    htmlFor="anonymous"
+                                    className="flex items-center cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="anonymous"
+                                        className="mr-2 leading-tight"
+                                    />
+                                    <span className="text-sm text-gray-700">
+                                        Donación anónima
+                                    </span>
+                                </label>
+                            </div>
+                            <button
+                                type="submit"
+                                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
-                                Realizar donación de tiempo (h)
-                            </label>
-                            <input
-                                type="number"
-                                name="donationAmount"
-                                placeholder="Introduce la cantidad a donar"
-                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-indigo-500"
-                                required
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                Enviar donación
+                            </button>
+                        </form>
+                    )}
+
+                    {campaign.timeGoal && (
+                        <form
+                            onSubmit={onSubmitTimeDonation}
+                            className="border-t-2 border-teal-600 px-4 py-2"
                         >
-                            Enviar donación
-                        </button>
-                    </form>
+                            <div className="mb-4">
+                                <div className="flex gap-2 items-center">
+                                    <p className="block text-gray-700 font-bold mb-1">
+                                        Realizar donación de tiempo
+                                    </p>
+                                    <Tooltip text="Debes autenticarte para poder realizar una donación de tiempo" />
+                                </div>
+
+                                {timeDonationErrors.map((error, i) => (
+                                    <div
+                                        className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
+                                        key={i}
+                                    >
+                                        {error}
+                                    </div>
+                                ))}
+
+                                <label className="block text-sm text-gray-700">
+                                    Cantidad a donar (horas)
+                                </label>
+                                {errors.timeDonated && (
+                                    <p className="text-red-500 text-sm mb-1">
+                                        Por favor, ingresa una cantidad
+                                    </p>
+                                )}
+                                <input
+                                    type="number"
+                                    {...register("timeDonated", {
+                                        required: true,
+                                    })}
+                                    className="w-full px-4 py-2 rounded-md border border-indigo-500"
+                                />
+
+                                <label className="block text-sm text-gray-700 mt-2">
+                                    Periodo de disponibilidad
+                                </label>
+                                {errors.startDate || errors.endDate ? (
+                                    <p className="text-red-500 text-sm mb-1">
+                                        Por favor, selecciona un periodo de
+                                        tiempo
+                                    </p>
+                                ) : null}
+                                <div className="flex items-center">
+                                    <p className="text-sm text-gray-700 mr-2">
+                                        Desde
+                                    </p>
+                                    <input
+                                        type="date"
+                                        {...register("startDate", {
+                                            required: true,
+                                        })}
+                                        className="w-full px-4 py-2 rounded-md border border-indigo-500"
+                                    />
+
+                                    <p className="text-sm text-gray-700 mx-2">
+                                        hasta
+                                    </p>
+                                    <input
+                                        type="date"
+                                        {...register("endDate", {
+                                            required: true,
+                                        })}
+                                        className="w-full px-4 py-2 rounded-md border border-indigo-500"
+                                    />
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            >
+                                Enviar donación
+                            </button>
+                        </form>
+                    )}
                 </div>
             </div>
         </div>

@@ -189,36 +189,40 @@ function CampaignFormPage() {
                                         className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                                     />
 
-                                    {errors.startDate && (
-                                        <p className="text-red-500 text-sm mb-1">
-                                            Por favor, ingresa una fecha de
-                                            inicio
-                                        </p>
-                                    )}
                                     <label className="text-sm text-slate-500">
-                                        Fecha de inicio
+                                        Periodo de recibimiento
                                     </label>
-                                    <input
-                                        type="date"
-                                        {...register("startDate")}
-                                        placeholder="Fecha de inicio"
-                                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                                    />
+                                    <div className="flex items-center mb-4">
+                                        {errors.startDate && (
+                                            <p className="text-red-500 text-sm mb-1">
+                                                Por favor, ingresa una fecha de
+                                                inicio
+                                            </p>
+                                        )}
+                                        <p className="text-sm text-slate-500 mr-2">
+                                            Desde
+                                        </p>
+                                        <input
+                                            type="date"
+                                            {...register("startDate")}
+                                            className="w-full px-4 py-2 rounded-md border border-teal-600"
+                                        />
 
-                                    {errors.endDate && (
-                                        <p className="text-red-500 text-sm mb-1">
-                                            Por favor, ingresa una fecha de fin
+                                        {errors.endDate && (
+                                            <p className="text-red-500 text-sm mb-1">
+                                                Por favor, ingresa una fecha de
+                                                fin
+                                            </p>
+                                        )}
+                                        <p className="text-sm text-slate-500 mx-2">
+                                            hasta
                                         </p>
-                                    )}
-                                    <label className="text-sm text-slate-500">
-                                        Fecha de fin
-                                    </label>
-                                    <input
-                                        type="date"
-                                        {...register("endDate")}
-                                        placeholder="Fecha de fin"
-                                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                                    />
+                                        <input
+                                            type="date"
+                                            {...register("endDate")}
+                                            className="w-full px-4 py-2 rounded-md border border-teal-600"
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </div>

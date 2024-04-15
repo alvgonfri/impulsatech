@@ -40,7 +40,8 @@ export async function checkIfTimeDonationAmountIsValid(amount, period) {
     try {
         const startDate = new Date(period.startDate);
         const endDate = new Date(period.endDate);
-        const days = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
+        const days =
+            Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
         return amount <= days * 24;
     } catch (error) {
         console.error(error);
