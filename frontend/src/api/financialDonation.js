@@ -10,3 +10,6 @@ export const createFinancialDonationRequest = async (financialDonation) =>
             Authorization: `${Cookies.get("token")}`,
         },
     });
+
+export const processPaymentRequest = async (financialDonation) =>
+    axios.post(`/financial-donations/process-payment`, financialDonation);

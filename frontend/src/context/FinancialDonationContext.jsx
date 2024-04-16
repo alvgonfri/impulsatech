@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react";
 import {
     getFinancialDonationsByCampaignRequest,
     createFinancialDonationRequest,
+    processPaymentRequest,
 } from "../api/financialDonation.js";
 import PropTypes from "prop-types";
 
@@ -35,7 +36,17 @@ export const FinancialDonationProvider = ({ children }) => {
         try {
             const res = await createFinancialDonationRequest(financialDonation);
             setFinancialDonations([...financialDonations, res.data]);
-            return res.status;
+            return res.data;
+        } catch (error) {
+            console.error(error);
+            setErrors(error.response.data);
+        }
+    };
+
+    const processPayment = async (financialDonation) => {
+        try {
+            const res = await processPaymentRequest(financialDonation);
+            return res.data;
         } catch (error) {
             console.error(error);
             setErrors(error.response.data);
@@ -48,6 +59,7 @@ export const FinancialDonationProvider = ({ children }) => {
                 financialDonations,
                 getFinancialDonationsByCampaign,
                 createFinancialDonation,
+                processPayment,
                 errors,
             }}
         >

@@ -11,6 +11,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import CampaignsPage from "./pages/campaign/CampaignsPage";
 import CampaignPage from "./pages/campaign/CampaignPage";
 import CampaignFormPage from "./pages/campaign/CampaignFormPage";
+import FinancialDonationSuccess from "./pages/financialDonation/FinancialDonationSuccess";
+import FinancialDonationCancel from "./pages/financialDonation/FinancialDonationCancel";
 
 function App() {
     return (
@@ -45,6 +47,14 @@ function App() {
                                             element={<CampaignFormPage />}
                                         />
                                     </Route>
+                                    <Route
+                                        path="/financial-donation/success"
+                                        element={<FinancialDonationSuccess />}
+                                    />
+                                    <Route
+                                        path="/financial-donation/cancel"
+                                        element={<FinancialDonationCancel />}
+                                    />
                                     <Route
                                         path="*"
                                         element={<h1>Not Found</h1>}

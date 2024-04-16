@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useCampaign } from "../../context/CampaignContext";
+import { useFinancialDonation } from "../../context/FinancialDonationContext";
 import { useTimeDonation } from "../../context/TimeDonationContext";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { loadStripe } from "@stripe/stripe-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
@@ -12,10 +14,14 @@ import Tooltip from "../../components/Tooltip";
 function CampaignPage() {
     const [campaign, setCampaign] = useState({});
     const [promoter, setPromoter] = useState({});
+    const [invalidAmount, setInvalidAmount] = useState(false);
     const { getCampaign } = useCampaign();
+    const { processPayment, errors: financialDonationErrors } =
+        useFinancialDonation();
     const { createTimeDonation, errors: timeDonationErrors } =
         useTimeDonation();
     const { isAuthenticated } = useAuth();
+    const financialDonationRef = useRef();
     const {
         register,
         handleSubmit,
@@ -29,7 +35,6 @@ function CampaignPage() {
             if (params.id) {
                 const campaign = await getCampaign(params.id);
 
-                // Format dates
                 if (campaign.timeGoalPeriod) {
                     campaign.timeGoalPeriod.startDate = new Date(
                         campaign.timeGoalPeriod.startDate
@@ -53,6 +58,41 @@ function CampaignPage() {
         loadCampaign();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const onSubmitFinancialDonation = async (e) => {
+        e.preventDefault();
+
+        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+        const amount = financialDonationRef.current.amount.value;
+        const anonymous = isAuthenticated
+            ? financialDonationRef.current.anonymous.checked
+            : true;
+        const campaignId = campaign._id;
+
+        if (!amount) {
+            setInvalidAmount(true);
+            return;
+        }
+
+        const financialDonation = {
+            amount,
+            anonymous,
+            campaignId,
+        };
+
+        const response = await processPayment(financialDonation);
+
+        const session = await stripe.redirectToCheckout({
+            sessionId: response.sessionId,
+        });
+
+        if (session.error) {
+            console.error(session.error.message);
+        }
+
+        setInvalidAmount(false);
+    };
 
     const onSubmitTimeDonation = handleSubmit(async (data) => {
         if (!isAuthenticated) {
@@ -212,9 +252,8 @@ function CampaignPage() {
 
                     {campaign.financialGoal && (
                         <form
-                            onSubmit={() => {
-                                console.log("Donation submitted");
-                            }}
+                            ref={financialDonationRef}
+                            onSubmit={onSubmitFinancialDonation}
                             className="border-t-2 border-teal-600 px-4 py-2"
                         >
                             <div className="mb-4">
@@ -222,28 +261,43 @@ function CampaignPage() {
                                     Realizar donación económica
                                 </p>
 
+                                {financialDonationErrors.map((error, i) => (
+                                    <div
+                                        className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
+                                        key={i}
+                                    >
+                                        {error}
+                                    </div>
+                                ))}
+
                                 <label className="block text-sm text-gray-700">
                                     Cantidad a donar (€)
                                 </label>
+                                {invalidAmount && (
+                                    <p className="text-red-500 text-sm mb-1">
+                                        Por favor, ingresa una cantidad
+                                    </p>
+                                )}
                                 <input
                                     type="number"
+                                    name="amount"
                                     className="w-full px-4 py-2 rounded-md border border-teal-500"
                                 />
-                            </div>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="anonymous"
-                                    className="flex items-center cursor-pointer"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        name="anonymous"
-                                        className="mr-2 leading-tight"
-                                    />
-                                    <span className="text-sm text-gray-700">
-                                        Donación anónima
-                                    </span>
-                                </label>
+
+                                {isAuthenticated && (
+                                    <div className="mb-4 mt-2">
+                                        <label className="flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                name="anonymous"
+                                                className="mr-2 leading-tight"
+                                            />
+                                            <span className="text-sm text-gray-700">
+                                                Donación anónima
+                                            </span>
+                                        </label>
+                                    </div>
+                                )}
                             </div>
                             <button
                                 type="submit"

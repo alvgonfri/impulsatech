@@ -4,8 +4,10 @@ import { createFinancialDonationSchema } from "../schemas/financialDonation.sche
 import {
     getFinancialDonationsByCampaign,
     createFinancialDonation,
+    processPayment,
 } from "../controllers/financialDonation.controller.js";
 import { validateToken } from "../middlewares/validateToken.js";
+import { parseFinancialDonation } from "../middlewares/parse.js";
 
 const router = Router();
 
@@ -14,8 +16,11 @@ router.get("/:campaignId", getFinancialDonationsByCampaign);
 router.post(
     "",
     validateToken,
+    parseFinancialDonation,
     validateSchema(createFinancialDonationSchema),
     createFinancialDonation
 );
+
+router.post("/process-payment", processPayment);
 
 export default router;
