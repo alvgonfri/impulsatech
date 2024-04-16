@@ -33,7 +33,6 @@ export const createTimeDonation = async (req, res) => {
                 .json(["La campaña no tiene un objetivo de tiempo"]);
         }
 
-        console.log(campaign.promoter.id.toString(), req.subject.id);
         if (campaign.promoter.id.toString() === req.subject.id) {
             return res
                 .status(400)
