@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import {
     getCampaignsRequest,
+    getCampaignsByStatusRequest,
     getCampaignRequest,
     createCampaignRequest,
     updateCampaignRequest,
@@ -25,6 +26,15 @@ export const CampaignProvider = ({ children }) => {
     const getCampaigns = async () => {
         try {
             const res = await getCampaignsRequest();
+            setCampaigns(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getCampaignsByStatus = async (status) => {
+        try {
+            const res = await getCampaignsByStatusRequest(status);
             setCampaigns(res.data);
         } catch (error) {
             console.error(error);
@@ -68,14 +78,35 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const cancelCampaign = async (id) => {
+        try {
+            const res = await updateCampaignRequest(id, {
+                status: "cancelled",
+            });
+            setCampaigns(
+                campaigns.map((campaign) =>
+                    campaign._id === id
+                        ? { ...campaign, status: "cancelled" }
+                        : campaign
+                )
+            );
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setErrors(error.response.data);
+        }
+    };
+
     return (
         <CampaignContext.Provider
             value={{
                 campaigns,
                 getCampaigns,
+                getCampaignsByStatus,
                 getCampaign,
                 createCampaign,
                 eliminateCampaign,
+                cancelCampaign,
                 errors,
             }}
         >

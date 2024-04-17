@@ -38,6 +38,33 @@ export const getCampaigns = async (req, res) => {
     }
 };
 
+export const getCampaignsByStatus = (status) => async (req, res) => {
+    try {
+        const campaigns = await Campaign.find({ status });
+        const campaignsWithDonationsInfo = await Promise.all(
+            campaigns.map(async (campaign) => {
+                const moneyDonated = await getMoneyDonated(campaign._id);
+                const moneyDonatedPercetage = await getMoneyDonatedPercentage(
+                    campaign._id
+                );
+                const timeDonated = await getTimeDonated(campaign._id);
+                const timeDonatedPercentage = await getTimeDonatedPercentage(
+                    campaign._id
+                );
+                return Object.assign(campaign.toObject(), {
+                    moneyDonated,
+                    moneyDonatedPercetage,
+                    timeDonated,
+                    timeDonatedPercentage,
+                });
+            })
+        );
+        res.status(200).json(campaignsWithDonationsInfo);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const getCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);
@@ -158,10 +185,29 @@ export const createCampaign = async (req, res) => {
 
 export const updateCampaign = async (req, res) => {
     try {
-        if (req.body.eliminated && !req.subject.isAdmin) {
+        const campaignInDB = await Campaign.findById(req.params.id);
+
+        const subject = await User.findById(req.subject.id);
+
+        if (!campaignInDB) {
+            return res.status(404).json({ message: "Campaña no encontrada" });
+        }
+
+        if (req.body.eliminated && !subject.isAdmin) {
             return res
                 .status(403)
                 .json(["No tienes permiso para eliminar la campaña"]);
+        }
+
+        if (
+            req.body.status &&
+            req.subject.id !== campaignInDB.promoter.id.toString()
+        ) {
+            return res
+                .status(403)
+                .json([
+                    "No tienes permiso para cambiar el estado de la campaña",
+                ]);
         }
 
         if (req.body.status) {

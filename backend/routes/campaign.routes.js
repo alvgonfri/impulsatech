@@ -9,6 +9,7 @@ import {
 import {
     getCampaigns,
     getCampaign,
+    getCampaignsByStatus,
     createCampaign,
     updateCampaign,
     deleteCampaign,
@@ -17,6 +18,12 @@ import {
 const router = Router();
 
 router.get("", getCampaigns);
+
+router.get("/ongoing", getCampaignsByStatus("ongoing"));
+
+router.get("/completed", getCampaignsByStatus("completed"));
+
+router.get("/cancelled", getCampaignsByStatus("cancelled"));
 
 router.get("/:id", getCampaign);
 

@@ -9,6 +9,8 @@ import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import LoginPage from "./pages/auth/LoginPage";
 import CampaignsPage from "./pages/campaign/CampaignsPage";
+import CancelledCampaignsPage from "./pages/campaign/CancelledCampaignsPage";
+import CompletedCampaignsPage from "./pages/campaign/CompletedCampaignsPage";
 import CampaignPage from "./pages/campaign/CampaignPage";
 import CampaignFormPage from "./pages/campaign/CampaignFormPage";
 import FinancialDonationSuccess from "./pages/financialDonation/FinancialDonationSuccess";
@@ -36,6 +38,14 @@ function App() {
                                     <Route
                                         path="/campaigns"
                                         element={<CampaignsPage />}
+                                    />
+                                    <Route
+                                        path="/cancelled-campaigns"
+                                        element={<CancelledCampaignsPage />}
+                                    />
+                                    <Route
+                                        path="/completed-campaigns"
+                                        element={<CompletedCampaignsPage />}
                                     />
                                     <Route
                                         path="/campaigns/:id"

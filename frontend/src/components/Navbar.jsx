@@ -67,6 +67,18 @@ function Navbar() {
                             Campañas
                         </Link>
                         <Link
+                            to="/cancelled-campaigns"
+                            className="hover:opacity-65 transition duration-500"
+                        >
+                            Campañas canceladas
+                        </Link>
+                        <Link
+                            to="/completed-campaigns"
+                            className="hover:opacity-65 transition duration-500"
+                        >
+                            Campañas completadas
+                        </Link>
+                        <Link
                             to="/campaigns/create"
                             className="hover:opacity-65 transition duration-500"
                         >
