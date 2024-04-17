@@ -24,8 +24,6 @@ function CampaignCard({ campaign }) {
             )}
 
             <div className="mt-2">
-                <div className="text-sm text-gray-500">Tags</div>
-
                 <div className="mt-2 text-lg font-medium truncate">
                     {campaign.title}
                 </div>

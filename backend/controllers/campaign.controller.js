@@ -87,6 +87,7 @@ export const createCampaign = async (req, res) => {
             timeGoalPeriod,
             financialGoal,
             deadline,
+            tags,
         } = req.body;
         let image;
 
@@ -114,6 +115,12 @@ export const createCampaign = async (req, res) => {
                 ]);
         }
 
+        if (tags && tags.length > 3) {
+            return res
+                .status(400)
+                .json(["No se pueden seleccionar más de 3 etiquetas"]);
+        }
+
         const promoterType = (await isOrganization(req.subject.id))
             ? "Organization"
             : "User";
@@ -136,6 +143,7 @@ export const createCampaign = async (req, res) => {
             financialGoal,
             image,
             deadline,
+            tags,
             promoter: {
                 type: promoterType,
                 id: req.subject.id,

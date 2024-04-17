@@ -21,6 +21,11 @@ export const parseCampign = (req, res, next) => {
         if (req.body.financialGoal) {
             req.body.financialGoal = parseInt(req.body.financialGoal);
         }
+
+        if (req.body.tags) {
+            req.body.tags = JSON.parse(req.body.tags);
+        }
+
         next();
     } catch (error) {
         return res.status(500).json({ message: error.message });

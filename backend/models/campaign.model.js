@@ -34,6 +34,23 @@ const campaignSchema = new mongoose.Schema(
         deadline: {
             type: Date,
         },
+        tags: {
+            type: [
+                {
+                    type: String,
+                    enum: [
+                        "Educación digital",
+                        "Acceso a la tecnología",
+                        "Acceso a la información",
+                        "Conectividad",
+                        "Habilidades digitales",
+                        "Inclusión digital",
+                        "Emprendimiento tecnológico",
+                        "Desarrollo de software",
+                    ],
+                },
+            ],
+        },
         promoter: {
             type: {
                 type: String,

@@ -5,9 +5,20 @@ import { useCampaign } from "../../context/CampaignContext";
 
 function CampaignFormPage() {
     const [image, setImage] = useState(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [financialGoalChecked, setFinancialGoalChecked] = useState(false);
     const [timeGoalChecked, setTimeGoalChecked] = useState(false);
+    const availableTags = [
+        "Educación digital",
+        "Acceso a la tecnología",
+        "Acceso a la información",
+        "Conectividad",
+        "Habilidades digitales",
+        "Inclusión digital",
+        "Emprendimiento tecnológico",
+        "Desarrollo de software",
+    ];
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         register,
         handleSubmit,
@@ -42,6 +53,9 @@ function CampaignFormPage() {
         if (data.deadline) {
             formData.append("deadline", data.deadline);
         }
+        if (selectedTags.length > 0) {
+            formData.append("tags", JSON.stringify(selectedTags));
+        }
         if (image) {
             formData.append("image", image);
         }
@@ -57,7 +71,7 @@ function CampaignFormPage() {
 
     return (
         <div className="flex justify-center">
-            <div className="w-1/3 p-10 rounded-md border border-teal-600">
+            <div className="w-2/3 px-10 py-5 mb-10 rounded-md border border-teal-600">
                 <h1 className="text-teal-600 text-2xl font-bold mb-4">
                     Crea una campaña
                 </h1>
@@ -72,8 +86,12 @@ function CampaignFormPage() {
                 ))}
 
                 <form onSubmit={onSubmit}>
-                    <div>
-                        <div>
+                    <div className="flex gap-8">
+                        <div className="w-1/2">
+                            <h2 className="text-teal-600 text-lg font-bold mb-4">
+                                Información general
+                            </h2>
+
                             {errors.title && (
                                 <p className="text-red-500 text-sm mb-1">
                                     Por favor, ingresa un título
@@ -122,12 +140,58 @@ function CampaignFormPage() {
                                 {...register("deadline")}
                                 className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                             />
+
+                            <label className="text-sm text-slate-500">
+                                Selecciona hasta 3 etiquetas
+                            </label>
+                            <div className="flex flex-wrap gap-2 mb-4">
+                                {availableTags.map((tag) => (
+                                    <label
+                                        key={tag}
+                                        className="flex items-center cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            value={tag}
+                                            className="hidden"
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setSelectedTags([
+                                                        ...selectedTags,
+                                                        e.target.value,
+                                                    ]);
+                                                } else {
+                                                    setSelectedTags(
+                                                        selectedTags.filter(
+                                                            (tag) =>
+                                                                tag !==
+                                                                e.target.value
+                                                        )
+                                                    );
+                                                }
+                                            }}
+                                        />
+                                        {selectedTags.includes(tag) ? (
+                                            <span className="text-xs inline-flex items-center font-bold leading-sm px-3 py-1 bg-teal-600 text-white rounded-full">
+                                                {tag}
+                                            </span>
+                                        ) : (
+                                            <span className="text-xs inline-flex items-center font-bold leading-sm px-3 py-1 bg-white text-teal-600 rounded-full border border-teal-600">
+                                                {tag}
+                                            </span>
+                                        )}
+                                    </label>
+                                ))}
+                            </div>
                         </div>
 
-                        <div>
+                        <div className="divider bg-teal-600 w-px"></div>
+
+                        <div className="w-1/2">
                             <h2 className="text-teal-600 text-lg font-bold mb-4">
                                 Objetivos
                             </h2>
+
                             <label className="flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"

@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import Tooltip from "../../components/Tooltip";
+import Tag from "../../components/Tag";
 
 function CampaignPage() {
     const [campaign, setCampaign] = useState({});
@@ -139,6 +140,13 @@ function CampaignPage() {
                         />
                     )}
 
+                    <div className="flex gap-2 mb-4">
+                        {campaign.tags &&
+                            campaign.tags.map((tag, i) => (
+                                <Tag key={i} text={tag} />
+                            ))}
+                    </div>
+
                     <p className="mb-4">{campaign.description}</p>
 
                     <div className="mb-2 flex gap-2 items-center">
@@ -153,7 +161,7 @@ function CampaignPage() {
                     </div>
                     <div className="mt-2 sharethis-inline-share-buttons"></div>
                 </div>
-                <div className="w-full md:w-2/5 rounded-md border-2 border-teal-600">
+                <div className="w-full h-fit md:w-2/5 rounded-md border-2 border-teal-600">
                     <div className="flex bg-teal-600 text-white px-4 py-2">
                         <p className="font-bold">Promotor:</p>
                         <span className="ml-2">{promoter.name}</span>
@@ -282,6 +290,7 @@ function CampaignPage() {
                                     type="number"
                                     name="amount"
                                     className="w-full px-4 py-2 rounded-md border border-teal-500"
+                                    onChange={() => setInvalidAmount(false)}
                                 />
 
                                 {isAuthenticated && (
