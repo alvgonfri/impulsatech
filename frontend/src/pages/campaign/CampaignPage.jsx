@@ -16,12 +16,12 @@ function CampaignPage() {
     const [campaign, setCampaign] = useState({});
     const [promoter, setPromoter] = useState({});
     const [invalidAmount, setInvalidAmount] = useState(false);
-    const { getCampaign } = useCampaign();
+    const { getCampaign, eliminateCampaign } = useCampaign();
     const { processPayment, errors: financialDonationErrors } =
         useFinancialDonation();
     const { createTimeDonation, errors: timeDonationErrors } =
         useTimeDonation();
-    const { isAuthenticated } = useAuth();
+    const { subject, isAuthenticated } = useAuth();
     const financialDonationRef = useRef();
     const {
         register,
@@ -118,6 +118,14 @@ function CampaignPage() {
             window.location.reload();
         }
     });
+
+    const onEliminateCampaign = async () => {
+        const status = await eliminateCampaign(campaign._id);
+
+        if (status === 200) {
+            navigate("/campaigns");
+        }
+    };
 
     return (
         <div className="container mx-auto px-10 md:px-40 mb-10">
@@ -255,6 +263,17 @@ function CampaignPage() {
                                 Fecha límite:
                             </p>
                             <span>{campaign.deadline}</span>
+                        </div>
+                    )}
+
+                    {subject?.isAdmin && (
+                        <div className="px-4 py-2">
+                            <button
+                                onClick={onEliminateCampaign}
+                                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            >
+                                Eliminar campaña
+                            </button>
                         </div>
                     )}
 

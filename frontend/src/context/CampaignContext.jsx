@@ -3,6 +3,7 @@ import {
     getCampaignsRequest,
     getCampaignRequest,
     createCampaignRequest,
+    updateCampaignRequest,
 } from "../api/campaign.js";
 import PropTypes from "prop-types";
 
@@ -50,6 +51,23 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const eliminateCampaign = async (id) => {
+        try {
+            const res = await updateCampaignRequest(id, { eliminated: true });
+            setCampaigns(
+                campaigns.map((campaign) =>
+                    campaign._id === id
+                        ? { ...campaign, eliminated: true }
+                        : campaign
+                )
+            );
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setErrors(error.response.data);
+        }
+    };
+
     return (
         <CampaignContext.Provider
             value={{
@@ -57,6 +75,7 @@ export const CampaignProvider = ({ children }) => {
                 getCampaigns,
                 getCampaign,
                 createCampaign,
+                eliminateCampaign,
                 errors,
             }}
         >

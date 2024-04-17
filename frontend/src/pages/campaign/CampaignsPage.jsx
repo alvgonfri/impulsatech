@@ -14,9 +14,11 @@ function CampaignsPage() {
         <div className="container mx-auto px-10 md:px-40">
             <h1 className="text-3xl font-bold text-teal-800 mb-4">Campañas</h1>
             <div className="grid grid-cols-3 gap-4">
-                {campaigns.map((campaign) => (
-                    <CampaignCard key={campaign._id} campaign={campaign} />
-                ))}
+                {campaigns.map((campaign) =>
+                    campaign.eliminated ? null : (
+                        <CampaignCard key={campaign._id} campaign={campaign} />
+                    )
+                )}
             </div>
         </div>
     );

@@ -12,3 +12,11 @@ export const createCampaignRequest = async (campaign) =>
             ContentType: "multipart/form-data",
         },
     });
+
+export const updateCampaignRequest = async (id, campaign) =>
+    axios.patch(`/campaigns/${id}`, campaign, {
+        headers: {
+            Authorization: `${Cookies.get("token")}`,
+            ContentType: "multipart/form-data",
+        },
+    });

@@ -158,6 +158,12 @@ export const createCampaign = async (req, res) => {
 
 export const updateCampaign = async (req, res) => {
     try {
+        if (req.body.eliminated && !req.subject.isAdmin) {
+            return res
+                .status(403)
+                .json(["No tienes permiso para eliminar la campaña"]);
+        }
+
         if (req.body.status) {
             if (
                 req.body.status !== "ongoing" &&
@@ -166,7 +172,7 @@ export const updateCampaign = async (req, res) => {
             ) {
                 return res
                     .status(400)
-                    .json({ message: "Estado de campaña no válido" });
+                    .json(["El estado de la campaña no es válido"]);
             }
         }
         const campaign = await Campaign.findByIdAndUpdate(

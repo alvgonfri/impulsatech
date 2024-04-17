@@ -51,6 +51,10 @@ const campaignSchema = new mongoose.Schema(
                 },
             ],
         },
+        eliminated: {
+            type: Boolean,
+            default: false,
+        },
         promoter: {
             type: {
                 type: String,
