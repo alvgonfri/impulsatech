@@ -87,6 +87,12 @@ export const processPayment = async (req, res) => {
                 .json(["No puedes donar dinero a tu propia campaña"]);
         }
 
+        if (campaign.status !== "ongoing") {
+            return res
+                .status(400)
+                .json(["Solo puedes donar a campañas en curso"]);
+        }
+
         const customer = await stripe.customers.create({
             metadata: {
                 anonymous,

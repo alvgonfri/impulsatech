@@ -63,6 +63,12 @@ export const createTimeDonation = async (req, res) => {
                 ]);
         }
 
+        if (campaign.status !== "ongoing") {
+            return res
+                .status(400)
+                .json(["Solo puedes donar a campañas en curso"]);
+        }
+
         const collaboratorType = (await isOrganization(req.subject.id))
             ? "Organization"
             : "User";
