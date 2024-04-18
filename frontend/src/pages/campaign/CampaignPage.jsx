@@ -352,7 +352,7 @@ function CampaignPage() {
                                         onClick={handleClickOnComplete}
                                         className="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                                     >
-                                        Completar campaña
+                                        Marcar como completada
                                     </button>
                                 </div>
                             </>
@@ -520,8 +520,8 @@ function CampaignPage() {
             )}
             {isCompleteModalOpen && (
                 <Modal
-                    title="Completar campaña"
-                    message="¿Estás seguro de que deseas completar esta campaña?"
+                    title="Marcar campaña como completada"
+                    message="¿Estás seguro de que deseas marcar esta campaña como completada?"
                     onConfirm={handleCompleteCampaign}
                     onCancel={() => setIsCompleteModalOpen(false)}
                 />
