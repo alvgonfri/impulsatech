@@ -19,7 +19,10 @@ function CampaignPage() {
     const [invalidAmount, setInvalidAmount] = useState(false);
     const [isEliminateModalOpen, setIsEliminateModalOpen] = useState(false);
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-    const { getCampaign, eliminateCampaign, cancelCampaign } = useCampaign();
+    const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+    const [completeError, setCompleteError] = useState(false);
+    const { getCampaign, eliminateCampaign, cancelCampaign, completeCampaign } =
+        useCampaign();
     const { processPayment, errors: financialDonationErrors } =
         useFinancialDonation();
     const { createTimeDonation, errors: timeDonationErrors } =
@@ -69,6 +72,8 @@ function CampaignPage() {
         loadCampaign();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    console.log(campaign);
 
     const onSubmitFinancialDonation = async (e) => {
         e.preventDefault();
@@ -139,6 +144,35 @@ function CampaignPage() {
 
     const handleCancelCampaign = async () => {
         const status = await cancelCampaign(campaign._id);
+
+        if (status === 200) {
+            navigate("/campaigns");
+        }
+    };
+
+    const handleClickOnComplete = () => {
+        if (
+            campaign.financialGoal &&
+            campaign.moneyDonated < campaign.financialGoal
+        ) {
+            setCompleteError(true);
+            return;
+        }
+
+        if (campaign.timeGoal && campaign.timeDonated < campaign.timeGoal) {
+            setCompleteError(true);
+            return;
+        }
+
+        setIsCompleteModalOpen(true);
+
+        setCompleteError(false);
+
+        return;
+    };
+
+    const handleCompleteCampaign = async () => {
+        const status = await completeCampaign(campaign._id);
 
         if (status === 200) {
             navigate("/campaigns");
@@ -297,14 +331,31 @@ function CampaignPage() {
 
                     {subject?._id === promoter._id &&
                         campaign.status === "ongoing" && (
-                            <div className="px-4 py-2">
-                                <button
-                                    onClick={() => setIsCancelModalOpen(true)}
-                                    className="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                >
-                                    Cancelar campaña
-                                </button>
-                            </div>
+                            <>
+                                {completeError && (
+                                    <div className="mx-4 bg-red-500 text-white text-sm p-2 rounded-lg my-2">
+                                        La campaña no puede completarse hasta
+                                        que se alcancen los objetivos
+                                    </div>
+                                )}
+                                <div className="px-4 py-2 flex gap-2 justify-center">
+                                    <button
+                                        onClick={() =>
+                                            setIsCancelModalOpen(true)
+                                        }
+                                        className="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    >
+                                        Cancelar campaña
+                                    </button>
+
+                                    <button
+                                        onClick={handleClickOnComplete}
+                                        className="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    >
+                                        Completar campaña
+                                    </button>
+                                </div>
+                            </>
                         )}
 
                     {campaign.financialGoal &&
@@ -465,6 +516,14 @@ function CampaignPage() {
                     message="¿Estás seguro de que deseas cancelar esta campaña?"
                     onConfirm={handleCancelCampaign}
                     onCancel={() => setIsCancelModalOpen(false)}
+                />
+            )}
+            {isCompleteModalOpen && (
+                <Modal
+                    title="Completar campaña"
+                    message="¿Estás seguro de que deseas completar esta campaña?"
+                    onConfirm={handleCompleteCampaign}
+                    onCancel={() => setIsCompleteModalOpen(false)}
                 />
             )}
         </div>

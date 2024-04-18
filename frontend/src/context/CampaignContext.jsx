@@ -97,6 +97,25 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const completeCampaign = async (id) => {
+        try {
+            const res = await updateCampaignRequest(id, {
+                status: "completed",
+            });
+            setCampaigns(
+                campaigns.map((campaign) =>
+                    campaign._id === id
+                        ? { ...campaign, status: "completed" }
+                        : campaign
+                )
+            );
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setErrors(error.response.data);
+        }
+    };
+
     return (
         <CampaignContext.Provider
             value={{
@@ -107,6 +126,7 @@ export const CampaignProvider = ({ children }) => {
                 createCampaign,
                 eliminateCampaign,
                 cancelCampaign,
+                completeCampaign,
                 errors,
             }}
         >
