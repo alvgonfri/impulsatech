@@ -37,10 +37,19 @@ describe("Campaign tests", () => {
         it("should return 201 Created", async () => {
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
+            const futureStartDate = new Date();
+            futureStartDate.setDate(futureStartDate.getDate() + 2);
+            const futureEndDate = new Date();
+            futureEndDate.setDate(futureEndDate.getDate() + 3);
+
             const response = await agent.post("/api/v1/campaigns").send({
                 title: "test",
                 description: "test",
                 timeGoal: 100,
+                timeGoalPeriod: {
+                    startDate: futureStartDate.toISOString().slice(0, 10),
+                    endDate: futureEndDate.toISOString().slice(0, 10),
+                },
                 financialGoal: 1000,
                 deadline: tomorrow.toISOString().slice(0, 10),
             });

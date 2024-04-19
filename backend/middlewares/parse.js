@@ -4,7 +4,10 @@ export const parseCampign = (req, res, next) => {
             req.body.timeGoal = parseInt(req.body.timeGoal);
         }
 
-        if (req.body.timeGoalPeriod) {
+        if (
+            req.body.timeGoalPeriod &&
+            !(req.body.timeGoalPeriod instanceof Object)
+        ) {
             req.body.timeGoalPeriod = JSON.parse(req.body.timeGoalPeriod);
             if (
                 req.body.timeGoalPeriod.startDate === "" ||
