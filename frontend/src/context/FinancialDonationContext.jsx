@@ -12,7 +12,9 @@ const FinancialDonationContext = createContext();
 export const useFinancialDonation = () => {
     const context = useContext(FinancialDonationContext);
     if (!context) {
-        throw new Error("useCampaign must be used within a CampaignProvider");
+        throw new Error(
+            "useFinancialDonation must be used within a FinancialDonationProvider"
+        );
     }
     return context;
 };

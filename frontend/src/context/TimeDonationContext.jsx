@@ -11,7 +11,9 @@ const TimeDonationContext = createContext();
 export const useTimeDonation = () => {
     const context = useContext(TimeDonationContext);
     if (!context) {
-        throw new Error("useCampaign must be used within a CampaignProvider");
+        throw new Error(
+            "useTimeDonation must be used within a TimeDonationProvider"
+        );
     }
     return context;
 };
