@@ -1,19 +1,7 @@
-import { useEffect } from "react";
-import { useFinancialDonation } from "../../context/FinancialDonationContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 
 function FinancialDonationSuccess() {
-    const { createFinancialDonation } = useFinancialDonation();
-
-    useEffect(() => {
-        async function createDonation() {
-            await createFinancialDonation();
-        }
-        createDonation();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     return (
         <div className="h-screen">
             <div className="bg-white p-6 md:mx-auto">
