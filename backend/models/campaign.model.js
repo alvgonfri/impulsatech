@@ -27,6 +27,9 @@ const campaignSchema = new mongoose.Schema(
         financialGoal: {
             type: Number,
         },
+        iban: {
+            type: String,
+        },
         image: {
             public_id: String,
             secure_url: String,

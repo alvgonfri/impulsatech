@@ -113,6 +113,7 @@ export const createCampaign = async (req, res) => {
             timeGoal,
             timeGoalPeriod,
             financialGoal,
+            iban,
             deadline,
             tags,
         } = req.body;
@@ -123,6 +124,14 @@ export const createCampaign = async (req, res) => {
                 .status(400)
                 .json([
                     "La campaña debe tener al menos un objetivo, ya sea de tiempo o económico",
+                ]);
+        }
+
+        if (financialGoal && !iban) {
+            return res
+                .status(400)
+                .json([
+                    "Si se establece un objetivo económico, se debe indicar un IBAN",
                 ]);
         }
 
@@ -168,6 +177,7 @@ export const createCampaign = async (req, res) => {
             timeGoal,
             timeGoalPeriod,
             financialGoal,
+            iban,
             image,
             deadline,
             tags,

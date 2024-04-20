@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { checkIfDateIsFuture } from "../libs/checks.js";
+import { checkIfDateIsFuture, checkIfIbanIsValid } from "../libs/checks.js";
 
 export const createCampaignSchema = z.object({
     title: z
@@ -51,6 +51,12 @@ export const createCampaignSchema = z.object({
         .max(100000000, {
             message:
                 "El objetivo financiero no puede ser mayor de 100.000.000 €",
+        })
+        .optional(),
+    iban: z
+        .string()
+        .refine((value) => checkIfIbanIsValid(value), {
+            message: "El IBAN no es válido",
         })
         .optional(),
     deadline: z

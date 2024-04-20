@@ -7,6 +7,7 @@ function CampaignFormPage() {
     const [image, setImage] = useState(null);
     const [financialGoalChecked, setFinancialGoalChecked] = useState(false);
     const [timeGoalChecked, setTimeGoalChecked] = useState(false);
+    const [goalErrors, setGoalErrors] = useState([]);
     const availableTags = [
         "Educación digital",
         "Acceso a la tecnología",
@@ -31,6 +32,18 @@ function CampaignFormPage() {
         if (isSubmitting) return;
         setIsSubmitting(true);
 
+        if (financialGoalChecked && !data.financialGoal) {
+            setGoalErrors(["Por favor, ingresa un objetivo económico"]);
+            setIsSubmitting(false);
+            return;
+        }
+
+        if (timeGoalChecked && !data.timeGoal) {
+            setGoalErrors(["Por favor, ingresa un objetivo de tiempo"]);
+            setIsSubmitting(false);
+            return;
+        }
+
         const timeGoalPeriod = {
             startDate: data.startDate,
             endDate: data.endDate,
@@ -43,6 +56,9 @@ function CampaignFormPage() {
 
         if (data.financialGoal) {
             formData.append("financialGoal", data.financialGoal);
+        }
+        if (financialGoalChecked) {
+            formData.append("iban", data.iban);
         }
         if (data.timeGoal) {
             formData.append("timeGoal", data.timeGoal);
@@ -77,6 +93,15 @@ function CampaignFormPage() {
                 </h1>
 
                 {formErrors.map((error, i) => (
+                    <div
+                        className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
+                        key={i}
+                    >
+                        {error}
+                    </div>
+                ))}
+
+                {goalErrors.map((error, i) => (
                     <div
                         className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
                         key={i}
@@ -215,15 +240,16 @@ function CampaignFormPage() {
                                     <input
                                         type="number"
                                         {...register("financialGoal")}
+                                        onChange={() => setGoalErrors([])}
                                         className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                                     />
 
                                     <label className="text-sm text-slate-500">
-                                        Cuenta bancaria
+                                        IBAN de la cuenta bancaria
                                     </label>
                                     <input
                                         type="text"
-                                        {...register("bankAccount")}
+                                        {...register("iban")}
                                         className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                                     />
                                 </div>
@@ -250,6 +276,7 @@ function CampaignFormPage() {
                                     <input
                                         type="number"
                                         {...register("timeGoal")}
+                                        onChange={() => setGoalErrors([])}
                                         className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                                     />
 

@@ -47,3 +47,12 @@ export async function checkIfTimeDonationAmountIsValid(amount, period) {
         console.error(error);
     }
 }
+
+export function checkIfIbanIsValid(iban) {
+    try {
+        const ibanRegex = /^[A-Z]{2}\d{2}[A-Z0-9]{4}\d{7}([A-Z0-9]?){0,16}$/;
+        return ibanRegex.test(iban);
+    } catch (error) {
+        console.error(error);
+    }
+}
