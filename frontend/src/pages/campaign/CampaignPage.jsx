@@ -73,8 +73,6 @@ function CampaignPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    console.log(campaign);
-
     const onSubmitFinancialDonation = async (e) => {
         e.preventDefault();
 

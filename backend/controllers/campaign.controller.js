@@ -187,6 +187,7 @@ export const createCampaign = async (req, res) => {
             },
         });
         const campaign = await newCampaign.save();
+        console.log(res);
         res.status(201).json(campaign);
     } catch (error) {
         res.status(500).json({ message: error.message });
