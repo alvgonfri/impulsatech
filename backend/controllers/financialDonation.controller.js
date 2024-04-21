@@ -70,7 +70,6 @@ export const processPayment = async (req, res) => {
         const { amount, anonymous, campaignId } = req.body;
 
         console.log(campaign.promoter.type);
-        console.log(req.subject._id);
 
         const campaign = await Campaign.findById(campaignId);
 
