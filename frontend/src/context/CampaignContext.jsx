@@ -53,9 +53,11 @@ export const CampaignProvider = ({ children }) => {
     const createCampaign = async (campaign) => {
         try {
             const res = await createCampaignRequest(campaign);
+            console.log(res.data, " 111111111");
             setCampaigns([...campaigns, res.data]);
             return res.status;
         } catch (error) {
+            console.log("222222222");
             console.error(error);
             setErrors(error.response.data);
         }
