@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest",
-    "coverage": "set NODE_OPTIONS=--experimental-vm-modules && jest --coverage"
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest --runInBand",
+    "coverage": "set NODE_OPTIONS=--experimental-vm-modules && jest --runInBand --coverage"
   },
   "keywords": [],
   "author": "",

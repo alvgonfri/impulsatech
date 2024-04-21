@@ -51,6 +51,7 @@ describe("Campaign tests", () => {
                     endDate: futureEndDate.toISOString().slice(0, 10),
                 },
                 financialGoal: 1000,
+                iban: "ES123456789123456789",
                 deadline: tomorrow.toISOString().slice(0, 10),
             });
             expect(response.statusCode).toBe(201);
