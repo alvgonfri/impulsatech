@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { checkIfDateIsFuture, checkIfIbanIsValid } from "../libs/checks.js";
 
 export const createCampaignSchema = z.object({
     title: z
@@ -27,6 +28,20 @@ export const createCampaignSchema = z.object({
             message: "El objetivo de tiempo no puede ser mayor de 5.000 horas",
         })
         .optional(),
+    timeGoalPeriod: z
+        .object({
+            startDate: z
+                .string({ required_error: "La fecha de inicio es requerida" })
+                .refine((value) => checkIfDateIsFuture(value), {
+                    message: "La fecha de inicio debe ser una fecha futura",
+                }),
+            endDate: z
+                .string({ required_error: "La fecha de fin es requerida" })
+                .refine((value) => checkIfDateIsFuture(value), {
+                    message: "La fecha de fin debe ser una fecha futura",
+                }),
+        })
+        .optional(),
     financialGoal: z
         .number()
         .int({ message: "El objetivo financiero debe ser un número entero" })
@@ -38,16 +53,17 @@ export const createCampaignSchema = z.object({
                 "El objetivo financiero no puede ser mayor de 100.000.000 €",
         })
         .optional(),
-    image: z.string().optional(),
+    iban: z
+        .string()
+        .refine((value) => checkIfIbanIsValid(value), {
+            message: "El IBAN no es válido",
+        })
+        .optional(),
     deadline: z
         .string()
-        .refine(
-            (value) => {
-                const deadline = new Date(value).toISOString().slice(0, 10);
-                return deadline > new Date().toISOString().slice(0, 10);
-            },
-            { message: "La fecha límite debe ser una fecha futura" }
-        )
+        .refine((value) => checkIfDateIsFuture(value), {
+            message: "La fecha límite debe ser una fecha futura",
+        })
         .optional(),
 });
 
@@ -91,7 +107,6 @@ export const updateCampaignSchema = z.object({
                 "El objetivo financiero no puede ser mayor de 100.000.000 €",
         })
         .optional(),
-    image: z.string().optional(),
     deadline: z
         .string()
         .refine(

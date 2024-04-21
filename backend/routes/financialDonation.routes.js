@@ -1,0 +1,36 @@
+import express from "express";
+import { Router } from "express";
+import { validateSchema } from "../middlewares/validator.js";
+import { createFinancialDonationSchema } from "../schemas/financialDonation.schema.js";
+import {
+    getFinancialDonationsByCampaign,
+    createFinancialDonation,
+    processPayment,
+    webhook,
+} from "../controllers/financialDonation.controller.js";
+import { validateToken } from "../middlewares/validateToken.js";
+import { parseFinancialDonation } from "../middlewares/parse.js";
+
+const router = Router();
+
+router.get("/:campaignId", getFinancialDonationsByCampaign);
+
+router.post(
+    "",
+    validateToken,
+    parseFinancialDonation,
+    validateSchema(createFinancialDonationSchema),
+    createFinancialDonation
+);
+
+router.post(
+    "/process-payment",
+    validateToken,
+    parseFinancialDonation,
+    validateSchema(createFinancialDonationSchema),
+    processPayment
+);
+
+router.post("/webhook", express.raw({ type: "application/json" }), webhook);
+
+export default router;

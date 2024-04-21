@@ -9,12 +9,14 @@ describe("Campaign tests", () => {
         await mongoose.connect(process.env.TEST_MONGODB_URI);
 
         agent = request.agent(app);
+
         const res = await agent.post("/api/v1/register").send({
             name: "campaign-test",
             surname: "campaign-test",
             email: "campaign-test@gmail.com",
             password: "12345678",
         });
+
         const token = res.body.token;
         agent.set("Authorization", token);
     });
@@ -35,11 +37,21 @@ describe("Campaign tests", () => {
         it("should return 201 Created", async () => {
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
+            const futureStartDate = new Date();
+            futureStartDate.setDate(futureStartDate.getDate() + 2);
+            const futureEndDate = new Date();
+            futureEndDate.setDate(futureEndDate.getDate() + 3);
+
             const response = await agent.post("/api/v1/campaigns").send({
                 title: "test",
                 description: "test",
                 timeGoal: 100,
+                timeGoalPeriod: {
+                    startDate: futureStartDate.toISOString().slice(0, 10),
+                    endDate: futureEndDate.toISOString().slice(0, 10),
+                },
                 financialGoal: 1000,
+                iban: "ES123456789123456789",
                 deadline: tomorrow.toISOString().slice(0, 10),
             });
             expect(response.statusCode).toBe(201);
@@ -51,6 +63,27 @@ describe("Campaign tests", () => {
                 description: "test",
             });
             expect(response.statusCode).toBe(400);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/ongoing", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get("/api/v1/campaigns/ongoing");
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/completed", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get("/api/v1/campaigns/completed");
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/cancelled", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get("/api/v1/campaigns/cancelled");
+            expect(response.statusCode).toBe(200);
         });
     });
 
@@ -73,11 +106,17 @@ describe("Campaign tests", () => {
 
     describe("PATCH /api/v1/campaigns/:id", () => {
         it("should return 200 OK", async () => {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
             const campaigns = await agent.get("/api/v1/campaigns");
             const campaignId = campaigns.body[0]._id;
             const response = await agent
                 .patch(`/api/v1/campaigns/${campaignId}`)
-                .send({ title: "updated" });
+                .send({
+                    title: "updated",
+                    deadline: tomorrow.toISOString().slice(0, 10),
+                });
             expect(response.statusCode).toBe(200);
         });
 

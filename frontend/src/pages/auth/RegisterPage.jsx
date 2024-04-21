@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -10,7 +10,13 @@ function RegisterPage() {
         handleSubmit,
         formState: { errors },
     } = useForm();
-    const { signUp, isAuthenticated, errors: registerErrors } = useAuth();
+    const {
+        signUp,
+        signUpOrganization,
+        isAuthenticated,
+        errors: registerErrors,
+    } = useAuth();
+    const [isOrganization, setIsOrganization] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,12 +43,16 @@ function RegisterPage() {
             delete trimmedData.bio;
         }
 
-        await signUp(trimmedData);
+        if (isOrganization) {
+            await signUpOrganization(trimmedData);
+        } else {
+            await signUp(trimmedData);
+        }
     });
 
     return (
         <div className="flex justify-center">
-            <div className="max-w-md p-10 rounded-md border border-teal-600">
+            <div className="w-1/3 p-10 rounded-md border border-teal-600">
                 <h1 className="text-teal-600 text-2xl font-bold mb-4">
                     Únete a ImpulsaTech
                 </h1>
@@ -57,6 +67,31 @@ function RegisterPage() {
                 ))}
 
                 <form onSubmit={onSubmit}>
+                    <div className="flex justify-center mb-4">
+                        <button
+                            type="button"
+                            onClick={() => setIsOrganization(false)}
+                            className={`${
+                                !isOrganization
+                                    ? "bg-teal-600 text-white"
+                                    : "bg-white text-teal-600"
+                            } font-bold py-2 px-4 rounded`}
+                        >
+                            Usuario
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsOrganization(true)}
+                            className={`${
+                                isOrganization
+                                    ? "bg-teal-600 text-white"
+                                    : "bg-white text-teal-600"
+                            } font-bold py-2 px-4 rounded`}
+                        >
+                            Organización
+                        </button>
+                    </div>
+
                     {errors.name && (
                         <p className="text-red-500 text-sm mb-1">
                             Por favor, ingresa un nombre
@@ -65,21 +100,29 @@ function RegisterPage() {
                     <input
                         type="text"
                         {...register("name", { required: true })}
-                        placeholder="Nombre"
+                        placeholder={
+                            isOrganization
+                                ? "Nombre de la organización"
+                                : "Nombre"
+                        }
                         className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                     />
 
-                    {errors.surname && (
-                        <p className="text-red-500 text-sm mb-1">
-                            Por favor, ingresa un apellido
-                        </p>
+                    {!isOrganization && (
+                        <>
+                            {errors.surname && (
+                                <p className="text-red-500 text-sm mb-1">
+                                    Por favor, ingresa un apellido
+                                </p>
+                            )}
+                            <input
+                                type="text"
+                                {...register("surname", { required: true })}
+                                placeholder="Apellido"
+                                className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                            />
+                        </>
                     )}
-                    <input
-                        type="text"
-                        {...register("surname", { required: true })}
-                        placeholder="Apellido"
-                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                    />
 
                     {errors.email && (
                         <p className="text-red-500 text-sm mb-1">

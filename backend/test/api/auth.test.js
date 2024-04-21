@@ -34,7 +34,7 @@ describe("Auth tests", () => {
         });
     });
 
-    describe("POST /api/v1/login", () => {
+    describe("POST /api/v1/login (user)", () => {
         it("should return 200 OK", async () => {
             const response = await request(app).post("/api/v1/login").send({
                 email: "test@gmail.com",
@@ -52,9 +52,68 @@ describe("Auth tests", () => {
         });
     });
 
+    describe("POST /api/v1/register-organization", () => {
+        it("should return 201 Created", async () => {
+            const response = await request(app)
+                .post("/api/v1/register-organization")
+                .send({
+                    name: "test_org",
+                    email: "test_org@gmail.com",
+                    password: "12345678",
+                });
+            expect(response.statusCode).toBe(201);
+        });
+
+        it("should return 400 Bad Request", async () => {
+            const response = await request(app)
+                .post("/api/v1/register-organization")
+                .send({
+                    name: "new_test_org",
+                    email: "new_test_org@gmail.com",
+                    password: "short",
+                });
+            expect(response.statusCode).toBe(400);
+        });
+    });
+
+    describe("POST /api/v1/login (organization)", () => {
+        it("should return 200 OK", async () => {
+            const response = await request(app).post("/api/v1/login").send({
+                email: "test_org@gmail.com",
+                password: "12345678",
+            });
+            expect(response.statusCode).toBe(200);
+        });
+
+        it("should return 400 Bad Request", async () => {
+            const response = await request(app).post("/api/v1/login").send({
+                email: "test_org@gmail.com",
+                password: "wrongpassword",
+            });
+            expect(response.statusCode).toBe(400);
+        });
+    });
+
     describe("POST /api/v1/logout", () => {
         it("should return 200 OK", async () => {
             const response = await request(app).post("/api/v1/logout");
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
+    describe("GET /api/v1/verify-token", () => {
+        it("should return 200 OK", async () => {
+            const agent = request.agent(app);
+
+            const res = await agent.post("/api/v1/login").send({
+                email: "test@gmail.com",
+                password: "12345678",
+            });
+
+            const token = res.body.token;
+            agent.set("Authorization", token);
+
+            const response = await agent.get("/api/v1/verify-token");
             expect(response.statusCode).toBe(200);
         });
     });

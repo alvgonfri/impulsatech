@@ -31,8 +31,8 @@ const userSchema = new mongoose.Schema(
             trim: true,
         },
         picture: {
-            type: String,
-            trim: true,
+            public_id: String,
+            secure_url: String,
         },
         bio: {
             type: String,

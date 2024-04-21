@@ -1,4 +1,4 @@
-import RegisterPage from "../../../src/pages/user/RegisterPage";
+import RegisterPage from "../../../src/pages/auth/RegisterPage";
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "../../../src/context/AuthContext";

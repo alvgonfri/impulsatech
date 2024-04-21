@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
 import { validateSchema } from "../middlewares/validator.js";
+import { parseCampign } from "../middlewares/parse.js";
 import {
     createCampaignSchema,
     updateCampaignSchema,
@@ -8,6 +9,7 @@ import {
 import {
     getCampaigns,
     getCampaign,
+    getCampaignsByStatus,
     createCampaign,
     updateCampaign,
     deleteCampaign,
@@ -17,11 +19,18 @@ const router = Router();
 
 router.get("", getCampaigns);
 
+router.get("/ongoing", getCampaignsByStatus("ongoing"));
+
+router.get("/completed", getCampaignsByStatus("completed"));
+
+router.get("/cancelled", getCampaignsByStatus("cancelled"));
+
 router.get("/:id", getCampaign);
 
 router.post(
     "",
     authRequired,
+    parseCampign,
     validateSchema(createCampaignSchema),
     createCampaign
 );
@@ -29,6 +38,7 @@ router.post(
 router.patch(
     "/:id",
     authRequired,
+    parseCampign,
     validateSchema(updateCampaignSchema),
     updateCampaign
 );

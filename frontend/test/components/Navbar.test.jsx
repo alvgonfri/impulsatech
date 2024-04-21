@@ -5,9 +5,9 @@ import { BrowserRouter } from "react-router-dom";
 
 describe("Navbar", () => {
     it("should render the Navbar component correctly when user is authenticated", () => {
-        const user = { name: "Test User" };
+        const subject = { name: "Test User" };
         const isAuthenticated = true;
-        const contextValue = { user, isAuthenticated };
+        const contextValue = { subject, isAuthenticated };
 
         render(
             <AuthContext.Provider value={contextValue}>
@@ -22,9 +22,9 @@ describe("Navbar", () => {
     });
 
     it("should render the Navbar component correctly when user is not authenticated", () => {
-        const user = null;
+        const subject = null;
         const isAuthenticated = false;
-        const contextValue = { user, isAuthenticated };
+        const contextValue = { subject, isAuthenticated };
 
         render(
             <AuthContext.Provider value={contextValue}>

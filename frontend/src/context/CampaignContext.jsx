@@ -1,8 +1,10 @@
 import { createContext, useContext, useState } from "react";
 import {
     getCampaignsRequest,
+    getCampaignsByStatusRequest,
     getCampaignRequest,
     createCampaignRequest,
+    updateCampaignRequest,
 } from "../api/campaign.js";
 import PropTypes from "prop-types";
 
@@ -30,6 +32,15 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const getCampaignsByStatus = async (status) => {
+        try {
+            const res = await getCampaignsByStatusRequest(status);
+            setCampaigns(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const getCampaign = async (id) => {
         try {
             const res = await getCampaignRequest(id);
@@ -50,13 +61,72 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const eliminateCampaign = async (id) => {
+        try {
+            const res = await updateCampaignRequest(id, { eliminated: true });
+            setCampaigns(
+                campaigns.map((campaign) =>
+                    campaign._id === id
+                        ? { ...campaign, eliminated: true }
+                        : campaign
+                )
+            );
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setErrors(error.response.data);
+        }
+    };
+
+    const cancelCampaign = async (id) => {
+        try {
+            const res = await updateCampaignRequest(id, {
+                status: "cancelled",
+            });
+            setCampaigns(
+                campaigns.map((campaign) =>
+                    campaign._id === id
+                        ? { ...campaign, status: "cancelled" }
+                        : campaign
+                )
+            );
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setErrors(error.response.data);
+        }
+    };
+
+    const completeCampaign = async (id) => {
+        try {
+            const res = await updateCampaignRequest(id, {
+                status: "completed",
+            });
+            setCampaigns(
+                campaigns.map((campaign) =>
+                    campaign._id === id
+                        ? { ...campaign, status: "completed" }
+                        : campaign
+                )
+            );
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setErrors(error.response.data);
+        }
+    };
+
     return (
         <CampaignContext.Provider
             value={{
                 campaigns,
                 getCampaigns,
+                getCampaignsByStatus,
                 getCampaign,
                 createCampaign,
+                eliminateCampaign,
+                cancelCampaign,
+                completeCampaign,
                 errors,
             }}
         >

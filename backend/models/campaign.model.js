@@ -20,20 +20,54 @@ const campaignSchema = new mongoose.Schema(
         timeGoal: {
             type: Number,
         },
+        timeGoalPeriod: {
+            startDate: Date,
+            endDate: Date,
+        },
         financialGoal: {
             type: Number,
         },
-        image: {
+        iban: {
             type: String,
-            trim: true,
+        },
+        image: {
+            public_id: String,
+            secure_url: String,
         },
         deadline: {
             type: Date,
         },
+        tags: {
+            type: [
+                {
+                    type: String,
+                    enum: [
+                        "Educación digital",
+                        "Acceso a la tecnología",
+                        "Acceso a la información",
+                        "Conectividad",
+                        "Habilidades digitales",
+                        "Inclusión digital",
+                        "Emprendimiento tecnológico",
+                        "Desarrollo de software",
+                    ],
+                },
+            ],
+        },
+        eliminated: {
+            type: Boolean,
+            default: false,
+        },
         promoter: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
+            type: {
+                type: String,
+                enum: ["User", "Organization"],
+                required: true,
+            },
+            id: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: true,
+            },
         },
     },
     {
