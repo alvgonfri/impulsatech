@@ -13,6 +13,7 @@ jobs:
     env:
       TEST_MONGODB_URI: mongodb://localhost:27017/impulsatech-test
       TOKEN_SECRET: testsecret
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
 
     steps:
     - name: Git checkout
