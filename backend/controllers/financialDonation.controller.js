@@ -30,7 +30,7 @@ export const createFinancialDonation = async (req, res) => {
                 .json(["La campaña no tiene un objetivo financiero"]);
         }
 
-        if (campaign.promoter.id.toString() === req.subject.id) {
+        if (req.subject && campaign.promoter.id.toString() === req.subject.id) {
             return res
                 .status(400)
                 .json(["No puedes donar dinero a tu propia campaña"]);
@@ -69,8 +69,6 @@ export const processPayment = async (req, res) => {
     try {
         const { amount, anonymous, campaignId } = req.body;
 
-        console.log(req.subject._id);
-
         const campaign = await Campaign.findById(campaignId);
 
         if (!campaign) {
@@ -83,7 +81,7 @@ export const processPayment = async (req, res) => {
                 .json(["La campaña no tiene un objetivo financiero"]);
         }
 
-        if (campaign.promoter.id.toString() === req.subject.id) {
+        if (req.subject && campaign.promoter.id.toString() === req.subject.id) {
             return res
                 .status(400)
                 .json(["No puedes donar dinero a tu propia campaña"]);
