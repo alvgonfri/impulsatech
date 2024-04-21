@@ -142,6 +142,7 @@ describe("Financial Donation tests", () => {
                     anonymous: false,
                     campaignId: campaignId,
                 });
+            console.log(response.body);
             expect(response.statusCode).toBe(201);
         });
 
