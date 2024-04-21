@@ -66,6 +66,27 @@ describe("Campaign tests", () => {
         });
     });
 
+    describe("GET /api/v1/campaigns/ongoing", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get("/api/v1/campaigns/ongoing");
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/completed", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get("/api/v1/campaigns/completed");
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/cancelled", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get("/api/v1/campaigns/cancelled");
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
     describe("GET /api/v1/campaigns/:id", () => {
         it("should return 200 OK", async () => {
             const campaigns = await agent.get("/api/v1/campaigns");
@@ -85,11 +106,17 @@ describe("Campaign tests", () => {
 
     describe("PATCH /api/v1/campaigns/:id", () => {
         it("should return 200 OK", async () => {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
             const campaigns = await agent.get("/api/v1/campaigns");
             const campaignId = campaigns.body[0]._id;
             const response = await agent
                 .patch(`/api/v1/campaigns/${campaignId}`)
-                .send({ title: "updated" });
+                .send({
+                    title: "updated",
+                    deadline: tomorrow.toISOString().slice(0, 10),
+                });
             expect(response.statusCode).toBe(200);
         });
 

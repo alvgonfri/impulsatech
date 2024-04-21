@@ -100,4 +100,21 @@ describe("Auth tests", () => {
             expect(response.statusCode).toBe(200);
         });
     });
+
+    describe("GET /api/v1/verify-token", () => {
+        it("should return 200 OK", async () => {
+            const agent = request.agent(app);
+
+            const res = await agent.post("/api/v1/login").send({
+                email: "test@gmail.com",
+                password: "12345678",
+            });
+
+            const token = res.body.token;
+            agent.set("Authorization", token);
+
+            const response = await agent.get("/api/v1/verify-token");
+            expect(response.statusCode).toBe(200);
+        });
+    });
 });

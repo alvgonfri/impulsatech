@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 describe("Financial Donation tests", () => {
     let agent;
     let campaignId;
+    let campaignWithNoFinancialGoalId;
 
     beforeAll(async () => {
         await mongoose.connect(process.env.TEST_MONGODB_URI);
@@ -21,15 +22,33 @@ describe("Financial Donation tests", () => {
         const token = res.body.token;
         agent.set("Authorization", token);
 
-        await agent.post("/api/v1/campaigns").send({
+        const campaign = await agent.post("/api/v1/campaigns").send({
             title: "campaign-test",
             description: "campaign-test",
             financialGoal: 1000,
             iban: "ES123456789123456789",
         });
 
-        const campaign = await agent.get("/api/v1/campaigns");
-        campaignId = campaign.body[0]._id;
+        campaignId = campaign.body._id;
+
+        const futureStartDate = new Date();
+        futureStartDate.setDate(futureStartDate.getDate() + 2);
+        const futureEndDate = new Date();
+        futureEndDate.setDate(futureEndDate.getDate() + 3);
+
+        const campaignWithNoFinancialGoal = await agent
+            .post("/api/v1/campaigns")
+            .send({
+                title: "no-financial-goal",
+                description: "no-financial-goal",
+                timeGoal: 100,
+                timeGoalPeriod: {
+                    startDate: futureStartDate.toISOString().slice(0, 10),
+                    endDate: futureEndDate.toISOString().slice(0, 10),
+                },
+            });
+
+        campaignWithNoFinancialGoalId = campaignWithNoFinancialGoal.body._id;
     });
 
     afterAll(async () => {
@@ -38,6 +57,17 @@ describe("Financial Donation tests", () => {
     });
 
     describe("POST /api/v1/financial-donations", () => {
+        it("should return 400 Bad Request because you cannot donate to your own campaign", async () => {
+            const response = await agent
+                .post("/api/v1/financial-donations")
+                .send({
+                    amount: 100,
+                    anonymous: false,
+                    campaignId: campaignId,
+                });
+            expect(response.statusCode).toBe(400);
+        });
+
         it("should return 201 Created", async () => {
             const other = await agent.post("/api/v1/register").send({
                 name: "other-test",
@@ -59,7 +89,7 @@ describe("Financial Donation tests", () => {
             expect(response.statusCode).toBe(201);
         });
 
-        it("should return 400 Bad Request", async () => {
+        it("should return 400 Bad Request because amount is 0", async () => {
             const response = await agent
                 .post("/api/v1/financial-donations")
                 .send({
@@ -69,9 +99,32 @@ describe("Financial Donation tests", () => {
                 });
             expect(response.statusCode).toBe(400);
         });
+
+        it("should return 404 Not Found because campaign does not exist", async () => {
+            const randomObjectId = new mongoose.Types.ObjectId();
+            const response = await agent
+                .post("/api/v1/financial-donations")
+                .send({
+                    amount: 100,
+                    anonymous: false,
+                    campaignId: randomObjectId,
+                });
+            expect(response.statusCode).toBe(404);
+        });
+
+        it("should return 400 Bad Request because campaign has no financial goal", async () => {
+            const response = await agent
+                .post("/api/v1/financial-donations")
+                .send({
+                    amount: 100,
+                    anonymous: false,
+                    campaignId: campaignWithNoFinancialGoalId,
+                });
+            expect(response.statusCode).toBe(400);
+        });
     });
 
-    describe("GET /api/v1/financial-donations/campaign/:id", () => {
+    describe("GET /api/v1/financial-donations/:campaignId", () => {
         it("should return 200 OK", async () => {
             const response = await agent.get(
                 `/api/v1/financial-donations/${campaignId}`
