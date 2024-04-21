@@ -187,9 +187,6 @@ export const createCampaign = async (req, res) => {
             },
         });
         const campaign = await newCampaign.save();
-
-        res.setHeader("Access-Control-Allow-Credentials", "true");
-        res.setHeader("Access-Control-Allow-Origin", process.env.CORS_ORIGIN);
         res.status(201).json(campaign);
     } catch (error) {
         res.status(500).json({ message: error.message });

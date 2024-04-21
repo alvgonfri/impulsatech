@@ -128,7 +128,7 @@ export const processPayment = async (req, res) => {
 
         res.status(201).json({ sessionId: session.id });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message, message2: "error 2" });
     }
 };
 
