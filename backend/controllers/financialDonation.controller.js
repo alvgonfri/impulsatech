@@ -69,9 +69,9 @@ export const processPayment = async (req, res) => {
     try {
         const { amount, anonymous, campaignId } = req.body;
 
-        const campaign = await Campaign.findById(campaignId);
+        console.log(req.subject._id);
 
-        console.log(campaign.promoter.type);
+        const campaign = await Campaign.findById(campaignId);
 
         if (!campaign) {
             return res.status(404).json(["Campaña no encontrada"]);
