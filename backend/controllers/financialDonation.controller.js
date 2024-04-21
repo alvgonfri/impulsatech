@@ -120,7 +120,7 @@ export const processPayment = async (req, res) => {
                     quantity: 1,
                 },
             ],
-            customer: customer.id,
+            customer: customer?.id,
             mode: "payment",
             success_url: `${process.env.CORS_ORIGIN}/financial-donation/success`,
             cancel_url: `${process.env.CORS_ORIGIN}/financial-donation/cancel`,
