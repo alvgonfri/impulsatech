@@ -13,7 +13,8 @@ import webhookRoutes from "./routes/webhook.routes.js";
 const app = express();
 
 const corsOptions = {
-    origin: "*",
+    credentials: true,
+    origin: process.env.CORS_ORIGIN,
 };
 
 app.use(cors(corsOptions));
