@@ -40,6 +40,7 @@ export const getCampaigns = async (req, res) => {
 
 export const getCampaignsByStatus = (status) => async (req, res) => {
     try {
+        console.log("aaaaaaaaaaaaa");
         const campaigns = await Campaign.find({ status });
         const campaignsWithDonationsInfo = await Promise.all(
             campaigns.map(async (campaign) => {
@@ -107,6 +108,7 @@ export const getCampaign = async (req, res) => {
 
 export const createCampaign = async (req, res) => {
     try {
+        console.log("0000000000000000");
         const {
             title,
             description,
@@ -162,6 +164,7 @@ export const createCampaign = async (req, res) => {
             : "User";
 
         if (req.files && req.files.image) {
+            console.log(req.files.image, "1111111111111");
             const { public_id, secure_url } = await uploadCampaignImage(
                 req.files.image.tempFilePath
             );
@@ -170,6 +173,8 @@ export const createCampaign = async (req, res) => {
 
             image = { public_id, secure_url };
         }
+
+        console.log(image, "2222222222222");
 
         const newCampaign = new Campaign({
             title,
@@ -189,6 +194,7 @@ export const createCampaign = async (req, res) => {
         const campaign = await newCampaign.save();
         res.status(201).json(campaign);
     } catch (error) {
+        console.log("9999999999999999 ", error.message);
         res.status(500).json({ message: error.message });
     }
 };
