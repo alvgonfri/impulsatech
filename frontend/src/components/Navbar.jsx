@@ -66,24 +66,6 @@ function Navbar() {
                         >
                             Campañas
                         </Link>
-                        <Link
-                            to="/cancelled-campaigns"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Campañas canceladas
-                        </Link>
-                        <Link
-                            to="/completed-campaigns"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Campañas completadas
-                        </Link>
-                        <Link
-                            to="/campaigns/create"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Crear campaña
-                        </Link>
                     </div>
 
                     <div className="flex gap-x-5 items-start lg:items-stretch flex-col lg:flex-row gap-y-2 lg:gap-y-0">
@@ -136,18 +118,6 @@ function Navbar() {
                             className="hover:opacity-65 transition duration-500"
                         >
                             Campañas
-                        </Link>
-                        <Link
-                            to="/cancelled-campaigns"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Campañas canceladas
-                        </Link>
-                        <Link
-                            to="/completed-campaigns"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Campañas completadas
                         </Link>
                     </div>
                     <div className="flex gap-x-5 items-start lg:items-stretch flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">
