@@ -178,17 +178,17 @@ function CampaignPage() {
     };
 
     return (
-        <div className="container mx-auto px-10 md:px-40 mb-10">
+        <div className="container mx-auto mb-10 px-10 xl:px-40">
             <h1 className="text-3xl font-bold text-teal-800 mb-4">
                 {campaign.title}
             </h1>
-            <div className="flex flex-col gap-8 md:flex-row">
-                <div className="w-full md:w-3/5  mb-4 md:mb-0">
+            <div className="flex flex-col gap-8 lg:flex-row">
+                <div className="w-full lg:w-3/5 mb-4 md:mb-0">
                     {campaign.image ? (
                         <img
                             alt="Campaign"
                             src={campaign.image && campaign.image.secure_url}
-                            className="w-full h-96 rounded-md object-cover border-2 border-teal-600 mb-4"
+                            className="w-full h-72 md:h-96 rounded-md object-cover border-2 border-teal-600 mb-4"
                         />
                     ) : (
                         <img
@@ -219,7 +219,7 @@ function CampaignPage() {
                     </div>
                     <div className="mt-2 sharethis-inline-share-buttons"></div>
                 </div>
-                <div className="w-full h-fit md:w-2/5 rounded-md border-2 border-teal-600">
+                <div className="w-full h-fit lg:w-2/5 rounded-md border-2 border-teal-600">
                     <div className="flex bg-teal-600 text-white px-4 py-2">
                         <p className="font-bold">Promotor:</p>
                         <span className="ml-2">{promoter.name}</span>

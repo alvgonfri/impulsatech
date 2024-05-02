@@ -86,8 +86,8 @@ function CampaignFormPage() {
     });
 
     return (
-        <div className="flex justify-center">
-            <div className="w-2/3 px-10 py-5 mb-10 rounded-md border border-teal-600">
+        <div className="flex justify-center mb-10">
+            <div className="mx-4 lg:w-2/3 px-10 py-5 rounded-md border border-teal-600">
                 <h1 className="text-teal-600 text-2xl font-bold mb-4">
                     Crea una campaña
                 </h1>
@@ -111,8 +111,8 @@ function CampaignFormPage() {
                 ))}
 
                 <form onSubmit={onSubmit}>
-                    <div className="flex gap-8">
-                        <div className="w-1/2">
+                    <div className="md:flex gap-8">
+                        <div className="md:w-1/2">
                             <h2 className="text-teal-600 text-lg font-bold mb-4">
                                 Información general
                             </h2>
@@ -212,7 +212,7 @@ function CampaignFormPage() {
 
                         <div className="divider bg-teal-600 w-px"></div>
 
-                        <div className="w-1/2">
+                        <div className="md:w-1/2">
                             <h2 className="text-teal-600 text-lg font-bold mb-4">
                                 Objetivos
                             </h2>
@@ -283,7 +283,7 @@ function CampaignFormPage() {
                                     <label className="text-sm text-slate-500">
                                         Periodo de recibimiento
                                     </label>
-                                    <div className="flex items-center mb-4">
+                                    <div className="md:flex items-center mb-4">
                                         {errors.startDate && (
                                             <p className="text-red-500 text-sm mb-1">
                                                 Por favor, ingresa una fecha de
@@ -305,7 +305,7 @@ function CampaignFormPage() {
                                                 fin
                                             </p>
                                         )}
-                                        <p className="text-sm text-slate-500 mx-2">
+                                        <p className="text-sm text-slate-500 md:mx-2">
                                             hasta
                                         </p>
                                         <input

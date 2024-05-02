@@ -7,7 +7,7 @@ function CampaignCard({ campaign }) {
     return (
         <a
             href={`/campaigns/${campaign._id}`}
-            className="block rounded-lg p-4 shadow bg-teal-50 border border-teal-200 hover:bg-teal-100"
+            className="block w-80 mx-auto sm:w-full rounded-lg p-4 shadow bg-teal-50 border border-teal-200 hover:bg-teal-100"
         >
             {campaign.image ? (
                 <img
