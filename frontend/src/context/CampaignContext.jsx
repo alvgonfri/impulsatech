@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react";
 import {
     getCampaignsRequest,
     getCampaignsByStatusRequest,
+    getFeaturedCampaignsRequest,
     getCampaignRequest,
     createCampaignRequest,
     updateCampaignRequest,
@@ -21,6 +22,7 @@ export const useCampaign = () => {
 
 export const CampaignProvider = ({ children }) => {
     const [campaigns, setCampaigns] = useState([]);
+    const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
     const [errors, setErrors] = useState([]);
 
     const getCampaigns = async () => {
@@ -36,6 +38,15 @@ export const CampaignProvider = ({ children }) => {
         try {
             const res = await getCampaignsByStatusRequest(status);
             setCampaigns(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getFeaturedCampaigns = async () => {
+        try {
+            const res = await getFeaturedCampaignsRequest();
+            setFeaturedCampaigns(res.data);
         } catch (error) {
             console.error(error);
         }
@@ -122,6 +133,8 @@ export const CampaignProvider = ({ children }) => {
                 campaigns,
                 getCampaigns,
                 getCampaignsByStatus,
+                featuredCampaigns,
+                getFeaturedCampaigns,
                 getCampaign,
                 createCampaign,
                 eliminateCampaign,

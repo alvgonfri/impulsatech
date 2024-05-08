@@ -65,6 +65,41 @@ export const getCampaignsByStatus = (status) => async (req, res) => {
     }
 };
 
+export const getFeaturedCampaigns = async (req, res) => {
+    // Featured campaigns are those 3 ongoing campaigns with the highest percentage of money donated and time donated
+    try {
+        const campaigns = await Campaign.find({ status: "ongoing" });
+        const campaignsWithDonationsInfo = await Promise.all(
+            campaigns.map(async (campaign) => {
+                const moneyDonated = await getMoneyDonated(campaign._id);
+                const moneyDonatedPercetage = await getMoneyDonatedPercentage(
+                    campaign._id
+                );
+                const timeDonated = await getTimeDonated(campaign._id);
+                const timeDonatedPercentage = await getTimeDonatedPercentage(
+                    campaign._id
+                );
+                return Object.assign(campaign.toObject(), {
+                    moneyDonated,
+                    moneyDonatedPercetage,
+                    timeDonated,
+                    timeDonatedPercentage,
+                });
+            })
+        );
+        campaignsWithDonationsInfo.sort(
+            (a, b) =>
+                parseFloat(b.moneyDonatedPercetage) +
+                parseFloat(b.timeDonatedPercentage) -
+                (parseFloat(a.moneyDonatedPercetage) +
+                    parseFloat(a.timeDonatedPercentage))
+        );
+        res.status(200).json(campaignsWithDonationsInfo.slice(0, 3));
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const getCampaign = async (req, res) => {
     try {
         const campaign = await Campaign.findById(req.params.id);

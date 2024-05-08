@@ -6,6 +6,9 @@ export const getCampaignsRequest = async () => axios.get(`/campaigns`);
 export const getCampaignsByStatusRequest = async (status) =>
     axios.get(`/campaigns/${status}`);
 
+export const getFeaturedCampaignsRequest = async () =>
+    axios.get(`/campaigns/featured`);
+
 export const getCampaignRequest = async (id) => axios.get(`/campaigns/${id}`);
 
 export const createCampaignRequest = async (campaign) =>

@@ -38,7 +38,7 @@ function Navbar() {
                     className="h-10 mr-3 hover:opacity-50 transition duration-500"
                 />
             </Link>
-            <div className="flex lg:hidden flex-grow justify-end">
+            <div className="flex lg:hidden sm:flex-grow sm:justify-end">
                 <button
                     className="bg-teal-700 hover:bg-teal-800 px-3 py-1 rounded-md border"
                     onClick={toggleMenu}

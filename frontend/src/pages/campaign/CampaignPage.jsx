@@ -429,7 +429,7 @@ function CampaignPage() {
                                         <p className="block text-gray-700 font-bold mb-1">
                                             Realizar donación de tiempo
                                         </p>
-                                        <Tooltip text="Debes autenticarte para poder realizar una donación de tiempo" />
+                                        <Tooltip text="Debes iniciar sesión para poder realizar una donación de tiempo" />
                                     </div>
 
                                     {timeDonationErrors.map((error, i) => (

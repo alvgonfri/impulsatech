@@ -15,6 +15,7 @@ import CampaignPage from "./pages/campaign/CampaignPage";
 import CampaignFormPage from "./pages/campaign/CampaignFormPage";
 import FinancialDonationSuccess from "./pages/financialDonation/FinancialDonationSuccess";
 import FinancialDonationCancel from "./pages/financialDonation/FinancialDonationCancel";
+import Footer from "./components/Footer";
 
 function App() {
     return (
@@ -24,7 +25,7 @@ function App() {
                     <TimeDonationProvider>
                         <BrowserRouter>
                             <Navbar />
-                            <main className="mt-24">
+                            <main className="mt-24 min-h-screen">
                                 <Routes>
                                     <Route path="/" element={<HomePage />} />
                                     <Route
@@ -71,6 +72,7 @@ function App() {
                                     />
                                 </Routes>
                             </main>
+                            <Footer />
                         </BrowserRouter>
                     </TimeDonationProvider>
                 </FinancialDonationProvider>
