@@ -15,6 +15,8 @@ import CampaignPage from "./pages/campaign/CampaignPage";
 import CampaignFormPage from "./pages/campaign/CampaignFormPage";
 import FinancialDonationSuccess from "./pages/financialDonation/FinancialDonationSuccess";
 import FinancialDonationCancel from "./pages/financialDonation/FinancialDonationCancel";
+import PrivacyPolicyPage from "./pages/legal/PrivacyPolicyPage";
+import TermsOfUsePage from "./pages/legal/TermsOfUsePage";
 import Footer from "./components/Footer";
 
 function App() {
@@ -65,6 +67,14 @@ function App() {
                                     <Route
                                         path="/financial-donation/cancel"
                                         element={<FinancialDonationCancel />}
+                                    />
+                                    <Route
+                                        path="/privacy-policy"
+                                        element={<PrivacyPolicyPage />}
+                                    />
+                                    <Route
+                                        path="/terms-of-use"
+                                        element={<TermsOfUsePage />}
                                     />
                                     <Route
                                         path="*"

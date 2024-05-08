@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 
@@ -11,18 +12,31 @@ function Footer() {
                     </a>
                 </div>
                 <div>
-                    <a>
-                        Política de privacidad <FontAwesomeIcon icon={faLink} />
-                    </a>
+                    <Link
+                        to="/privacy-policy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                    >
+                        Política de Privacidad <FontAwesomeIcon icon={faLink} />
+                    </Link>
                 </div>
                 <div>
-                    <a>
-                        Términos de uso <FontAwesomeIcon icon={faLink} />
-                    </a>
+                    <Link
+                        to="/terms-of-use"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                    >
+                        Términos de Uso <FontAwesomeIcon icon={faLink} />
+                    </Link>
                 </div>
+
                 <p className="mt-4 lg:mt-0">
                     Contacta con nosotros a través de{" "}
-                    <span className="font-bold">impulsatech@gmail.com </span>
+                    <span className="font-bold">
+                        impulsatech.info@gmail.com
+                    </span>
                 </p>
             </div>
             <div className="mt-8">&copy; 2024 ImpulsaTech</div>

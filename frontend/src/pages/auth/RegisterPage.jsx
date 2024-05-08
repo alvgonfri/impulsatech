@@ -160,6 +160,29 @@ function RegisterPage() {
                         placeholder="Biografía"
                         className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                     />
+
+                    <p className="text-teal-600 text-sm mb-4">
+                        Al registrarte, aceptas nuestra{" "}
+                        <Link
+                            to="/privacy-policy"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sky-500"
+                        >
+                            Política de Privacidad
+                        </Link>{" "}
+                        y nuestros{" "}
+                        <Link
+                            to="/terms-of-use"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sky-500"
+                        >
+                            Términos de Uso
+                        </Link>
+                        .
+                    </p>
+
                     <div className="flex justify-center mb-4">
                         <button
                             type="submit"
