@@ -1,4 +1,5 @@
 import fs from "fs-extra";
+import bcrypt from "bcryptjs";
 import Campaign from "../models/campaign.model.js";
 import User from "../models/user.model.js";
 import Organization from "../models/organization.model.js";
@@ -154,6 +155,8 @@ export const createCampaign = async (req, res) => {
         } = req.body;
         let image;
 
+        const ibanHash = await bcrypt.hash(iban, 10);
+
         if (!timeGoal && !financialGoal) {
             return res
                 .status(400)
@@ -212,7 +215,7 @@ export const createCampaign = async (req, res) => {
             timeGoal,
             timeGoalPeriod,
             financialGoal,
-            iban,
+            iban: ibanHash,
             image,
             deadline,
             tags,
