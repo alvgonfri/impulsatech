@@ -96,12 +96,12 @@ export const processPayment = async (req, res) => {
         const customer = await stripe.customers.create({
             metadata: {
                 anonymous,
-                collaboratorType: anonymous
+                collaboratorType: !req.subject
                     ? null
                     : (await isOrganization(req.subject.id))
                     ? "Organization"
                     : "User",
-                collaboratorId: anonymous ? null : req.subject.id,
+                collaboratorId: !req.subject ? null : req.subject.id,
                 campaignId,
             },
         });

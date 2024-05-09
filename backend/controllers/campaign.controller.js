@@ -45,10 +45,11 @@ export const getCampaignsByStatus = (status) => async (req, res) => {
         const pageSize = 12;
         const startIndex = (page - 1) * pageSize;
         const totalPages = Math.ceil(
-            (await Campaign.countDocuments({ status })) / pageSize
+            (await Campaign.countDocuments({ status, eliminated: false })) /
+                pageSize
         );
 
-        const campaigns = await Campaign.find({ status })
+        const campaigns = await Campaign.find({ status, eliminated: false })
             .skip(startIndex)
             .limit(pageSize)
             .sort({ createdAt: -1 });
