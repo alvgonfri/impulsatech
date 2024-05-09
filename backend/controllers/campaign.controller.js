@@ -41,7 +41,17 @@ export const getCampaigns = async (req, res) => {
 
 export const getCampaignsByStatus = (status) => async (req, res) => {
     try {
-        const campaigns = await Campaign.find({ status });
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 12;
+        const startIndex = (page - 1) * pageSize;
+        const totalPages = Math.ceil(
+            (await Campaign.countDocuments({ status })) / pageSize
+        );
+
+        const campaigns = await Campaign.find({ status })
+            .skip(startIndex)
+            .limit(pageSize)
+            .sort({ createdAt: -1 });
         const campaignsWithDonationsInfo = await Promise.all(
             campaigns.map(async (campaign) => {
                 const moneyDonated = await getMoneyDonated(campaign._id);
@@ -60,7 +70,10 @@ export const getCampaignsByStatus = (status) => async (req, res) => {
                 });
             })
         );
-        res.status(200).json(campaignsWithDonationsInfo);
+        res.status(200).json({
+            campaigns: campaignsWithDonationsInfo,
+            totalPages,
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

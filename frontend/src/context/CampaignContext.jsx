@@ -22,6 +22,7 @@ export const useCampaign = () => {
 
 export const CampaignProvider = ({ children }) => {
     const [campaigns, setCampaigns] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
     const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
     const [errors, setErrors] = useState([]);
 
@@ -34,10 +35,11 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
-    const getCampaignsByStatus = async (status) => {
+    const getCampaignsByStatus = async (status, page) => {
         try {
-            const res = await getCampaignsByStatusRequest(status);
-            setCampaigns(res.data);
+            const res = await getCampaignsByStatusRequest(status, page);
+            setCampaigns(res.data.campaigns);
+            setTotalPages(res.data.totalPages);
         } catch (error) {
             console.error(error);
         }
@@ -133,6 +135,7 @@ export const CampaignProvider = ({ children }) => {
                 campaigns,
                 getCampaigns,
                 getCampaignsByStatus,
+                totalPages,
                 featuredCampaigns,
                 getFeaturedCampaigns,
                 getCampaign,

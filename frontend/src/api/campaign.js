@@ -3,8 +3,8 @@ import Cookies from "js-cookie";
 
 export const getCampaignsRequest = async () => axios.get(`/campaigns`);
 
-export const getCampaignsByStatusRequest = async (status) =>
-    axios.get(`/campaigns/${status}`);
+export const getCampaignsByStatusRequest = async (status, page) =>
+    axios.get(`/campaigns/${status}?page=${page}`);
 
 export const getFeaturedCampaignsRequest = async () =>
     axios.get(`/campaigns/featured`);

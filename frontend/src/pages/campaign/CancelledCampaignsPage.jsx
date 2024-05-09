@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
@@ -6,13 +6,14 @@ import { useCampaign } from "../../context/CampaignContext";
 import CampaignCard from "../../components/CampaignCard";
 
 function CancelledCampaignsPage() {
-    const { campaigns, getCampaignsByStatus } = useCampaign();
+    const { campaigns, totalPages, getCampaignsByStatus } = useCampaign();
+    const [page, setPage] = useState(1);
     const navigate = useNavigate();
 
     useEffect(() => {
-        getCampaignsByStatus("cancelled");
+        getCampaignsByStatus("cancelled", page);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [page]);
 
     return (
         <div className="container mx-auto mb-10 px-4 sm:px-10 xl:px-40">
@@ -49,6 +50,37 @@ function CancelledCampaignsPage() {
                     campaign.eliminated ? null : (
                         <CampaignCard key={campaign._id} campaign={campaign} />
                     )
+                )}
+            </div>
+
+            <div className="flex justify-center items-center mt-4">
+                {page > 1 ? (
+                    <button
+                        onClick={() => setPage(page - 1)}
+                        className="bg-teal-700 hover:bg-teal-800 rounded-md text-white font-bold border border-white px-3 py-1 transition duration-500"
+                    >
+                        {"<"}
+                    </button>
+                ) : (
+                    <button className="bg-teal-900 rounded-md text-white font-bold border border-white px-3 py-1 cursor-not-allowed">
+                        {"<"}
+                    </button>
+                )}
+
+                <p className="text-teal-800 mx-4">
+                    Página {page} de {totalPages}
+                </p>
+                {page < totalPages ? (
+                    <button
+                        onClick={() => setPage(page + 1)}
+                        className="bg-teal-700 hover:bg-teal-800 rounded-md text-white font-bold border border-white px-3 py-1 transition duration-500"
+                    >
+                        {">"}
+                    </button>
+                ) : (
+                    <button className="bg-teal-900 rounded-md text-white font-bold border border-white px-3 py-1 cursor-not-allowed">
+                        {">"}
+                    </button>
                 )}
             </div>
         </div>
