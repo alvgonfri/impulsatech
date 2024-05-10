@@ -168,8 +168,11 @@ export const createCampaign = async (req, res) => {
             tags,
         } = req.body;
         let image;
+        let ibanHash;
 
-        const ibanHash = await bcrypt.hash(iban, 10);
+        if (iban) {
+            ibanHash = await bcrypt.hash(iban, 10);
+        }
 
         if (!timeGoal && !financialGoal) {
             return res
