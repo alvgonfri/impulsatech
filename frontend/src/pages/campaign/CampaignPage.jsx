@@ -39,6 +39,9 @@ function CampaignPage() {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const created = searchParams.get("created");
+    const cancelled = searchParams.get("cancelled");
+    const completed = searchParams.get("completed");
+    const timeDonated = searchParams.get("timeDonated");
     const params = useParams();
 
     useEffect(() => {
@@ -132,7 +135,8 @@ function CampaignPage() {
         const status = await createTimeDonation(timeDonation);
 
         if (status === 201) {
-            window.location.reload();
+            window.location.href =
+                "/campaigns/" + campaign._id + "?timeDonated=true";
         }
     });
 
@@ -140,7 +144,7 @@ function CampaignPage() {
         const status = await eliminateCampaign(campaign._id);
 
         if (status === 200) {
-            navigate("/campaigns");
+            navigate("/campaigns?eliminated=true");
         }
     };
 
@@ -148,7 +152,8 @@ function CampaignPage() {
         const status = await cancelCampaign(campaign._id);
 
         if (status === 200) {
-            navigate("/campaigns");
+            window.location.href =
+                "/campaigns/" + campaign._id + "?cancelled=true";
         }
     };
 
@@ -177,13 +182,25 @@ function CampaignPage() {
         const status = await completeCampaign(campaign._id);
 
         if (status === 200) {
-            navigate("/campaigns");
+            window.location.href =
+                "/campaigns/" + campaign._id + "?completed=true";
         }
     };
 
     return (
         <div className="container mx-auto mb-10 px-10 xl:px-40">
-            {created && <Alert text="¡Campaña creada e iniciada con éxito!" />}
+            {created === "true" && (
+                <Alert text="¡Campaña creada e iniciada con éxito!" />
+            )}
+            {cancelled === "true" && (
+                <Alert text="¡Campaña cancelada con éxito!" />
+            )}
+            {completed === "true" && (
+                <Alert text="¡Campaña completada con éxito!" />
+            )}
+            {timeDonated === "true" && (
+                <Alert text="¡Donación de tiempo realizada con éxito!" />
+            )}
 
             <h1 className="text-3xl font-bold text-teal-800 mb-4">
                 {campaign.title}

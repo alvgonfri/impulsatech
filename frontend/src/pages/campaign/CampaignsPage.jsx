@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import { useCampaign } from "../../context/CampaignContext";
 import CampaignCard from "../../components/CampaignCard";
+import Alert from "../../components/Alert";
 
 function CampaignsPage() {
     const { campaigns, totalPages, getCampaignsByStatus } = useCampaign();
     const [page, setPage] = useState(1);
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const eliminated = searchParams.get("eliminated");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,6 +21,10 @@ function CampaignsPage() {
 
     return (
         <div className="container mx-auto mb-10 px-4 sm:px-10 xl:px-40">
+            {eliminated === "true" && (
+                <Alert text="¡Campaña eliminada con éxito!" />
+            )}
+
             <div className="flex justify-between items-center mb-2">
                 <h1 className="text-3xl font-bold text-teal-800">
                     Campañas en curso
