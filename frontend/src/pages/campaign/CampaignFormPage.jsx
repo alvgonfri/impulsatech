@@ -76,12 +76,12 @@ function CampaignFormPage() {
             formData.append("image", image);
         }
 
-        const status = await createCampaign(formData);
+        const res = await createCampaign(formData);
 
         setIsSubmitting(false);
 
-        if (status === 201) {
-            navigate("/campaigns");
+        if (res.status === 201) {
+            navigate("/campaigns/" + res.data._id + "?created=true");
         }
     });
 

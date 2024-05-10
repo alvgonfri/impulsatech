@@ -3,7 +3,7 @@ import { useCampaign } from "../../context/CampaignContext";
 import { useFinancialDonation } from "../../context/FinancialDonationContext";
 import { useTimeDonation } from "../../context/TimeDonationContext";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { loadStripe } from "@stripe/stripe-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,6 +12,7 @@ import { faClock } from "@fortawesome/free-solid-svg-icons";
 import Tooltip from "../../components/Tooltip";
 import Tag from "../../components/Tag";
 import Modal from "../../components/Modal";
+import Alert from "../../components/Alert";
 
 function CampaignPage() {
     const [campaign, setCampaign] = useState({});
@@ -35,6 +36,9 @@ function CampaignPage() {
         formState: { errors },
     } = useForm();
     const navigate = useNavigate();
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const created = searchParams.get("created");
     const params = useParams();
 
     useEffect(() => {
@@ -179,9 +183,12 @@ function CampaignPage() {
 
     return (
         <div className="container mx-auto mb-10 px-10 xl:px-40">
+            {created && <Alert text="¡Campaña creada e iniciada con éxito!" />}
+
             <h1 className="text-3xl font-bold text-teal-800 mb-4">
                 {campaign.title}
             </h1>
+
             <div className="flex flex-col gap-8 lg:flex-row">
                 <div className="w-full lg:w-3/5 mb-4 md:mb-0">
                     {campaign.image ? (
