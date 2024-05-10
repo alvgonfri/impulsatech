@@ -10,7 +10,7 @@ import {
     getTimeDonated,
     getTimeDonatedPercentage,
 } from "../libs/getAmountDonated.js";
-import { uploadCampaignImage } from "../libs/cloudinary.js";
+import { uploadImage } from "../libs/cloudinary.js";
 
 export const getCampaigns = async (req, res) => {
     try {
@@ -217,8 +217,9 @@ export const createCampaign = async (req, res) => {
             : "User";
 
         if (req.files && req.files.image) {
-            const { public_id, secure_url } = await uploadCampaignImage(
-                req.files.image.tempFilePath
+            const { public_id, secure_url } = await uploadImage(
+                req.files.image.tempFilePath,
+                "campaigns"
             );
 
             await fs.remove(req.files.image.tempFilePath);

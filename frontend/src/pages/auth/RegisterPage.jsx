@@ -5,6 +5,9 @@ import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 
 function RegisterPage() {
+    const [picture, setPicture] = useState(null);
+    const [isOrganization, setIsOrganization] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         register,
         handleSubmit,
@@ -16,7 +19,6 @@ function RegisterPage() {
         isAuthenticated,
         errors: registerErrors,
     } = useAuth();
-    const [isOrganization, setIsOrganization] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,6 +27,9 @@ function RegisterPage() {
     }, [isAuthenticated]);
 
     const onSubmit = handleSubmit(async (data) => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
         const trimmedData = {};
         Object.keys(data).forEach((key) => {
             if (typeof data[key] === "string") {
@@ -43,11 +48,23 @@ function RegisterPage() {
             delete trimmedData.bio;
         }
 
-        if (isOrganization) {
-            await signUpOrganization(trimmedData);
-        } else {
-            await signUp(trimmedData);
+        const formData = new FormData();
+
+        Object.keys(trimmedData).forEach((key) => {
+            formData.append(key, trimmedData[key]);
+        });
+
+        if (picture) {
+            formData.append("picture", picture);
         }
+
+        if (isOrganization) {
+            await signUpOrganization(formData);
+        } else {
+            await signUp(formData);
+        }
+
+        setIsSubmitting(false);
     });
 
     return (
@@ -93,72 +110,87 @@ function RegisterPage() {
                     </div>
 
                     {errors.name && (
-                        <p className="text-red-500 text-sm mb-1">
+                        <p className="text-red-500 text-sm">
                             Por favor, ingresa un nombre
                         </p>
                     )}
+                    <label className="text-sm text-slate-500">
+                        {isOrganization
+                            ? "Nombre de la organización"
+                            : "Nombre"}
+                    </label>
                     <input
                         type="text"
                         {...register("name", { required: true })}
-                        placeholder={
-                            isOrganization
-                                ? "Nombre de la organización"
-                                : "Nombre"
-                        }
-                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                        className="w-full px-4 py-2 mb-2 rounded-md border border-teal-600"
                     />
 
                     {!isOrganization && (
                         <>
                             {errors.surname && (
-                                <p className="text-red-500 text-sm mb-1">
+                                <p className="text-red-500 text-sm">
                                     Por favor, ingresa un apellido
                                 </p>
                             )}
+                            <label className="text-sm text-slate-500">
+                                Apellido
+                            </label>
                             <input
                                 type="text"
                                 {...register("surname", { required: true })}
-                                placeholder="Apellido"
-                                className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                                className="w-full px-4 py-2 mb-2 rounded-md border border-teal-600"
                             />
                         </>
                     )}
 
                     {errors.email && (
-                        <p className="text-red-500 text-sm mb-1">
+                        <p className="text-red-500 text-sm">
                             Por favor, ingresa un correo electrónico
                         </p>
                     )}
+                    <label className="text-sm text-slate-500">
+                        Correo electrónico
+                    </label>
                     <input
                         type="email"
                         {...register("email", { required: true })}
-                        placeholder="Correo electrónico"
-                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                        className="w-full px-4 py-2 mb-2 rounded-md border border-teal-600"
                     />
 
                     {errors.password && (
-                        <p className="text-red-500 text-sm mb-1">
+                        <p className="text-red-500 text-sm">
                             Por favor, ingresa una contraseña
                         </p>
                     )}
+                    <label className="text-sm text-slate-500">Contraseña</label>
                     <input
                         type="password"
                         {...register("password", { required: true })}
-                        placeholder="Contraseña"
-                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                        className="w-full px-4 py-2 mb-2 rounded-md border border-teal-600"
                     />
 
+                    <label className="text-sm text-slate-500">Teléfono</label>
                     <input
                         type="tel"
                         {...register("phone")}
-                        placeholder="Teléfono"
-                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                        className="w-full px-4 py-2 mb-2 rounded-md border border-teal-600"
                     />
 
+                    <label className="text-sm text-slate-500">Biografía</label>
                     <textarea
                         {...register("bio")}
-                        placeholder="Biografía"
+                        className="w-full px-4 py-2 mb-2 rounded-md border border-teal-600"
+                    />
+
+                    <label className="text-sm text-slate-500">
+                        Foto de perfil
+                    </label>
+                    <input
+                        type="file"
+                        {...register("picture")}
                         className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                        accept="image/*"
+                        onChange={(e) => setPicture(e.target.files[0])}
                     />
 
                     <p className="text-teal-600 text-sm mb-4">
@@ -187,8 +219,9 @@ function RegisterPage() {
                         <button
                             type="submit"
                             className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
+                            disabled={isSubmitting}
                         >
-                            Registrarse
+                            {isSubmitting ? "Registrando..." : "Registrarse"}
                         </button>
                     </div>
                 </form>

@@ -1,15 +1,29 @@
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import fs from "fs-extra";
 import User from "../models/user.model.js";
 import Organization from "../models/organization.model.js";
-import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt.js";
-import jwt, { decode } from "jsonwebtoken";
 import { TOKEN_SECRET } from "../config.js";
+import { uploadImage } from "../libs/cloudinary.js";
 
 export const register = async (req, res) => {
-    const { name, surname, email, password, phone, picture, bio } = req.body;
+    const { name, surname, email, password, phone, bio } = req.body;
+    let picture;
 
     try {
         const passwordHash = await bcrypt.hash(password, 10);
+
+        if (req.files && req.files.picture) {
+            const { public_id, secure_url } = await uploadImage(
+                req.files.picture.tempFilePath,
+                "users"
+            );
+
+            await fs.remove(req.files.picture.tempFilePath);
+
+            picture = { public_id, secure_url };
+        }
 
         const newUser = await User.create({
             name,
@@ -45,10 +59,22 @@ export const register = async (req, res) => {
 };
 
 export const registerOrganization = async (req, res) => {
-    const { name, email, password, phone, picture, bio } = req.body;
+    const { name, email, password, phone, bio } = req.body;
+    let picture;
 
     try {
         const passwordHash = await bcrypt.hash(password, 10);
+
+        if (req.files && req.files.picture) {
+            const { public_id, secure_url } = await uploadImage(
+                req.files.picture.tempFilePath,
+                "organizations"
+            );
+
+            await fs.remove(req.files.picture.tempFilePath);
+
+            picture = { public_id, secure_url };
+        }
 
         const newOrganization = await Organization.create({
             name,

@@ -3,11 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faBars,
-    faRightFromBracket,
-    faUser,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBars, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -71,9 +67,21 @@ function Navbar() {
                     <div className="flex gap-x-5 items-start lg:items-stretch flex-col lg:flex-row gap-y-2 lg:gap-y-0">
                         <button
                             onClick={toggleDropdown}
-                            className="bg-teal-700 hover:bg-teal-800 rounded-md border border-white px-3 py-1 transition duration-500"
+                            className="bg-teal-700 hover:bg-teal-800 flex items-center rounded-md border border-white px-3 py-1 transition duration-500"
                         >
-                            <FontAwesomeIcon icon={faUser} /> &nbsp;{" "}
+                            {subject.picture.secure_url ? (
+                                <img
+                                    className="size-8 mr-2 rounded-full object-cover border border-white"
+                                    src={subject.picture.secure_url}
+                                    alt="picture"
+                                />
+                            ) : (
+                                <img
+                                    className="size-8 mr-2 rounded-full object-cover border border-white"
+                                    src="/assets/user/avatar.jpg"
+                                    alt="picture"
+                                />
+                            )}
                             {subject.name}
                         </button>
                         <div
