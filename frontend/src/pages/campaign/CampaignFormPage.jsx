@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { useCampaign } from "../../context/CampaignContext";
 
 function CampaignFormPage() {
@@ -26,7 +25,6 @@ function CampaignFormPage() {
         formState: { errors },
     } = useForm();
     const { createCampaign, errors: formErrors } = useCampaign();
-    const navigate = useNavigate();
 
     const onSubmit = handleSubmit(async (data) => {
         if (isSubmitting) return;
@@ -81,7 +79,8 @@ function CampaignFormPage() {
         setIsSubmitting(false);
 
         if (res.status === 201) {
-            navigate("/campaigns/" + res.data._id + "?created=true");
+            window.location.href =
+                "/campaigns/" + res.data._id + "?created=true";
         }
     });
 
