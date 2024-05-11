@@ -3,6 +3,7 @@ import {
     getCampaignsRequest,
     getCampaignsByStatusRequest,
     getFeaturedCampaignsRequest,
+    getCampaignsByPromoterRequest,
     getCampaignRequest,
     createCampaignRequest,
     updateCampaignRequest,
@@ -24,6 +25,7 @@ export const CampaignProvider = ({ children }) => {
     const [campaigns, setCampaigns] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
+    const [promoterCampaigns, setPromoterCampaigns] = useState([]);
     const [errors, setErrors] = useState([]);
 
     const getCampaigns = async () => {
@@ -49,6 +51,15 @@ export const CampaignProvider = ({ children }) => {
         try {
             const res = await getFeaturedCampaignsRequest();
             setFeaturedCampaigns(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getCampaignsByPromoter = async (id) => {
+        try {
+            const res = await getCampaignsByPromoterRequest(id);
+            setPromoterCampaigns(res.data);
         } catch (error) {
             console.error(error);
         }
@@ -138,6 +149,8 @@ export const CampaignProvider = ({ children }) => {
                 totalPages,
                 featuredCampaigns,
                 getFeaturedCampaigns,
+                promoterCampaigns,
+                getCampaignsByPromoter,
                 getCampaign,
                 createCampaign,
                 eliminateCampaign,

@@ -54,11 +54,9 @@ function CampaignsPage() {
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {campaigns.map((campaign) =>
-                    campaign.eliminated ? null : (
-                        <CampaignCard key={campaign._id} campaign={campaign} />
-                    )
-                )}
+                {campaigns.map((campaign) => (
+                    <CampaignCard key={campaign._id} campaign={campaign} />
+                ))}
             </div>
 
             <div className="flex justify-center items-center mt-4">

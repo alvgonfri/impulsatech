@@ -8,9 +8,10 @@ import {
 } from "../schemas/campaign.schema.js";
 import {
     getCampaigns,
-    getCampaign,
     getCampaignsByStatus,
     getFeaturedCampaigns,
+    getCampaignsByPromoter,
+    getCampaign,
     createCampaign,
     updateCampaign,
     deleteCampaign,
@@ -27,6 +28,8 @@ router.get("/completed", getCampaignsByStatus("completed"));
 router.get("/cancelled", getCampaignsByStatus("cancelled"));
 
 router.get("/featured", getFeaturedCampaigns);
+
+router.get("/promoter/:id", getCampaignsByPromoter);
 
 router.get("/:id", getCampaign);
 

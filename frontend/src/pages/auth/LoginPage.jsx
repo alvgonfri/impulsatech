@@ -43,10 +43,12 @@ function LoginPage() {
                             Por favor, ingresa un correo electrónico
                         </p>
                     )}
+                    <label className="text-sm text-slate-500">
+                        Correo electrónico
+                    </label>
                     <input
                         type="email"
                         {...register("email", { required: true })}
-                        placeholder="Correo electrónico"
                         className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                     />
 
@@ -55,12 +57,13 @@ function LoginPage() {
                             Por favor, ingresa una contraseña
                         </p>
                     )}
+                    <label className="text-sm text-slate-500">Contraseña</label>
                     <input
                         type="password"
                         {...register("password", { required: true })}
-                        placeholder="Contraseña"
                         className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                     />
+
                     <div className="flex justify-center mb-4">
                         <button
                             type="submit"

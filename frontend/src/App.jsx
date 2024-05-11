@@ -8,6 +8,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import LoginPage from "./pages/auth/LoginPage";
+import ProfilePage from "./pages/auth/ProfilePage";
 import CampaignsPage from "./pages/campaign/CampaignsPage";
 import CancelledCampaignsPage from "./pages/campaign/CancelledCampaignsPage";
 import CompletedCampaignsPage from "./pages/campaign/CompletedCampaignsPage";
@@ -54,12 +55,6 @@ function App() {
                                         path="/campaigns/:id"
                                         element={<CampaignPage />}
                                     />
-                                    <Route element={<ProtectedRoute />}>
-                                        <Route
-                                            path="/campaigns/create"
-                                            element={<CampaignFormPage />}
-                                        />
-                                    </Route>
                                     <Route
                                         path="/financial-donation/success"
                                         element={<FinancialDonationSuccess />}
@@ -76,6 +71,16 @@ function App() {
                                         path="/terms-of-use"
                                         element={<TermsOfUsePage />}
                                     />
+                                    <Route element={<ProtectedRoute />}>
+                                        <Route
+                                            path="/campaigns/create"
+                                            element={<CampaignFormPage />}
+                                        />
+                                        <Route
+                                            path="/profile"
+                                            element={<ProfilePage />}
+                                        />
+                                    </Route>
                                     <Route
                                         path="*"
                                         element={<h1>Not Found</h1>}
