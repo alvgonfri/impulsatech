@@ -1,17 +1,21 @@
 import { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faPhone } from "@fortawesome/free-solid-svg-icons";
-import { useCampaign } from "../../context/CampaignContext";
-import CampaignStateCard from "../../components/CampaignStateCard";
-
 import { useAuth } from "../../context/AuthContext";
+import { useCampaign } from "../../context/CampaignContext";
+import { useSubject } from "../../context/SubjectContext";
+import CampaignStateCard from "../../components/CampaignStateCard";
+import DonationCard from "../../components/DonationCard";
+import Tooltip from "../../components/Tooltip";
 
 function ProfilePage() {
     const { subject } = useAuth();
     const { promoterCampaigns, getCampaignsByPromoter } = useCampaign();
+    const { subjectDonations, getDonationsBySubject } = useSubject();
 
     useEffect(() => {
         getCampaignsByPromoter(subject?._id);
+        getDonationsBySubject(subject?._id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -94,11 +98,26 @@ function ProfilePage() {
                     <h4 className="text-teal-800 text-2xl font-semibold">
                         Mis donaciones
                     </h4>
+                    <div>
+                        {subjectDonations.length === 0 ? (
+                            <p className="text-gray-500 italic">
+                                No hay donaciones
+                            </p>
+                        ) : (
+                            subjectDonations.map((donation) => (
+                                <DonationCard
+                                    key={donation._id}
+                                    donation={donation}
+                                />
+                            ))
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex flex-col space-y-4 md:w-1/3">
                     <h4 className="text-teal-800 text-2xl font-semibold">
-                        Mis reinversiones
+                        Mis reinversiones{" "}
+                        <Tooltip text="Si una campaña en curso a la que has donado dinero es cancelada o eliminada, podrás reinvertir el dinero donado en otra campaña." />
                     </h4>
                 </div>
             </div>

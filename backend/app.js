@@ -5,6 +5,7 @@ import cors from "cors";
 import fileUpload from "express-fileupload";
 
 import authRoutes from "./routes/auth.routes.js";
+import subjectRoutes from "./routes/subject.routes.js";
 import campaignRoutes from "./routes/campaign.routes.js";
 import financialDonationRoutes from "./routes/financialDonation.routes.js";
 import timeDonationRoutes from "./routes/timeDonation.routes.js";
@@ -35,6 +36,7 @@ app.use(
 );
 
 app.use("/api/v1", authRoutes);
+app.use("/api/v1/subjects", subjectRoutes);
 app.use("/api/v1/campaigns", campaignRoutes);
 app.use("/api/v1/financial-donations", financialDonationRoutes);
 app.use("/api/v1/time-donations", timeDonationRoutes);

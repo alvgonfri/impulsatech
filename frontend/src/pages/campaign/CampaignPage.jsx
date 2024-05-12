@@ -51,8 +51,6 @@ function CampaignPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [campaign]);
 
-    console.log(campaign);
-
     useEffect(() => {
         async function loadCampaign() {
             if (params.id) {
