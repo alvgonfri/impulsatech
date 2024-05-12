@@ -246,9 +246,12 @@ function CampaignPage() {
                 <div className="w-full h-fit lg:w-2/5 rounded-md border-2 border-teal-600">
                     <div className="flex bg-teal-600 text-white px-4 py-2">
                         <p className="font-bold">Promotor:</p>
-                        <span className="ml-2">
+                        <a
+                            href={`/profile/${promoter._id}`}
+                            className="ml-2 hover:underline"
+                        >
                             {promoter.name} {promoter.surname}
-                        </span>
+                        </a>
                     </div>
 
                     {campaign.financialGoal && (

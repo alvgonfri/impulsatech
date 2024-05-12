@@ -1,6 +1,9 @@
 import { createContext, useContext, useState } from "react";
 import PropTypes from "prop-types";
-import { getDonationsBySubjectRequest } from "../api/subject.js";
+import {
+    getSubjectRequest,
+    getDonationsBySubjectRequest,
+} from "../api/subject.js";
 
 const SubjectContext = createContext();
 
@@ -14,7 +17,17 @@ export const useSubject = () => {
 };
 
 export const SubjectProvider = ({ children }) => {
+    const [subject, setSubject] = useState({});
     const [subjectDonations, setSubjectDonations] = useState([]);
+
+    const getSubject = async (id) => {
+        try {
+            const res = await getSubjectRequest(id);
+            setSubject(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const getDonationsBySubject = async (id) => {
         try {
@@ -28,6 +41,8 @@ export const SubjectProvider = ({ children }) => {
     return (
         <SubjectContext.Provider
             value={{
+                subject,
+                getSubject,
                 subjectDonations,
                 getDonationsBySubject,
             }}

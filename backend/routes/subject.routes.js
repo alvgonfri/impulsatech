@@ -1,7 +1,12 @@
 import { Router } from "express";
-import { getDonationsBySubject } from "../controllers/subject.controller.js";
+import {
+    getSubject,
+    getDonationsBySubject,
+} from "../controllers/subject.controller.js";
 
 const router = Router();
+
+router.get("/:id", getSubject);
 
 router.get("/:id/donations", getDonationsBySubject);
 

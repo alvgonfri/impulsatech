@@ -10,6 +10,7 @@ import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import LoginPage from "./pages/auth/LoginPage";
 import ProfilePage from "./pages/auth/ProfilePage";
+import OtherProfilePage from "./pages/auth/OtherProfilePage";
 import CampaignsPage from "./pages/campaign/CampaignsPage";
 import CancelledCampaignsPage from "./pages/campaign/CancelledCampaignsPage";
 import CompletedCampaignsPage from "./pages/campaign/CompletedCampaignsPage";
@@ -43,6 +44,10 @@ function App() {
                                         <Route
                                             path="/login"
                                             element={<LoginPage />}
+                                        />
+                                        <Route
+                                            path="/profile/:id"
+                                            element={<OtherProfilePage />}
                                         />
                                         <Route
                                             path="/campaigns"
