@@ -3,6 +3,7 @@ import { validateSchema } from "../middlewares/validator.js";
 import { createFinancialDonationSchema } from "../schemas/financialDonation.schema.js";
 import {
     getFinancialDonationsByCampaign,
+    getReinvestmentsByCollaborator,
     createFinancialDonation,
     processPayment,
 } from "../controllers/financialDonation.controller.js";
@@ -12,6 +13,8 @@ import { parseFinancialDonation } from "../middlewares/parse.js";
 const router = Router();
 
 router.get("/:campaignId", getFinancialDonationsByCampaign);
+
+router.get("/reinvestments/:collaboratorId", getReinvestmentsByCollaborator);
 
 router.post(
     "",

@@ -4,6 +4,9 @@ import Cookies from "js-cookie";
 export const getFinancialDonationsByCampaignRequest = async (campaignId) =>
     axios.get(`/financial-donations/${campaignId}`);
 
+export const getReinvestmentsByCollaboratorRequest = async (collaboratorId) =>
+    axios.get(`/financial-donations/reinvestments/${collaboratorId}`);
+
 export const createFinancialDonationRequest = async (financialDonation) =>
     axios.post(`/financial-donations`, financialDonation, {
         headers: {

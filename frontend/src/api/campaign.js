@@ -9,6 +9,9 @@ export const getCampaignsByStatusRequest = async (status, page) =>
 export const getFeaturedCampaignsRequest = async () =>
     axios.get(`/campaigns/featured`);
 
+export const getInterestingCampaignsRequest = async () =>
+    axios.get(`/campaigns/interesting`);
+
 export const getCampaignsByPromoterRequest = async (id) =>
     axios.get(`/campaigns/promoter/${id}`);
 

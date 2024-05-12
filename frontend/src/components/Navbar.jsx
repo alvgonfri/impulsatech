@@ -1,14 +1,21 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useFinancialDonation } from "../context/FinancialDonationContext";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBars,
+    faRightFromBracket,
+    faBell,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { subject, isAuthenticated, logOut } = useAuth();
+    const { collaboratorReinvestments, getReinvestmentsByCollaborator } =
+        useFinancialDonation();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -24,6 +31,13 @@ function Navbar() {
         setIsMenuOpen(false);
         setIsDropdownOpen(false);
     }, [location]);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            getReinvestmentsByCollaborator(subject?._id);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated]);
 
     return (
         <nav className="bg-teal-600 text-white flex gap-x-5 px-10 py-3 mb-2 fixed top-0 left-0 right-0">
@@ -83,6 +97,12 @@ function Navbar() {
                                 />
                             )}
                             {subject.name}
+                            {collaboratorReinvestments.length > 0 && (
+                                <div className="bg-red-500 border text-white font-normal px-2 rounded-md ml-2">
+                                    {collaboratorReinvestments.length}{" "}
+                                    <FontAwesomeIcon icon={faBell} />
+                                </div>
+                            )}
                         </button>
                         <div
                             className={`${

@@ -10,6 +10,7 @@ import {
     getCampaigns,
     getCampaignsByStatus,
     getFeaturedCampaigns,
+    getInterestingCampaigns,
     getCampaignsByPromoter,
     getCampaign,
     createCampaign,
@@ -28,6 +29,8 @@ router.get("/completed", getCampaignsByStatus("completed"));
 router.get("/cancelled", getCampaignsByStatus("cancelled"));
 
 router.get("/featured", getFeaturedCampaigns);
+
+router.get("/interesting", getInterestingCampaigns);
 
 router.get("/promoter/:id", getCampaignsByPromoter);
 

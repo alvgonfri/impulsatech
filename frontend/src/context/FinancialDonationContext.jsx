@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import {
     getFinancialDonationsByCampaignRequest,
+    getReinvestmentsByCollaboratorRequest,
     createFinancialDonationRequest,
     processPaymentRequest,
 } from "../api/financialDonation.js";
@@ -21,6 +22,9 @@ export const useFinancialDonation = () => {
 
 export const FinancialDonationProvider = ({ children }) => {
     const [financialDonations, setFinancialDonations] = useState([]);
+    const [collaboratorReinvestments, setCollaboratorReinvestments] = useState(
+        []
+    );
     const [errors, setErrors] = useState([]);
 
     const getFinancialDonationsByCampaign = async (campaignId) => {
@@ -29,6 +33,17 @@ export const FinancialDonationProvider = ({ children }) => {
                 campaignId
             );
             setFinancialDonations(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getReinvestmentsByCollaborator = async (collaboratorId) => {
+        try {
+            const res = await getReinvestmentsByCollaboratorRequest(
+                collaboratorId
+            );
+            setCollaboratorReinvestments(res.data);
         } catch (error) {
             console.error(error);
         }
@@ -60,6 +75,8 @@ export const FinancialDonationProvider = ({ children }) => {
             value={{
                 financialDonations,
                 getFinancialDonationsByCampaign,
+                collaboratorReinvestments,
+                getReinvestmentsByCollaborator,
                 createFinancialDonation,
                 processPayment,
                 errors,

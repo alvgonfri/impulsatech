@@ -1,21 +1,32 @@
 import { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faPhone } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faPhone, faBell } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../context/AuthContext";
 import { useCampaign } from "../../context/CampaignContext";
 import { useSubject } from "../../context/SubjectContext";
+import { useFinancialDonation } from "../../context/FinancialDonationContext";
 import CampaignStateCard from "../../components/CampaignStateCard";
 import DonationCard from "../../components/DonationCard";
+import ReinvestmentCard from "../../components/ReinvestmentCard";
 import Tooltip from "../../components/Tooltip";
 
 function ProfilePage() {
     const { subject } = useAuth();
-    const { promoterCampaigns, getCampaignsByPromoter } = useCampaign();
+    const {
+        promoterCampaigns,
+        getCampaignsByPromoter,
+        interestingCampaigns,
+        getInterestingCampaigns,
+    } = useCampaign();
     const { subjectDonations, getDonationsBySubject } = useSubject();
+    const { collaboratorReinvestments, getReinvestmentsByCollaborator } =
+        useFinancialDonation();
 
     useEffect(() => {
         getCampaignsByPromoter(subject?._id);
         getDonationsBySubject(subject?._id);
+        getReinvestmentsByCollaborator(subject?._id);
+        getInterestingCampaigns();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -119,6 +130,40 @@ function ProfilePage() {
                         Mis reinversiones{" "}
                         <Tooltip text="Si una campaña en curso a la que has donado dinero es cancelada o eliminada, podrás reinvertir el dinero donado en otra campaña." />
                     </h4>
+                    <div>
+                        {collaboratorReinvestments.length === 0 ? (
+                            <p className="text-gray-500 italic">
+                                No hay reinversiones
+                            </p>
+                        ) : (
+                            <>
+                                <p className="flex items-center justify-center font-bold mb-2">
+                                    Reinversiones pendientes{" "}
+                                    <div className="bg-red-500 text-white font-normal px-2 rounded-md ml-2">
+                                        {collaboratorReinvestments.length}{" "}
+                                        <FontAwesomeIcon icon={faBell} />
+                                    </div>
+                                </p>
+                                {collaboratorReinvestments.map(
+                                    (reinvestment) => (
+                                        <ReinvestmentCard
+                                            key={reinvestment._id}
+                                            reinvestment={reinvestment}
+                                        />
+                                    )
+                                )}
+                                <p className="text-center font-bold mt-3 mb-2">
+                                    Campañas que podrían interesarte
+                                </p>
+                                {interestingCampaigns.map((campaign) => (
+                                    <CampaignStateCard
+                                        key={campaign._id}
+                                        campaign={campaign}
+                                    />
+                                ))}
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

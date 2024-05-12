@@ -14,6 +14,42 @@ export const getFinancialDonationsByCampaign = async (req, res) => {
     }
 };
 
+export const getReinvestmentsByCollaborator = async (req, res) => {
+    try {
+        const collaboratorFinancialDonations = await FinancialDonation.find({
+            "collaborator.id": req.params.collaboratorId,
+        }).populate("campaign");
+
+        const financialDonationsFromCancelledCampaigns =
+            collaboratorFinancialDonations.filter(
+                (financialDonation) =>
+                    financialDonation.campaign.status === "cancelled"
+            );
+
+        const financialDonationsFromEliminatedCampaigns =
+            collaboratorFinancialDonations.filter(
+                (financialDonation) =>
+                    financialDonation.campaign.eliminated === true &&
+                    financialDonation.campaign.status === "ongoing"
+            );
+
+        const financialDonations =
+            financialDonationsFromCancelledCampaigns.concat(
+                financialDonationsFromEliminatedCampaigns
+            );
+
+        financialDonations.sort((a, b) => {
+            if (a.updatedAt > b.updatedAt) return -1;
+            if (a.updatedAt < b.updatedAt) return 1;
+            return 0;
+        });
+
+        res.status(200).json(financialDonations);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const createFinancialDonation = async (req, res) => {
     try {
         const { amount, anonymous, campaignId } = req.body;
