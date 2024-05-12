@@ -211,3 +211,33 @@ export const webhook = async (req, res) => {
 
     res.status(200).send();
 };
+
+export const updateFinancialDonation = async (req, res) => {
+    try {
+        const financialDonationInDB = await FinancialDonation.findById(
+            req.params.id
+        );
+
+        if (!financialDonationInDB) {
+            return res.status(404).json(["Donación no encontrada"]);
+        }
+
+        if (
+            req.subject.id !== financialDonationInDB.collaborator.id.toString()
+        ) {
+            return res
+                .status(403)
+                .json(["No tienes permiso para modificar esta donación"]);
+        }
+
+        const financialDonation = await FinancialDonation.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+
+        res.status(200).json(financialDonation);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

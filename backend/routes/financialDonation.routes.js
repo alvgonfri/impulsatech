@@ -1,13 +1,17 @@
 import { Router } from "express";
 import { validateSchema } from "../middlewares/validator.js";
-import { createFinancialDonationSchema } from "../schemas/financialDonation.schema.js";
+import {
+    createFinancialDonationSchema,
+    updateFinancialDonationSchema,
+} from "../schemas/financialDonation.schema.js";
 import {
     getFinancialDonationsByCampaign,
     getReinvestmentsByCollaborator,
     createFinancialDonation,
     processPayment,
+    updateFinancialDonation,
 } from "../controllers/financialDonation.controller.js";
-import { validateToken } from "../middlewares/validateToken.js";
+import { authRequired, validateToken } from "../middlewares/validateToken.js";
 import { parseFinancialDonation } from "../middlewares/parse.js";
 
 const router = Router();
@@ -30,6 +34,14 @@ router.post(
     parseFinancialDonation,
     validateSchema(createFinancialDonationSchema),
     processPayment
+);
+
+router.patch(
+    "/:id",
+    authRequired,
+    parseFinancialDonation,
+    validateSchema(updateFinancialDonationSchema),
+    updateFinancialDonation
 );
 
 export default router;

@@ -4,6 +4,7 @@ import {
     getReinvestmentsByCollaboratorRequest,
     createFinancialDonationRequest,
     processPaymentRequest,
+    updateFinancialDonationRequest,
 } from "../api/financialDonation.js";
 import PropTypes from "prop-types";
 
@@ -26,6 +27,7 @@ export const FinancialDonationProvider = ({ children }) => {
         []
     );
     const [errors, setErrors] = useState([]);
+    const [reinvestmentErrors, setReinvestmentErrors] = useState([]);
 
     const getFinancialDonationsByCampaign = async (campaignId) => {
         try {
@@ -70,6 +72,19 @@ export const FinancialDonationProvider = ({ children }) => {
         }
     };
 
+    const reinvestFinancialDonation = async (id, campaignId, anonymous) => {
+        try {
+            const res = await updateFinancialDonationRequest(id, {
+                campaign: campaignId,
+                anonymous,
+            });
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setReinvestmentErrors(error.response.data);
+        }
+    };
+
     return (
         <FinancialDonationContext.Provider
             value={{
@@ -79,7 +94,9 @@ export const FinancialDonationProvider = ({ children }) => {
                 getReinvestmentsByCollaborator,
                 createFinancialDonation,
                 processPayment,
+                reinvestFinancialDonation,
                 errors,
+                reinvestmentErrors,
             }}
         >
             {children}

@@ -24,11 +24,18 @@ function CampaignPage() {
     const [completeError, setCompleteError] = useState(false);
     const { getCampaign, eliminateCampaign, cancelCampaign, completeCampaign } =
         useCampaign();
-    const { processPayment, errors: financialDonationErrors } =
-        useFinancialDonation();
+    const {
+        processPayment,
+        errors: financialDonationErrors,
+        collaboratorReinvestments,
+        getReinvestmentsByCollaborator,
+        reinvestFinancialDonation,
+        reinvestmentErrors,
+    } = useFinancialDonation();
     const { createTimeDonation, errors: timeDonationErrors } =
         useTimeDonation();
     const { subject, isAuthenticated } = useAuth();
+    const reinvestmentRef = useRef();
     const financialDonationRef = useRef();
     const {
         register,
@@ -42,6 +49,7 @@ function CampaignPage() {
     const cancelled = searchParams.get("cancelled");
     const completed = searchParams.get("completed");
     const timeDonated = searchParams.get("timeDonated");
+    const reinvested = searchParams.get("reinvested");
     const params = useParams();
 
     useEffect(() => {
@@ -79,6 +87,37 @@ function CampaignPage() {
         loadCampaign();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            getReinvestmentsByCollaborator(subject?._id);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated]);
+
+    const onReinvestFinancialDonation = async (e) => {
+        e.preventDefault();
+
+        const reinvestment =
+            collaboratorReinvestments[
+                reinvestmentRef.current.reinvestment.value
+            ];
+        const anonymous = isAuthenticated
+            ? reinvestmentRef.current.anonymous.checked
+            : true;
+        const campaignId = campaign._id;
+
+        const status = await reinvestFinancialDonation(
+            reinvestment._id,
+            campaignId,
+            anonymous
+        );
+
+        if (status === 200) {
+            window.location.href =
+                "/campaigns/" + campaign._id + "?reinvested=true";
+        }
+    };
 
     const onSubmitFinancialDonation = async (e) => {
         e.preventDefault();
@@ -200,6 +239,9 @@ function CampaignPage() {
             )}
             {timeDonated === "true" && (
                 <Alert text="¡Donación de tiempo realizada con éxito!" />
+            )}
+            {reinvested === "true" && (
+                <Alert text="¡Donación reinvertida con éxito!" />
             )}
 
             <h1 className="text-3xl font-bold text-teal-800 mb-4">
@@ -383,6 +425,71 @@ function CampaignPage() {
                                     </button>
                                 </div>
                             </>
+                        )}
+
+                    {campaign.financialGoal &&
+                        campaign.status === "ongoing" &&
+                        subject?._id !== promoter._id &&
+                        isAuthenticated &&
+                        collaboratorReinvestments.length > 0 && (
+                            <form
+                                ref={reinvestmentRef}
+                                onSubmit={onReinvestFinancialDonation}
+                                className="border-t-2 border-teal-600 px-4 py-2"
+                            >
+                                <div className="mb-4">
+                                    <p className="block text-gray-700 font-bold mb-1">
+                                        Reinvertir donación económica
+                                    </p>
+
+                                    {reinvestmentErrors.map((error, i) => (
+                                        <div
+                                            className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
+                                            key={i}
+                                        >
+                                            {error}
+                                        </div>
+                                    ))}
+
+                                    <label className="block text-sm text-gray-700">
+                                        Selecciona la donación a reinvertir
+                                    </label>
+
+                                    <select
+                                        name="reinvestment"
+                                        className="w-full px-4 py-2 rounded-md border border-teal-500"
+                                    >
+                                        {collaboratorReinvestments.map(
+                                            (reinvestment, i) => (
+                                                <option key={i} value={i}>
+                                                    {reinvestment.amount} €
+                                                </option>
+                                            )
+                                        )}
+                                    </select>
+
+                                    {isAuthenticated && (
+                                        <div className="mb-4 mt-2">
+                                            <label className="flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    name="anonymous"
+                                                    className="mr-2 leading-tight"
+                                                />
+                                                <span className="text-sm text-gray-700">
+                                                    Donación anónima
+                                                </span>
+                                            </label>
+                                        </div>
+                                    )}
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                >
+                                    Reinvertir donación
+                                </button>
+                            </form>
                         )}
 
                     {campaign.financialGoal &&

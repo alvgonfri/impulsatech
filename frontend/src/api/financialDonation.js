@@ -20,3 +20,10 @@ export const processPaymentRequest = async (financialDonation) =>
             Authorization: `${Cookies.get("token")}`,
         },
     });
+
+export const updateFinancialDonationRequest = async (id, financialDonation) =>
+    axios.patch(`/financial-donations/${id}`, financialDonation, {
+        headers: {
+            Authorization: `${Cookies.get("token")}`,
+        },
+    });
