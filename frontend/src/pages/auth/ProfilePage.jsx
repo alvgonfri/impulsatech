@@ -137,13 +137,13 @@ function ProfilePage() {
                             </p>
                         ) : (
                             <>
-                                <p className="flex items-center justify-center font-bold mb-2">
+                                <div className="flex items-center justify-center font-bold mb-2">
                                     Reinversiones pendientes{" "}
                                     <div className="bg-red-500 text-white font-normal px-2 rounded-md ml-2">
                                         {collaboratorReinvestments.length}{" "}
                                         <FontAwesomeIcon icon={faBell} />
                                     </div>
-                                </p>
+                                </div>
                                 {collaboratorReinvestments.map(
                                     (reinvestment) => (
                                         <ReinvestmentCard

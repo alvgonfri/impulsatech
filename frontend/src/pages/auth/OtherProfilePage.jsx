@@ -1,15 +1,25 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faPhone } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../../context/AuthContext";
 import { useSubject } from "../../context/SubjectContext";
 import { useCampaign } from "../../context/CampaignContext";
 import CampaignStateCard from "../../components/CampaignStateCard";
 
 function OtherProfilePage() {
+    const { subject: authSubject } = useAuth();
     const { subject, getSubject } = useSubject();
     const { promoterCampaigns, getCampaignsByPromoter } = useCampaign();
     const params = useParams();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (authSubject?._id === params.id) {
+            navigate("/profile");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authSubject]);
 
     useEffect(() => {
         getSubject(params.id);
