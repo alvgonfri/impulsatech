@@ -296,32 +296,33 @@ function CampaignPage() {
                         </a>
                     </div>
 
-                    {campaign.financialGoal && (
-                        <>
-                            <div className="text-lg text-teal-500 font-medium px-4 pt-2">
-                                {campaign.moneyDonated} € de&nbsp;
-                                {campaign.financialGoal} €
-                            </div>
-                            <div className="mt-2 flex justify-between items-center gap-2 px-4 pb-2">
-                                <div className="h-5 w-full bg-neutral-200 rounded-full">
-                                    <div
-                                        className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                        style={{
-                                            width: `${campaign.moneyDonatedPercetage}%`,
-                                        }}
-                                    >
-                                        {campaign.moneyDonatedPercetage}%
-                                    </div>
+                    {campaign.financialGoal &&
+                        campaign.status !== "cancelled" && (
+                            <>
+                                <div className="text-lg text-teal-500 font-medium px-4 pt-2">
+                                    {campaign.moneyDonated} € de&nbsp;
+                                    {campaign.financialGoal} €
                                 </div>
-                                <FontAwesomeIcon
-                                    icon={faCoins}
-                                    className="text-teal-500"
-                                />
-                            </div>
-                        </>
-                    )}
+                                <div className="mt-2 flex justify-between items-center gap-2 px-4 pb-2">
+                                    <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                        <div
+                                            className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                            style={{
+                                                width: `${campaign.moneyDonatedPercetage}%`,
+                                            }}
+                                        >
+                                            {campaign.moneyDonatedPercetage}%
+                                        </div>
+                                    </div>
+                                    <FontAwesomeIcon
+                                        icon={faCoins}
+                                        className="text-teal-500"
+                                    />
+                                </div>
+                            </>
+                        )}
 
-                    {campaign.timeGoal && (
+                    {campaign.timeGoal && campaign.status !== "cancelled" && (
                         <>
                             <div className="text-lg text-indigo-500 font-medium px-4 pt-2">
                                 {campaign.timeDonated} h de&nbsp;
@@ -364,7 +365,7 @@ function CampaignPage() {
                         )}
                     </div>
 
-                    {campaign.timeGoal && (
+                    {campaign.timeGoal && campaign.status !== "cancelled" && (
                         <>
                             <div className="px-4 py-2">
                                 <p className="block text-sm text-gray-700">

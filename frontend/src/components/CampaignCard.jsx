@@ -28,80 +28,82 @@ function CampaignCard({ campaign }) {
                     {campaign.title}
                 </div>
 
-                {campaign.financialGoal ? (
-                    <div className="mt-2 flex justify-between items-center gap-2">
-                        <div className="text-lg text-teal-500 font-medium">
-                            {campaign.financialGoal}&nbsp;€
-                        </div>
-                        <div className="h-5 w-full bg-neutral-200 rounded-full">
-                            <div
-                                className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                style={{
-                                    width: `${campaign.moneyDonatedPercetage}%`,
-                                }}
-                            >
-                                {campaign.moneyDonatedPercetage}%
+                {campaign.status !== "cancelled" &&
+                    (campaign.financialGoal ? (
+                        <div className="mt-2 flex justify-between items-center gap-2">
+                            <div className="text-lg text-teal-500 font-medium">
+                                {campaign.financialGoal}&nbsp;€
                             </div>
-                        </div>
-                        <FontAwesomeIcon
-                            icon={faCoins}
-                            className="text-teal-500"
-                        />
-                    </div>
-                ) : (
-                    <div className="mt-2 flex justify-between items-center gap-2">
-                        <div className="h-5 w-full bg-neutral-200 rounded-full">
-                            <div
-                                className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                style={{ width: "100%" }}
-                            >
-                                Sin objetivo económico
+                            <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                <div
+                                    className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                    style={{
+                                        width: `${campaign.moneyDonatedPercetage}%`,
+                                    }}
+                                >
+                                    {campaign.moneyDonatedPercetage}%
+                                </div>
                             </div>
+                            <FontAwesomeIcon
+                                icon={faCoins}
+                                className="text-teal-500"
+                            />
                         </div>
-                        <FontAwesomeIcon
-                            icon={faCoins}
-                            className="text-gray-400"
-                        />
-                    </div>
-                )}
+                    ) : (
+                        <div className="mt-2 flex justify-between items-center gap-2">
+                            <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                <div
+                                    className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                    style={{ width: "100%" }}
+                                >
+                                    Sin objetivo económico
+                                </div>
+                            </div>
+                            <FontAwesomeIcon
+                                icon={faCoins}
+                                className="text-gray-400"
+                            />
+                        </div>
+                    ))}
 
-                {campaign.timeGoal ? (
-                    <div className="mt-2 flex justify-between items-center gap-2">
-                        <div className="text-lg text-indigo-500 font-medium">
-                            {campaign.timeGoal}&nbsp;h
-                        </div>
+                {campaign.status !== "cancelled" &&
+                    (campaign.timeGoal ? (
+                        <div className="mt-2 flex justify-between items-center gap-2">
+                            <div className="text-lg text-indigo-500 font-medium">
+                                {campaign.timeGoal}&nbsp;h
+                            </div>
 
-                        <div className="h-5 w-full bg-neutral-200 rounded-full">
-                            <div
-                                className="h-5 bg-indigo-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                style={{
-                                    width: `${campaign.timeDonatedPercentage}%`,
-                                }}
-                            >
-                                {campaign.timeDonatedPercentage}%
+                            <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                <div
+                                    className="h-5 bg-indigo-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                    style={{
+                                        width: `${campaign.timeDonatedPercentage}%`,
+                                    }}
+                                >
+                                    {campaign.timeDonatedPercentage}%
+                                </div>
                             </div>
+                            <FontAwesomeIcon
+                                icon={faClock}
+                                className="text-indigo-500"
+                            />
                         </div>
-                        <FontAwesomeIcon
-                            icon={faClock}
-                            className="text-indigo-500"
-                        />
-                    </div>
-                ) : (
-                    <div className="mt-2 flex justify-between items-center gap-2">
-                        <div className="h-5 w-full bg-neutral-200 rounded-full">
-                            <div
-                                className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                style={{ width: "100%" }}
-                            >
-                                Sin objetivo de tiempo
+                    ) : (
+                        <div className="mt-2 flex justify-between items-center gap-2">
+                            <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                <div
+                                    className="h-5 bg-gray-400 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                    style={{ width: "100%" }}
+                                >
+                                    Sin objetivo de tiempo
+                                </div>
                             </div>
+                            <FontAwesomeIcon
+                                icon={faClock}
+                                className="text-gray-400"
+                            />
                         </div>
-                        <FontAwesomeIcon
-                            icon={faClock}
-                            className="text-gray-400"
-                        />
-                    </div>
-                )}
+                    ))}
             </div>
         </a>
     );
