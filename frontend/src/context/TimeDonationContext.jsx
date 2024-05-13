@@ -5,6 +5,7 @@ import {
     getTimeToInvestByCollaboratorRequest,
     createTimeDonationRequest,
 } from "../api/timeDonation.js";
+import { createTimeRecordRequest } from "../api/timeRecord.js";
 
 const TimeDonationContext = createContext();
 
@@ -23,6 +24,7 @@ export const TimeDonationProvider = ({ children }) => {
     const [timeDonations, setTimeDonations] = useState([]);
     const [timeToInvest, setTimeToInvest] = useState([]);
     const [errors, setErrors] = useState([]);
+    const [timeRecordErrors, setTimeRecordErrors] = useState([]);
 
     const getTimeDonationsByCampaign = async (campaignId) => {
         try {
@@ -55,6 +57,16 @@ export const TimeDonationProvider = ({ children }) => {
         }
     };
 
+    const createTimeRecord = async (timeRecord) => {
+        try {
+            const res = await createTimeRecordRequest(timeRecord);
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setTimeRecordErrors(error.response.data);
+        }
+    };
+
     return (
         <TimeDonationContext.Provider
             value={{
@@ -63,7 +75,9 @@ export const TimeDonationProvider = ({ children }) => {
                 timeToInvest,
                 getTimeToInvestByCollaborator,
                 createTimeDonation,
+                createTimeRecord,
                 errors,
+                timeRecordErrors,
             }}
         >
             {children}
