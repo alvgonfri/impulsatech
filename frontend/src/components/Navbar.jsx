@@ -115,6 +115,12 @@ function Navbar() {
                             >
                                 Mi perfil
                             </Link>
+                            <Link
+                                to="/time-record"
+                                className="block p-1 rounded-md hover:bg-teal-700 transition duration-500"
+                            >
+                                Registro de tiempo
+                            </Link>
                             <button
                                 onClick={() => {
                                     logOut();

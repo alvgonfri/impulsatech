@@ -1,4 +1,5 @@
 import TimeDonation from "../models/timeDonation.model.js";
+import TimeRecord from "../models/timeRecord.model.js";
 import Campaign from "../models/campaign.model.js";
 import { isOrganization } from "../libs/isOrganization.js";
 import {
@@ -12,6 +13,53 @@ export const getTimeDonationsByCampaign = async (req, res) => {
             campaign: req.params.campaignId,
         });
         res.status(200).json(timeDonations);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getTimeToInvestByCollaborator = async (req, res) => {
+    // Retrieves time donations made by a collaborator to completed campaigns. The time donations must contain a list of its time records.
+    try {
+        const collaboratorTimeDonations = await TimeDonation.find({
+            "collaborator.id": req.params.collaboratorId,
+        }).populate("campaign");
+
+        const timeDonationsFromCompletedCampaigns =
+            collaboratorTimeDonations.filter(
+                (timeDonation) =>
+                    timeDonation.campaign.status === "completed" &&
+                    timeDonation.campaign.eliminated === false
+            );
+
+        timeDonationsFromCompletedCampaigns.sort((a, b) => {
+            if (
+                a.campaign.timeGoalPeriod.startDate >
+                b.campaign.timeGoalPeriod.startDate
+            )
+                return 1;
+            if (
+                a.campaign.timeGoalPeriod.startDate <
+                b.campaign.timeGoalPeriod.startDate
+            )
+                return -1;
+
+            if (a.campaign.createdAt > b.campaign.createdAt) return 1;
+            if (a.campaign.createdAt < b.campaign.createdAt) return -1;
+
+            return 0;
+        });
+
+        const timeDonationsWithTimeRecords = await Promise.all(
+            timeDonationsFromCompletedCampaigns.map(async (timeDonation) => {
+                const timeRecords = await TimeRecord.find({
+                    timeDonation: timeDonation._id,
+                });
+                return { ...timeDonation._doc, timeRecords };
+            })
+        );
+
+        res.status(200).json(timeDonationsWithTimeRecords);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -9,6 +9,7 @@ import subjectRoutes from "./routes/subject.routes.js";
 import campaignRoutes from "./routes/campaign.routes.js";
 import financialDonationRoutes from "./routes/financialDonation.routes.js";
 import timeDonationRoutes from "./routes/timeDonation.routes.js";
+import timeRecordRoutes from "./routes/timeRecord.routes.js";
 import webhookRoutes from "./routes/webhook.routes.js";
 
 const app = express();
@@ -40,6 +41,7 @@ app.use("/api/v1/subjects", subjectRoutes);
 app.use("/api/v1/campaigns", campaignRoutes);
 app.use("/api/v1/financial-donations", financialDonationRoutes);
 app.use("/api/v1/time-donations", timeDonationRoutes);
+app.use("/api/v1/time-records", timeRecordRoutes);
 app.use("/api/v1/webhook", webhookRoutes);
 
 export default app;

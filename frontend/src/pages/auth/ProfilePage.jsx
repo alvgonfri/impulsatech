@@ -60,7 +60,7 @@ function ProfilePage() {
                         )}
                     </div>
                     <div className="flex">
-                        <p className="text-lg">
+                        <p className="md:text-lg">
                             <strong className="mr-2">
                                 <FontAwesomeIcon icon={faEnvelope} />
                             </strong>
