@@ -9,6 +9,7 @@ import {
     createCampaignRequest,
     updateCampaignRequest,
 } from "../api/campaign.js";
+import { getPostsByCampaignRequest, createPostRequest } from "../api/post.js";
 import PropTypes from "prop-types";
 
 const CampaignContext = createContext();
@@ -28,7 +29,9 @@ export const CampaignProvider = ({ children }) => {
     const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
     const [interestingCampaigns, setInterestingCampaigns] = useState([]);
     const [promoterCampaigns, setPromoterCampaigns] = useState([]);
+    const [campaignPosts, setCampaignPosts] = useState([]);
     const [errors, setErrors] = useState([]);
+    const [postErrors, setPostErrors] = useState([]);
 
     const getCampaigns = async () => {
         try {
@@ -151,6 +154,27 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const getPostsByCampaign = async (campaignId) => {
+        try {
+            const res = await getPostsByCampaignRequest(campaignId);
+            setCampaignPosts(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const createPost = async (post) => {
+        try {
+            console.log(post);
+            const res = await createPostRequest(post);
+            setCampaignPosts([...campaignPosts, res.data]);
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setPostErrors(error.response.data);
+        }
+    };
+
     return (
         <CampaignContext.Provider
             value={{
@@ -169,7 +193,11 @@ export const CampaignProvider = ({ children }) => {
                 eliminateCampaign,
                 cancelCampaign,
                 completeCampaign,
+                campaignPosts,
+                getPostsByCampaign,
+                createPost,
                 errors,
+                postErrors,
             }}
         >
             {children}

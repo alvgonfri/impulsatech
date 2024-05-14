@@ -19,6 +19,7 @@ import CampaignFormPage from "./pages/campaign/CampaignFormPage";
 import FinancialDonationSuccess from "./pages/financialDonation/FinancialDonationSuccess";
 import FinancialDonationCancel from "./pages/financialDonation/FinancialDonationCancel";
 import TimeRecordPage from "./pages/timeRecord/TimeRecordPage";
+import PostFormPage from "./pages/post/PostFormPage";
 import PrivacyPolicyPage from "./pages/legal/PrivacyPolicyPage";
 import TermsOfUsePage from "./pages/legal/TermsOfUsePage";
 import Footer from "./components/Footer";
@@ -98,6 +99,10 @@ function App() {
                                             <Route
                                                 path="/time-record"
                                                 element={<TimeRecordPage />}
+                                            />
+                                            <Route
+                                                path="/campaigns/:id/posts/create"
+                                                element={<PostFormPage />}
                                             />
                                         </Route>
                                         <Route

@@ -7,8 +7,11 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { loadStripe } from "@stripe/stripe-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoins } from "@fortawesome/free-solid-svg-icons";
-import { faClock } from "@fortawesome/free-solid-svg-icons";
+import {
+    faCoins,
+    faClock,
+    faCirclePlus,
+} from "@fortawesome/free-solid-svg-icons";
 import Tooltip from "../../components/Tooltip";
 import Tag from "../../components/Tag";
 import Modal from "../../components/Modal";
@@ -22,8 +25,15 @@ function CampaignPage() {
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
     const [completeError, setCompleteError] = useState(false);
-    const { getCampaign, eliminateCampaign, cancelCampaign, completeCampaign } =
-        useCampaign();
+    const {
+        getCampaign,
+        eliminateCampaign,
+        cancelCampaign,
+        completeCampaign,
+        getPostsByCampaign,
+        campaignPosts,
+    } = useCampaign();
+    useCampaign();
     const {
         processPayment,
         errors: financialDonationErrors,
@@ -94,6 +104,13 @@ function CampaignPage() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        if (campaign._id) {
+            getPostsByCampaign(campaign._id);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [campaign]);
 
     const onReinvestFinancialDonation = async (e) => {
         e.preventDefault();
@@ -637,6 +654,36 @@ function CampaignPage() {
                         )}
                 </div>
             </div>
+
+            <div className="mt-8">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-teal-600 text-lg font-bold">
+                        Posts del promotor
+                    </h2>
+
+                    <button
+                        onClick={() =>
+                            navigate(
+                                "/campaigns/" + campaign._id + "/posts/create"
+                            )
+                        }
+                        className="bg-teal-700 hover:bg-teal-800 rounded-md text-white border border-white px-3 py-2 transition duration-500"
+                    >
+                        <FontAwesomeIcon icon={faCirclePlus} />
+                        <span className="hidden sm:inline"> Nuevo post</span>
+                    </button>
+                </div>
+
+                {campaignPosts.map((post, i) => (
+                    <div
+                        key={i}
+                        className="bg-white rounded-md shadow-md p-4 mb-4"
+                    >
+                        {post.content}
+                    </div>
+                ))}
+            </div>
+
             {isEliminateModalOpen && (
                 <Modal
                     title="Eliminar campaña"
