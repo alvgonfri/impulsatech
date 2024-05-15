@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useCampaign } from "../../context/CampaignContext";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../../context/AuthContext";
 
 function PostFormPage() {
     const [campaign, setCampaign] = useState({});
@@ -13,7 +14,7 @@ function PostFormPage() {
         formState: { errors },
     } = useForm();
     const params = useParams();
-    const navigate = useNavigate();
+    const { subject } = useAuth();
     const { getCampaign, createPost, postErrors } = useCampaign();
 
     useEffect(() => {
@@ -23,11 +24,16 @@ function PostFormPage() {
     useEffect(() => {
         async function loadCampaign() {
             if (params.id) {
-                const campaign = await getCampaign(params.id);
-                setCampaign(campaign);
+                const campaignInDB = await getCampaign(params.id);
+                if (campaignInDB.promoter._id !== subject._id) {
+                    window.location.href = "/campaigns";
+                }
+
+                setCampaign(campaignInDB);
             }
         }
         loadCampaign();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -50,7 +56,7 @@ function PostFormPage() {
         setIsSubmitting(false);
 
         if (status === 201) {
-            navigate(`/campaigns/${campaign._id}?postCreated=true`);
+            window.location.href = `/campaigns/${campaign._id}?postCreated=true`;
         }
     });
 

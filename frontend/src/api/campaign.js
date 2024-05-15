@@ -17,6 +17,9 @@ export const getCampaignsByPromoterRequest = async (id) =>
 
 export const getCampaignRequest = async (id) => axios.get(`/campaigns/${id}`);
 
+export const getCampaignCollaboratorsRequest = async (id) =>
+    axios.get(`/campaigns/${id}/collaborators`);
+
 export const createCampaignRequest = async (campaign) =>
     axios.post(`/campaigns`, campaign, {
         headers: {

@@ -6,6 +6,7 @@ import {
     getInterestingCampaignsRequest,
     getCampaignsByPromoterRequest,
     getCampaignRequest,
+    getCampaignCollaboratorsRequest,
     createCampaignRequest,
     updateCampaignRequest,
 } from "../api/campaign.js";
@@ -29,6 +30,7 @@ export const CampaignProvider = ({ children }) => {
     const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
     const [interestingCampaigns, setInterestingCampaigns] = useState([]);
     const [promoterCampaigns, setPromoterCampaigns] = useState([]);
+    const [campaignCollaborators, setCampaignCollaborators] = useState([]);
     const [campaignPosts, setCampaignPosts] = useState([]);
     const [errors, setErrors] = useState([]);
     const [postErrors, setPostErrors] = useState([]);
@@ -83,6 +85,15 @@ export const CampaignProvider = ({ children }) => {
         try {
             const res = await getCampaignRequest(id);
             return res.data;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getCampaignCollaborators = async (id) => {
+        try {
+            const res = await getCampaignCollaboratorsRequest(id);
+            setCampaignCollaborators(res.data);
         } catch (error) {
             console.error(error);
         }
@@ -189,6 +200,8 @@ export const CampaignProvider = ({ children }) => {
                 promoterCampaigns,
                 getCampaignsByPromoter,
                 getCampaign,
+                campaignCollaborators,
+                getCampaignCollaborators,
                 createCampaign,
                 eliminateCampaign,
                 cancelCampaign,

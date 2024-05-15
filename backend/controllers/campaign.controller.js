@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import Campaign from "../models/campaign.model.js";
 import User from "../models/user.model.js";
 import Organization from "../models/organization.model.js";
+import FinancialDonation from "../models/financialDonation.model.js";
+import TimeDonation from "../models/timeDonation.model.js";
 import { isOrganization } from "../libs/isOrganization.js";
 import {
     getMoneyDonated,
@@ -196,6 +198,37 @@ export const getCampaign = async (req, res) => {
             timeDonatedPercentage,
             promoter,
         });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getCampaignCollaborators = async (req, res) => {
+    try {
+        const campaign = await Campaign.findById(req.params.id);
+
+        if (!campaign) {
+            return res.status(404).json({ message: "Campaña no encontrada" });
+        }
+
+        const financialDonations = await FinancialDonation.find({
+            campaign: campaign._id,
+        });
+
+        const timeDonations = await TimeDonation.find({
+            campaign: campaign._id,
+        });
+
+        const collaborators = [
+            ...financialDonations.map((donation) => donation.collaborator.id),
+            ...timeDonations.map((donation) => donation.collaborator.id),
+        ];
+
+        const uniqueCollaborators = Array.from(
+            new Set(collaborators.filter(Boolean))
+        );
+
+        res.status(200).json(uniqueCollaborators);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

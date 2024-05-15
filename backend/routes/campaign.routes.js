@@ -13,6 +13,7 @@ import {
     getInterestingCampaigns,
     getCampaignsByPromoter,
     getCampaign,
+    getCampaignCollaborators,
     createCampaign,
     updateCampaign,
     deleteCampaign,
@@ -35,6 +36,8 @@ router.get("/interesting", getInterestingCampaigns);
 router.get("/promoter/:id", getCampaignsByPromoter);
 
 router.get("/:id", getCampaign);
+
+router.get("/:id/collaborators", getCampaignCollaborators);
 
 router.post(
     "",

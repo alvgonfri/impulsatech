@@ -12,5 +12,6 @@ export const createPostRequest = async (post) =>
     axios.post(`/posts`, post, {
         headers: {
             Authorization: `${Cookies.get("token")}`,
+            ContentType: "multipart/form-data",
         },
     });

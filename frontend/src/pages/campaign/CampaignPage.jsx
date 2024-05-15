@@ -12,6 +12,7 @@ import {
     faClock,
     faCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
+import PostCard from "../../components/PostCard";
 import Tooltip from "../../components/Tooltip";
 import Tag from "../../components/Tag";
 import Modal from "../../components/Modal";
@@ -27,13 +28,14 @@ function CampaignPage() {
     const [completeError, setCompleteError] = useState(false);
     const {
         getCampaign,
+        campaignCollaborators,
+        getCampaignCollaborators,
         eliminateCampaign,
         cancelCampaign,
         completeCampaign,
         getPostsByCampaign,
         campaignPosts,
     } = useCampaign();
-    useCampaign();
     const {
         processPayment,
         errors: financialDonationErrors,
@@ -60,6 +62,7 @@ function CampaignPage() {
     const completed = searchParams.get("completed");
     const timeDonated = searchParams.get("timeDonated");
     const reinvested = searchParams.get("reinvested");
+    const postCreated = searchParams.get("postCreated");
     const params = useParams();
 
     useEffect(() => {
@@ -91,6 +94,7 @@ function CampaignPage() {
 
                 setCampaign(campaign);
                 setPromoter(campaign.promoter);
+                getCampaignCollaborators(campaign._id);
             }
         }
 
@@ -259,6 +263,9 @@ function CampaignPage() {
             )}
             {reinvested === "true" && (
                 <Alert text="¡Donación reinvertida con éxito!" />
+            )}
+            {postCreated === "true" && (
+                <Alert text="¡Post publicado con éxito!" />
             )}
 
             <h1 className="text-3xl font-bold text-teal-800 mb-4">
@@ -655,34 +662,46 @@ function CampaignPage() {
                 </div>
             </div>
 
-            <div className="mt-8">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-teal-600 text-lg font-bold">
-                        Posts del promotor
-                    </h2>
+            {campaign.status === "completed" &&
+                (campaign.promoter._id === subject?._id ||
+                    campaignCollaborators.includes(subject?._id)) && (
+                    <div className="mt-8">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-teal-600 text-lg font-bold">
+                                Posts del promotor
+                            </h2>
 
-                    <button
-                        onClick={() =>
-                            navigate(
-                                "/campaigns/" + campaign._id + "/posts/create"
-                            )
-                        }
-                        className="bg-teal-700 hover:bg-teal-800 rounded-md text-white border border-white px-3 py-2 transition duration-500"
-                    >
-                        <FontAwesomeIcon icon={faCirclePlus} />
-                        <span className="hidden sm:inline"> Nuevo post</span>
-                    </button>
-                </div>
+                            {campaign.promoter._id === subject?._id && (
+                                <button
+                                    onClick={() =>
+                                        navigate(
+                                            "/campaigns/" +
+                                                campaign._id +
+                                                "/posts/create"
+                                        )
+                                    }
+                                    className="bg-teal-700 hover:bg-teal-800 rounded-md text-white border border-white px-3 py-2 transition duration-500"
+                                >
+                                    <FontAwesomeIcon icon={faCirclePlus} />
+                                    <span className="hidden sm:inline">
+                                        {" "}
+                                        Nuevo post
+                                    </span>
+                                </button>
+                            )}
+                        </div>
 
-                {campaignPosts.map((post, i) => (
-                    <div
-                        key={i}
-                        className="bg-white rounded-md shadow-md p-4 mb-4"
-                    >
-                        {post.content}
+                        {campaignPosts.length > 0 ? (
+                            campaignPosts.map((post, i) => (
+                                <PostCard key={i} post={post} />
+                            ))
+                        ) : (
+                            <p className="text-gray-500 italic">
+                                No hay posts disponibles
+                            </p>
+                        )}
                     </div>
-                ))}
-            </div>
+                )}
 
             {isEliminateModalOpen && (
                 <Modal
