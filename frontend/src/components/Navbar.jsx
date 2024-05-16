@@ -76,6 +76,14 @@ function Navbar() {
                         >
                             Campañas
                         </Link>
+                        {subject.isAdmin && (
+                            <Link
+                                to="/stats"
+                                className="hover:opacity-65 transition duration-500"
+                            >
+                                Estadísticas
+                            </Link>
+                        )}
                     </div>
 
                     <div className="flex gap-x-5 items-start lg:items-stretch flex-col lg:flex-row gap-y-2 lg:gap-y-0">

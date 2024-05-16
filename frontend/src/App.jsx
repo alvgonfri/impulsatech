@@ -19,6 +19,7 @@ import CampaignFormPage from "./pages/campaign/CampaignFormPage";
 import FinancialDonationSuccess from "./pages/financialDonation/FinancialDonationSuccess";
 import FinancialDonationCancel from "./pages/financialDonation/FinancialDonationCancel";
 import TimeRecordPage from "./pages/timeRecord/TimeRecordPage";
+import StatsPage from "./pages/stats/StatsPage";
 import PostFormPage from "./pages/post/PostFormPage";
 import PrivacyPolicyPage from "./pages/legal/PrivacyPolicyPage";
 import TermsOfUsePage from "./pages/legal/TermsOfUsePage";
@@ -103,6 +104,10 @@ function App() {
                                             <Route
                                                 path="/campaigns/:id/posts/create"
                                                 element={<PostFormPage />}
+                                            />
+                                            <Route
+                                                path="/stats"
+                                                element={<StatsPage />}
                                             />
                                         </Route>
                                         <Route

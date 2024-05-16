@@ -11,6 +11,7 @@ import financialDonationRoutes from "./routes/financialDonation.routes.js";
 import timeDonationRoutes from "./routes/timeDonation.routes.js";
 import timeRecordRoutes from "./routes/timeRecord.routes.js";
 import postRoutes from "./routes/post.routes.js";
+import statsRoutes from "./routes/stats.routes.js";
 import webhookRoutes from "./routes/webhook.routes.js";
 
 const app = express();
@@ -44,6 +45,7 @@ app.use("/api/v1/financial-donations", financialDonationRoutes);
 app.use("/api/v1/time-donations", timeDonationRoutes);
 app.use("/api/v1/time-records", timeRecordRoutes);
 app.use("/api/v1/posts", postRoutes);
+app.use("/api/v1/stats", statsRoutes);
 app.use("/api/v1/webhook", webhookRoutes);
 
 export default app;
