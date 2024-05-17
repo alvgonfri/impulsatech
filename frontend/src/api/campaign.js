@@ -15,6 +15,9 @@ export const getInterestingCampaignsRequest = async () =>
 export const getCampaignsByPromoterRequest = async (id) =>
     axios.get(`/campaigns/promoter/${id}`);
 
+export const searchCampaignsRequest = async (searchParams) =>
+    axios.get(`/campaigns/search`, { params: searchParams });
+
 export const getCampaignRequest = async (id) => axios.get(`/campaigns/${id}`);
 
 export const getCampaignCollaboratorsRequest = async (id) =>

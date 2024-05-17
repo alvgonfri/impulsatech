@@ -5,6 +5,7 @@ import {
     getFeaturedCampaignsRequest,
     getInterestingCampaignsRequest,
     getCampaignsByPromoterRequest,
+    searchCampaignsRequest,
     getCampaignRequest,
     getCampaignCollaboratorsRequest,
     createCampaignRequest,
@@ -30,6 +31,7 @@ export const CampaignProvider = ({ children }) => {
     const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
     const [interestingCampaigns, setInterestingCampaigns] = useState([]);
     const [promoterCampaigns, setPromoterCampaigns] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
     const [campaignCollaborators, setCampaignCollaborators] = useState([]);
     const [campaignPosts, setCampaignPosts] = useState([]);
     const [errors, setErrors] = useState([]);
@@ -76,6 +78,16 @@ export const CampaignProvider = ({ children }) => {
         try {
             const res = await getCampaignsByPromoterRequest(id);
             setPromoterCampaigns(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const searchCampaigns = async (searchParams) => {
+        try {
+            const res = await searchCampaignsRequest(searchParams);
+            setSearchResults(res.data);
+            return res;
         } catch (error) {
             console.error(error);
         }
@@ -199,6 +211,8 @@ export const CampaignProvider = ({ children }) => {
                 getInterestingCampaigns,
                 promoterCampaigns,
                 getCampaignsByPromoter,
+                searchResults,
+                searchCampaigns,
                 getCampaign,
                 campaignCollaborators,
                 getCampaignCollaborators,

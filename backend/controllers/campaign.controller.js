@@ -13,7 +13,6 @@ import {
     getTimeDonatedPercentage,
 } from "../libs/getAmountDonated.js";
 import { uploadImage } from "../libs/cloudinary.js";
-
 export const getCampaigns = async (req, res) => {
     try {
         const campaigns = await Campaign.find();
@@ -229,6 +228,105 @@ export const getCampaignCollaborators = async (req, res) => {
         );
 
         res.status(200).json(uniqueCollaborators);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const searchCampaigns = async (req, res) => {
+    try {
+        const {
+            title,
+            tags,
+            deadline,
+            financialGoalMin,
+            financialGoalMax,
+            timeGoalMin,
+            timeGoalMax,
+            moneyRemainingMin,
+            moneyRemainingMax,
+            timeRemainingMin,
+            timeRemainingMax,
+        } = req.query;
+        const query = {};
+
+        if (title) {
+            query.title = { $regex: title, $options: "i" };
+        }
+
+        if (tags) {
+            query.tags = { $in: tags.split(",") };
+        }
+
+        if (deadline) {
+            query.deadline = { $lte: new Date(deadline) };
+        }
+
+        if (financialGoalMin || financialGoalMax) {
+            query.financialGoal = {};
+
+            if (financialGoalMin) {
+                query.financialGoal.$gte = financialGoalMin;
+            }
+
+            if (financialGoalMax) {
+                query.financialGoal.$lte = financialGoalMax;
+            }
+        }
+
+        if (timeGoalMin || timeGoalMax) {
+            query.timeGoal = {};
+
+            if (timeGoalMin) {
+                query.timeGoal.$gte = timeGoalMin;
+            }
+
+            if (timeGoalMax) {
+                query.timeGoal.$lte = timeGoalMax;
+            }
+        }
+
+        query.eliminated = false;
+        query.status = { $ne: "cancelled" };
+
+        const campaigns = await Campaign.find(query);
+
+        const campaignsWithDonationsInfo = await Promise.all(
+            campaigns.map(async (campaign) => {
+                const moneyDonated = await getMoneyDonated(campaign._id);
+                const moneyDonatedPercetage = await getMoneyDonatedPercentage(
+                    campaign._id
+                );
+                const timeDonated = await getTimeDonated(campaign._id);
+                const timeDonatedPercentage = await getTimeDonatedPercentage(
+                    campaign._id
+                );
+                return Object.assign(campaign.toObject(), {
+                    moneyDonated,
+                    moneyDonatedPercetage,
+                    timeDonated,
+                    timeDonatedPercentage,
+                });
+            })
+        );
+
+        const filteredCampaigns = campaignsWithDonationsInfo.filter(
+            (campaign) =>
+                (!moneyRemainingMin ||
+                    campaign.financialGoal - campaign.moneyDonated >=
+                        moneyRemainingMin) &&
+                (!moneyRemainingMax ||
+                    campaign.financialGoal - campaign.moneyDonated <=
+                        moneyRemainingMax) &&
+                (!timeRemainingMin ||
+                    campaign.timeGoal - campaign.timeDonated >=
+                        timeRemainingMin) &&
+                (!timeRemainingMax ||
+                    campaign.timeGoal - campaign.timeDonated <=
+                        timeRemainingMax)
+        );
+
+        res.status(200).json(filteredCampaigns);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

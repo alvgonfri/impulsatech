@@ -14,6 +14,7 @@ import {
     getCampaignsByPromoter,
     getCampaign,
     getCampaignCollaborators,
+    searchCampaigns,
     createCampaign,
     updateCampaign,
     deleteCampaign,
@@ -34,6 +35,8 @@ router.get("/featured", getFeaturedCampaigns);
 router.get("/interesting", getInterestingCampaigns);
 
 router.get("/promoter/:id", getCampaignsByPromoter);
+
+router.get("/search", searchCampaigns);
 
 router.get("/:id", getCampaign);
 

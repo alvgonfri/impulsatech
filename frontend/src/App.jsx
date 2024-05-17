@@ -16,6 +16,7 @@ import CancelledCampaignsPage from "./pages/campaign/CancelledCampaignsPage";
 import CompletedCampaignsPage from "./pages/campaign/CompletedCampaignsPage";
 import CampaignPage from "./pages/campaign/CampaignPage";
 import CampaignFormPage from "./pages/campaign/CampaignFormPage";
+import CampaignSearch from "./pages/campaign/CampaignSearch";
 import FinancialDonationSuccess from "./pages/financialDonation/FinancialDonationSuccess";
 import FinancialDonationCancel from "./pages/financialDonation/FinancialDonationCancel";
 import TimeRecordPage from "./pages/timeRecord/TimeRecordPage";
@@ -63,6 +64,10 @@ function App() {
                                         <Route
                                             path="/completed-campaigns"
                                             element={<CompletedCampaignsPage />}
+                                        />
+                                        <Route
+                                            path="/campaigns/search"
+                                            element={<CampaignSearch />}
                                         />
                                         <Route
                                             path="/campaigns/:id"
