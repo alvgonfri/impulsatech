@@ -7,9 +7,14 @@ function Footer() {
         <footer className="bg-teal-900 text-white text-center px-8 xl:px-40 py-6">
             <div className="lg:flex lg:justify-between">
                 <div>
-                    <a>
+                    <Link
+                        to="/information"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                    >
                         Más información <FontAwesomeIcon icon={faLink} />
-                    </a>
+                    </Link>
                 </div>
                 <div>
                     <Link

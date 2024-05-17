@@ -7,6 +7,7 @@ import { TimeDonationProvider } from "./context/TimeDonationContext";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./ProtectedRoute";
 import HomePage from "./pages/HomePage";
+import InformationPage from "./pages/InformationPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import LoginPage from "./pages/auth/LoginPage";
 import ProfilePage from "./pages/auth/ProfilePage";
@@ -40,6 +41,10 @@ function App() {
                                         <Route
                                             path="/"
                                             element={<HomePage />}
+                                        />
+                                        <Route
+                                            path="/information"
+                                            element={<InformationPage />}
                                         />
                                         <Route
                                             path="/register"

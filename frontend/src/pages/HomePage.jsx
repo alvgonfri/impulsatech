@@ -74,7 +74,10 @@ function HomePage() {
                         pequeño gesto cuenta.
                     </p>
                     <div className="flex justify-center mt-8">
-                        <button className="bg-teal-500 hover:bg-teal-600 text-white font-bold text-lg px-6 py-4 rounded-lg">
+                        <button
+                            className="bg-teal-500 hover:bg-teal-600 text-white font-bold text-lg px-6 py-4 rounded-lg"
+                            onClick={() => navigate("/information")}
+                        >
                             Más información
                         </button>
                         <button
