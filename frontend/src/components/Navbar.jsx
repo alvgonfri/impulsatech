@@ -40,7 +40,7 @@ function Navbar() {
     }, [isAuthenticated]);
 
     return (
-        <nav className="bg-teal-600 text-white flex gap-x-5 px-10 py-3 mb-2 fixed top-0 left-0 right-0">
+        <nav className="bg-teal-600 text-white flex gap-x-10 px-10 py-3 mb-2 fixed top-0 left-0 right-0">
             <Link to="/">
                 <img
                     src="/assets/impulsatech_logo.png"
@@ -63,7 +63,7 @@ function Navbar() {
                         isMenuOpen ? "block" : "hidden"
                     } lg:flex-grow items-center justify-between absolute lg:relative top-16 lg:top-0 w-full lg:w-auto left-0 py-2 lg:py-0 px-10 lg:px-0`}
                 >
-                    <div className="flex gap-x-5 flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">
+                    <div className="flex gap-x-10 flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">
                         <Link
                             to="/"
                             className="hover:opacity-65 transition duration-500"
@@ -115,7 +115,7 @@ function Navbar() {
                         <div
                             className={`${
                                 isDropdownOpen ? "block" : "hidden"
-                            } absolute top-24 lg:top-12 lg:right-0 bg-teal-600 p-3 rounded-md shadow-md  flex flex-col gap-y-2`}
+                            } absolute top-36 lg:top-12 lg:right-0 bg-teal-600 p-3 rounded-md shadow-md  flex flex-col gap-y-2`}
                         >
                             <Link
                                 to="/profile"
@@ -148,7 +148,7 @@ function Navbar() {
                         isMenuOpen ? "block" : "hidden"
                     } lg:flex-grow items-center justify-between absolute lg:relative top-16 lg:top-0 w-full lg:w-auto left-0 py-2 lg:py-0 px-10 lg:px-0`}
                 >
-                    <div className="flex gap-x-5 flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">
+                    <div className="flex gap-x-10 flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">
                         <Link
                             to="/"
                             className=" hover:opacity-65 transition duration-500"

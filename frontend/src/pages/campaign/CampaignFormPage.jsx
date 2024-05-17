@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCampaign } from "../../context/CampaignContext";
+import BackButton from "../../components/BackButton";
 
 function CampaignFormPage() {
     const [image, setImage] = useState(null);
@@ -85,251 +86,261 @@ function CampaignFormPage() {
     });
 
     return (
-        <div className="flex justify-center mb-10">
-            <div className="mx-4 lg:w-2/3 px-10 py-5 rounded-md border border-teal-600">
-                <h1 className="text-teal-600 text-2xl font-bold mb-4">
-                    Crea una campaña
-                </h1>
+        <div className="mb-10">
+            <div className="ml-40">
+                <BackButton />
+            </div>
+            <div className="flex justify-center">
+                <div className="mx-4 lg:w-2/3 px-10 py-5 rounded-md border border-teal-600">
+                    <h1 className="text-teal-600 text-2xl font-bold mb-4">
+                        Crea una campaña
+                    </h1>
 
-                {formErrors.map((error, i) => (
-                    <div
-                        className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
-                        key={i}
-                    >
-                        {error}
-                    </div>
-                ))}
+                    {formErrors.map((error, i) => (
+                        <div
+                            className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
+                            key={i}
+                        >
+                            {error}
+                        </div>
+                    ))}
 
-                {goalErrors.map((error, i) => (
-                    <div
-                        className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
-                        key={i}
-                    >
-                        {error}
-                    </div>
-                ))}
+                    {goalErrors.map((error, i) => (
+                        <div
+                            className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
+                            key={i}
+                        >
+                            {error}
+                        </div>
+                    ))}
 
-                <form onSubmit={onSubmit}>
-                    <div className="md:flex gap-8">
-                        <div className="md:w-1/2">
-                            <h2 className="text-teal-600 text-lg font-bold mb-4">
-                                Información general
-                            </h2>
+                    <form onSubmit={onSubmit}>
+                        <div className="md:flex gap-8">
+                            <div className="md:w-1/2">
+                                <h2 className="text-teal-600 text-lg font-bold mb-4">
+                                    Información general
+                                </h2>
 
-                            {errors.title && (
-                                <p className="text-red-500 text-sm mb-1">
-                                    Por favor, ingresa un título
-                                </p>
-                            )}
-                            <label className="text-sm text-slate-500">
-                                Título
-                            </label>
-                            <input
-                                type="text"
-                                {...register("title", { required: true })}
-                                autoFocus
-                                className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                            />
+                                {errors.title && (
+                                    <p className="text-red-500 text-sm mb-1">
+                                        Por favor, ingresa un título
+                                    </p>
+                                )}
+                                <label className="text-sm text-slate-500">
+                                    Título
+                                </label>
+                                <input
+                                    type="text"
+                                    {...register("title", { required: true })}
+                                    autoFocus
+                                    className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                                />
 
-                            {errors.description && (
-                                <p className="text-red-500 text-sm mb-1">
-                                    Por favor, ingresa una descripción
-                                </p>
-                            )}
-                            <label className="text-sm text-slate-500">
-                                Descripción
-                            </label>
-                            <textarea
-                                {...register("description", { required: true })}
-                                rows={3}
-                                className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                            />
+                                {errors.description && (
+                                    <p className="text-red-500 text-sm mb-1">
+                                        Por favor, ingresa una descripción
+                                    </p>
+                                )}
+                                <label className="text-sm text-slate-500">
+                                    Descripción
+                                </label>
+                                <textarea
+                                    {...register("description", {
+                                        required: true,
+                                    })}
+                                    rows={3}
+                                    className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                                />
 
-                            <label className="text-sm text-slate-500">
-                                Imagen
-                            </label>
-                            <input
-                                type="file"
-                                {...register("image")}
-                                className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                                accept="image/*"
-                                onChange={(e) => setImage(e.target.files[0])}
-                            />
+                                <label className="text-sm text-slate-500">
+                                    Imagen
+                                </label>
+                                <input
+                                    type="file"
+                                    {...register("image")}
+                                    className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        setImage(e.target.files[0])
+                                    }
+                                />
 
-                            <label className="text-sm text-slate-500">
-                                Fecha límite
-                            </label>
-                            <input
-                                type="date"
-                                {...register("deadline")}
-                                className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                            />
+                                <label className="text-sm text-slate-500">
+                                    Fecha límite
+                                </label>
+                                <input
+                                    type="date"
+                                    {...register("deadline")}
+                                    className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                                />
 
-                            <label className="text-sm text-slate-500">
-                                Selecciona hasta 3 etiquetas
-                            </label>
-                            <div className="flex flex-wrap gap-2 mb-4">
-                                {availableTags.map((tag) => (
-                                    <label
-                                        key={tag}
-                                        className="flex items-center cursor-pointer"
-                                    >
+                                <label className="text-sm text-slate-500">
+                                    Selecciona hasta 3 etiquetas
+                                </label>
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    {availableTags.map((tag) => (
+                                        <label
+                                            key={tag}
+                                            className="flex items-center cursor-pointer"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                value={tag}
+                                                className="hidden"
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setSelectedTags([
+                                                            ...selectedTags,
+                                                            e.target.value,
+                                                        ]);
+                                                    } else {
+                                                        setSelectedTags(
+                                                            selectedTags.filter(
+                                                                (tag) =>
+                                                                    tag !==
+                                                                    e.target
+                                                                        .value
+                                                            )
+                                                        );
+                                                    }
+                                                }}
+                                            />
+                                            {selectedTags.includes(tag) ? (
+                                                <span className="text-xs inline-flex items-center font-bold leading-sm px-3 py-1 bg-teal-600 text-white rounded-full">
+                                                    {tag}
+                                                </span>
+                                            ) : (
+                                                <span className="text-xs inline-flex items-center font-bold leading-sm px-3 py-1 bg-white text-teal-600 rounded-full border border-teal-600">
+                                                    {tag}
+                                                </span>
+                                            )}
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="divider bg-teal-600 w-px"></div>
+
+                            <div className="md:w-1/2">
+                                <h2 className="text-teal-600 text-lg font-bold mb-4">
+                                    Objetivos
+                                </h2>
+
+                                <label className="flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={financialGoalChecked}
+                                        onChange={() =>
+                                            setFinancialGoalChecked(
+                                                !financialGoalChecked
+                                            )
+                                        }
+                                        className="mr-2 leading-tight"
+                                    />
+                                    <span className="text-sm text-gray-700">
+                                        Objetivo económico
+                                    </span>
+                                </label>
+                                {financialGoalChecked && (
+                                    <div>
+                                        <label className="text-sm text-slate-500">
+                                            Objetivo económico (€)
+                                        </label>
                                         <input
-                                            type="checkbox"
-                                            value={tag}
-                                            className="hidden"
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    setSelectedTags([
-                                                        ...selectedTags,
-                                                        e.target.value,
-                                                    ]);
-                                                } else {
-                                                    setSelectedTags(
-                                                        selectedTags.filter(
-                                                            (tag) =>
-                                                                tag !==
-                                                                e.target.value
-                                                        )
-                                                    );
-                                                }
-                                            }}
+                                            type="number"
+                                            {...register("financialGoal")}
+                                            onChange={() => setGoalErrors([])}
+                                            className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                                         />
-                                        {selectedTags.includes(tag) ? (
-                                            <span className="text-xs inline-flex items-center font-bold leading-sm px-3 py-1 bg-teal-600 text-white rounded-full">
-                                                {tag}
-                                            </span>
-                                        ) : (
-                                            <span className="text-xs inline-flex items-center font-bold leading-sm px-3 py-1 bg-white text-teal-600 rounded-full border border-teal-600">
-                                                {tag}
-                                            </span>
-                                        )}
-                                    </label>
-                                ))}
+
+                                        <label className="text-sm text-slate-500">
+                                            IBAN de la cuenta bancaria
+                                        </label>
+                                        <input
+                                            type="text"
+                                            {...register("iban")}
+                                            className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                                        />
+                                    </div>
+                                )}
+
+                                <label className="flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={timeGoalChecked}
+                                        onChange={() =>
+                                            setTimeGoalChecked(!timeGoalChecked)
+                                        }
+                                        className="mr-2 leading-tight"
+                                    />
+                                    <span className="text-sm text-gray-700">
+                                        Objetivo de tiempo
+                                    </span>
+                                </label>
+                                {timeGoalChecked && (
+                                    <div>
+                                        <label className="text-sm text-slate-500">
+                                            Objetivo de tiempo (horas)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            {...register("timeGoal")}
+                                            onChange={() => setGoalErrors([])}
+                                            className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
+                                        />
+
+                                        <label className="text-sm text-slate-500">
+                                            Periodo de recibimiento
+                                        </label>
+                                        <div className="md:flex items-center mb-4">
+                                            {errors.startDate && (
+                                                <p className="text-red-500 text-sm mb-1">
+                                                    Por favor, ingresa una fecha
+                                                    de inicio
+                                                </p>
+                                            )}
+                                            <p className="text-sm text-slate-500 mr-2">
+                                                Desde
+                                            </p>
+                                            <input
+                                                type="date"
+                                                {...register("startDate")}
+                                                className="w-full px-4 py-2 rounded-md border border-teal-600"
+                                            />
+
+                                            {errors.endDate && (
+                                                <p className="text-red-500 text-sm mb-1">
+                                                    Por favor, ingresa una fecha
+                                                    de fin
+                                                </p>
+                                            )}
+                                            <p className="text-sm text-slate-500 md:mx-2">
+                                                hasta
+                                            </p>
+                                            <input
+                                                type="date"
+                                                {...register("endDate")}
+                                                className="w-full px-4 py-2 rounded-md border border-teal-600"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        <div className="divider bg-teal-600 w-px"></div>
-
-                        <div className="md:w-1/2">
-                            <h2 className="text-teal-600 text-lg font-bold mb-4">
-                                Objetivos
-                            </h2>
-
-                            <label className="flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={financialGoalChecked}
-                                    onChange={() =>
-                                        setFinancialGoalChecked(
-                                            !financialGoalChecked
-                                        )
-                                    }
-                                    className="mr-2 leading-tight"
-                                />
-                                <span className="text-sm text-gray-700">
-                                    Objetivo económico
-                                </span>
-                            </label>
-                            {financialGoalChecked && (
-                                <div>
-                                    <label className="text-sm text-slate-500">
-                                        Objetivo económico (€)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        {...register("financialGoal")}
-                                        onChange={() => setGoalErrors([])}
-                                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                                    />
-
-                                    <label className="text-sm text-slate-500">
-                                        IBAN de la cuenta bancaria
-                                    </label>
-                                    <input
-                                        type="text"
-                                        {...register("iban")}
-                                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                                    />
-                                </div>
-                            )}
-
-                            <label className="flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={timeGoalChecked}
-                                    onChange={() =>
-                                        setTimeGoalChecked(!timeGoalChecked)
-                                    }
-                                    className="mr-2 leading-tight"
-                                />
-                                <span className="text-sm text-gray-700">
-                                    Objetivo de tiempo
-                                </span>
-                            </label>
-                            {timeGoalChecked && (
-                                <div>
-                                    <label className="text-sm text-slate-500">
-                                        Objetivo de tiempo (horas)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        {...register("timeGoal")}
-                                        onChange={() => setGoalErrors([])}
-                                        className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
-                                    />
-
-                                    <label className="text-sm text-slate-500">
-                                        Periodo de recibimiento
-                                    </label>
-                                    <div className="md:flex items-center mb-4">
-                                        {errors.startDate && (
-                                            <p className="text-red-500 text-sm mb-1">
-                                                Por favor, ingresa una fecha de
-                                                inicio
-                                            </p>
-                                        )}
-                                        <p className="text-sm text-slate-500 mr-2">
-                                            Desde
-                                        </p>
-                                        <input
-                                            type="date"
-                                            {...register("startDate")}
-                                            className="w-full px-4 py-2 rounded-md border border-teal-600"
-                                        />
-
-                                        {errors.endDate && (
-                                            <p className="text-red-500 text-sm mb-1">
-                                                Por favor, ingresa una fecha de
-                                                fin
-                                            </p>
-                                        )}
-                                        <p className="text-sm text-slate-500 md:mx-2">
-                                            hasta
-                                        </p>
-                                        <input
-                                            type="date"
-                                            {...register("endDate")}
-                                            className="w-full px-4 py-2 rounded-md border border-teal-600"
-                                        />
-                                    </div>
-                                </div>
-                            )}
+                        <div className="flex justify-center my-4">
+                            <button
+                                type="submit"
+                                className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting
+                                    ? "Creando campaña..."
+                                    : "Crear campaña"}
+                            </button>
                         </div>
-                    </div>
-
-                    <div className="flex justify-center my-4">
-                        <button
-                            type="submit"
-                            className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting
-                                ? "Creando campaña..."
-                                : "Crear campaña"}
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     );

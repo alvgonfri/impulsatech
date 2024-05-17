@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useSubject } from "../../context/SubjectContext";
 import { useCampaign } from "../../context/CampaignContext";
 import CampaignStateCard from "../../components/CampaignStateCard";
+import BackButton from "../../components/BackButton";
 
 function OtherProfilePage() {
     const { subject: authSubject } = useAuth();
@@ -29,6 +30,9 @@ function OtherProfilePage() {
 
     return (
         <div className="container mx-auto mb-10 px-4 sm:px-10 xl:px-40 flex flex-col">
+            <div className="text-left">
+                <BackButton />
+            </div>
             <div className="flex flex-col space-y-4 md:space-y-0 md:space-x-6 md:flex-row">
                 {subject?.picture?.secure_url ? (
                     <img
