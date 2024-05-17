@@ -259,6 +259,7 @@ function CampaignFormPage() {
                                         <input
                                             type="text"
                                             {...register("iban")}
+                                            placeholder="Ej: ES1234567890123456789012"
                                             className="w-full px-4 py-2 mb-4 rounded-md border border-teal-600"
                                         />
                                     </div>
