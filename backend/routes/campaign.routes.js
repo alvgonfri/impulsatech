@@ -8,8 +8,13 @@ import {
 } from "../schemas/campaign.schema.js";
 import {
     getCampaigns,
-    getCampaign,
     getCampaignsByStatus,
+    getFeaturedCampaigns,
+    getInterestingCampaigns,
+    getCampaignsByPromoter,
+    getCampaign,
+    getCampaignCollaborators,
+    searchCampaigns,
     createCampaign,
     updateCampaign,
     deleteCampaign,
@@ -25,7 +30,17 @@ router.get("/completed", getCampaignsByStatus("completed"));
 
 router.get("/cancelled", getCampaignsByStatus("cancelled"));
 
+router.get("/featured", getFeaturedCampaigns);
+
+router.get("/interesting", getInterestingCampaigns);
+
+router.get("/promoter/:id", getCampaignsByPromoter);
+
+router.get("/search", searchCampaigns);
+
 router.get("/:id", getCampaign);
+
+router.get("/:id/collaborators", getCampaignCollaborators);
 
 router.post(
     "",

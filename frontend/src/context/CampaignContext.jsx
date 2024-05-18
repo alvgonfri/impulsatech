@@ -2,10 +2,16 @@ import { createContext, useContext, useState } from "react";
 import {
     getCampaignsRequest,
     getCampaignsByStatusRequest,
+    getFeaturedCampaignsRequest,
+    getInterestingCampaignsRequest,
+    getCampaignsByPromoterRequest,
+    searchCampaignsRequest,
     getCampaignRequest,
+    getCampaignCollaboratorsRequest,
     createCampaignRequest,
     updateCampaignRequest,
 } from "../api/campaign.js";
+import { getPostsByCampaignRequest, createPostRequest } from "../api/post.js";
 import PropTypes from "prop-types";
 
 const CampaignContext = createContext();
@@ -21,7 +27,15 @@ export const useCampaign = () => {
 
 export const CampaignProvider = ({ children }) => {
     const [campaigns, setCampaigns] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
+    const [interestingCampaigns, setInterestingCampaigns] = useState([]);
+    const [promoterCampaigns, setPromoterCampaigns] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
+    const [campaignCollaborators, setCampaignCollaborators] = useState([]);
+    const [campaignPosts, setCampaignPosts] = useState([]);
     const [errors, setErrors] = useState([]);
+    const [postErrors, setPostErrors] = useState([]);
 
     const getCampaigns = async () => {
         try {
@@ -32,10 +46,48 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
-    const getCampaignsByStatus = async (status) => {
+    const getCampaignsByStatus = async (status, page) => {
         try {
-            const res = await getCampaignsByStatusRequest(status);
-            setCampaigns(res.data);
+            const res = await getCampaignsByStatusRequest(status, page);
+            setCampaigns(res.data.campaigns);
+            setTotalPages(res.data.totalPages);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getFeaturedCampaigns = async () => {
+        try {
+            const res = await getFeaturedCampaignsRequest();
+            setFeaturedCampaigns(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getInterestingCampaigns = async () => {
+        try {
+            const res = await getInterestingCampaignsRequest();
+            setInterestingCampaigns(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getCampaignsByPromoter = async (id) => {
+        try {
+            const res = await getCampaignsByPromoterRequest(id);
+            setPromoterCampaigns(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const searchCampaigns = async (searchParams) => {
+        try {
+            const res = await searchCampaignsRequest(searchParams);
+            setSearchResults(res.data);
+            return res;
         } catch (error) {
             console.error(error);
         }
@@ -50,11 +102,20 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const getCampaignCollaborators = async (id) => {
+        try {
+            const res = await getCampaignCollaboratorsRequest(id);
+            setCampaignCollaborators(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const createCampaign = async (campaign) => {
         try {
             const res = await createCampaignRequest(campaign);
             setCampaigns([...campaigns, res.data]);
-            return res.status;
+            return res;
         } catch (error) {
             console.error(error);
             setErrors(error.response.data);
@@ -116,18 +177,54 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const getPostsByCampaign = async (campaignId) => {
+        try {
+            const res = await getPostsByCampaignRequest(campaignId);
+            setCampaignPosts(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const createPost = async (post) => {
+        try {
+            console.log(post);
+            const res = await createPostRequest(post);
+            setCampaignPosts([...campaignPosts, res.data]);
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setPostErrors(error.response.data);
+        }
+    };
+
     return (
         <CampaignContext.Provider
             value={{
                 campaigns,
                 getCampaigns,
                 getCampaignsByStatus,
+                totalPages,
+                featuredCampaigns,
+                getFeaturedCampaigns,
+                interestingCampaigns,
+                getInterestingCampaigns,
+                promoterCampaigns,
+                getCampaignsByPromoter,
+                searchResults,
+                searchCampaigns,
                 getCampaign,
+                campaignCollaborators,
+                getCampaignCollaborators,
                 createCampaign,
                 eliminateCampaign,
                 cancelCampaign,
                 completeCampaign,
+                campaignPosts,
+                getPostsByCampaign,
+                createPost,
                 errors,
+                postErrors,
             }}
         >
             {children}

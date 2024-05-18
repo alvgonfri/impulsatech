@@ -12,3 +12,7 @@ export const createFinancialDonationSchema = z.object({
         }),
     anonymous: z.boolean(),
 });
+
+export const updateFinancialDonationSchema = z.object({
+    anonymous: z.boolean(),
+});

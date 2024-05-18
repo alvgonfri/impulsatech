@@ -6,10 +6,10 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const uploadCampaignImage = async (filePath) => {
+export const uploadImage = async (filePath, folderName) => {
     try {
         const result = await cloudinary.uploader.upload(filePath, {
-            folder: "impulsatech/campaigns",
+            folder: "impulsatech/" + folderName,
         });
         return result;
     } catch (error) {

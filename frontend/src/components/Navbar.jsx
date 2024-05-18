@@ -1,18 +1,21 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useFinancialDonation } from "../context/FinancialDonationContext";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBars,
     faRightFromBracket,
-    faUser,
+    faBell,
 } from "@fortawesome/free-solid-svg-icons";
 
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { subject, isAuthenticated, logOut } = useAuth();
+    const { collaboratorReinvestments, getReinvestmentsByCollaborator } =
+        useFinancialDonation();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -29,8 +32,15 @@ function Navbar() {
         setIsDropdownOpen(false);
     }, [location]);
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            getReinvestmentsByCollaborator(subject?._id);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated]);
+
     return (
-        <nav className="bg-teal-600 text-white flex gap-x-5 px-10 py-3 mb-2 fixed top-0 left-0 right-0">
+        <nav className="bg-teal-600 text-white flex gap-x-10 px-10 py-3 mb-2 fixed top-0 left-0 right-0">
             <Link to="/">
                 <img
                     src="/assets/impulsatech_logo.png"
@@ -38,7 +48,7 @@ function Navbar() {
                     className="h-10 mr-3 hover:opacity-50 transition duration-500"
                 />
             </Link>
-            <div className="flex lg:hidden flex-grow justify-end">
+            <div className="flex lg:hidden sm:flex-grow sm:justify-end">
                 <button
                     className="bg-teal-700 hover:bg-teal-800 px-3 py-1 rounded-md border"
                     onClick={toggleMenu}
@@ -53,7 +63,7 @@ function Navbar() {
                         isMenuOpen ? "block" : "hidden"
                     } lg:flex-grow items-center justify-between absolute lg:relative top-16 lg:top-0 w-full lg:w-auto left-0 py-2 lg:py-0 px-10 lg:px-0`}
                 >
-                    <div className="flex gap-x-5 flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">
+                    <div className="flex gap-x-10 flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">
                         <Link
                             to="/"
                             className="hover:opacity-65 transition duration-500"
@@ -66,44 +76,58 @@ function Navbar() {
                         >
                             Campañas
                         </Link>
-                        <Link
-                            to="/cancelled-campaigns"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Campañas canceladas
-                        </Link>
-                        <Link
-                            to="/completed-campaigns"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Campañas completadas
-                        </Link>
-                        <Link
-                            to="/campaigns/create"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Crear campaña
-                        </Link>
+                        {subject.isAdmin && (
+                            <Link
+                                to="/stats"
+                                className="hover:opacity-65 transition duration-500"
+                            >
+                                Estadísticas
+                            </Link>
+                        )}
                     </div>
 
                     <div className="flex gap-x-5 items-start lg:items-stretch flex-col lg:flex-row gap-y-2 lg:gap-y-0">
                         <button
                             onClick={toggleDropdown}
-                            className="bg-teal-700 hover:bg-teal-800 rounded-md border border-white px-3 py-1 transition duration-500"
+                            className="bg-teal-700 hover:bg-teal-800 flex items-center rounded-md border border-white px-3 py-1 transition duration-500"
                         >
-                            <FontAwesomeIcon icon={faUser} /> &nbsp;{" "}
+                            {subject.picture ? (
+                                <img
+                                    className="size-8 mr-2 rounded-full object-cover border border-white"
+                                    src={subject.picture.secure_url}
+                                    alt="picture"
+                                />
+                            ) : (
+                                <img
+                                    className="size-8 mr-2 rounded-full object-cover border border-white"
+                                    src="/assets/user/avatar.jpg"
+                                    alt="picture"
+                                />
+                            )}
                             {subject.name}
+                            {collaboratorReinvestments.length > 0 && (
+                                <div className="bg-red-500 border text-white font-normal px-2 rounded-md ml-2">
+                                    {collaboratorReinvestments.length}{" "}
+                                    <FontAwesomeIcon icon={faBell} />
+                                </div>
+                            )}
                         </button>
                         <div
                             className={`${
                                 isDropdownOpen ? "block" : "hidden"
-                            } absolute top-24 lg:top-12 lg:right-0 bg-teal-600 p-3 rounded-md shadow-md  flex flex-col gap-y-2`}
+                            } absolute top-36 lg:top-12 lg:right-0 bg-teal-600 p-3 rounded-md shadow-md  flex flex-col gap-y-2`}
                         >
                             <Link
                                 to="/profile"
                                 className="block p-1 rounded-md hover:bg-teal-700 transition duration-500"
                             >
                                 Mi perfil
+                            </Link>
+                            <Link
+                                to="/time-record"
+                                className="block p-1 rounded-md hover:bg-teal-700 transition duration-500"
+                            >
+                                Registro de tiempo
                             </Link>
                             <button
                                 onClick={() => {
@@ -124,7 +148,7 @@ function Navbar() {
                         isMenuOpen ? "block" : "hidden"
                     } lg:flex-grow items-center justify-between absolute lg:relative top-16 lg:top-0 w-full lg:w-auto left-0 py-2 lg:py-0 px-10 lg:px-0`}
                 >
-                    <div className="flex gap-x-5 flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">
+                    <div className="flex gap-x-10 flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">
                         <Link
                             to="/"
                             className=" hover:opacity-65 transition duration-500"
@@ -136,18 +160,6 @@ function Navbar() {
                             className="hover:opacity-65 transition duration-500"
                         >
                             Campañas
-                        </Link>
-                        <Link
-                            to="/cancelled-campaigns"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Campañas canceladas
-                        </Link>
-                        <Link
-                            to="/completed-campaigns"
-                            className="hover:opacity-65 transition duration-500"
-                        >
-                            Campañas completadas
                         </Link>
                     </div>
                     <div className="flex gap-x-5 items-start lg:items-stretch flex-col lg:flex-row gap-y-2 lg:gap-y-0 mb-2 lg:mb-0">

@@ -1,7 +1,10 @@
 import fs from "fs-extra";
+import bcrypt from "bcryptjs";
 import Campaign from "../models/campaign.model.js";
 import User from "../models/user.model.js";
 import Organization from "../models/organization.model.js";
+import FinancialDonation from "../models/financialDonation.model.js";
+import TimeDonation from "../models/timeDonation.model.js";
 import { isOrganization } from "../libs/isOrganization.js";
 import {
     getMoneyDonated,
@@ -9,7 +12,7 @@ import {
     getTimeDonated,
     getTimeDonatedPercentage,
 } from "../libs/getAmountDonated.js";
-import { uploadCampaignImage } from "../libs/cloudinary.js";
+import { uploadImage } from "../libs/cloudinary.js";
 
 export const getCampaigns = async (req, res) => {
     try {
@@ -40,7 +43,18 @@ export const getCampaigns = async (req, res) => {
 
 export const getCampaignsByStatus = (status) => async (req, res) => {
     try {
-        const campaigns = await Campaign.find({ status });
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 12;
+        const startIndex = (page - 1) * pageSize;
+        const totalPages = Math.ceil(
+            (await Campaign.countDocuments({ status, eliminated: false })) /
+                pageSize
+        );
+
+        const campaigns = await Campaign.find({ status, eliminated: false })
+            .skip(startIndex)
+            .limit(pageSize)
+            .sort({ createdAt: -1 });
         const campaignsWithDonationsInfo = await Promise.all(
             campaigns.map(async (campaign) => {
                 const moneyDonated = await getMoneyDonated(campaign._id);
@@ -59,7 +73,91 @@ export const getCampaignsByStatus = (status) => async (req, res) => {
                 });
             })
         );
-        res.status(200).json(campaignsWithDonationsInfo);
+        res.status(200).json({
+            campaigns: campaignsWithDonationsInfo,
+            totalPages,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getFeaturedCampaigns = async (req, res) => {
+    // Featured campaigns are those 3 ongoing campaigns with the highest percentage of money donated and time donated
+    try {
+        const campaigns = await Campaign.find({
+            status: "ongoing",
+            eliminated: false,
+        });
+        const campaignsWithDonationsInfo = await Promise.all(
+            campaigns.map(async (campaign) => {
+                const moneyDonated = await getMoneyDonated(campaign._id);
+                const moneyDonatedPercetage = await getMoneyDonatedPercentage(
+                    campaign._id
+                );
+                const timeDonated = await getTimeDonated(campaign._id);
+                const timeDonatedPercentage = await getTimeDonatedPercentage(
+                    campaign._id
+                );
+                return Object.assign(campaign.toObject(), {
+                    moneyDonated,
+                    moneyDonatedPercetage,
+                    timeDonated,
+                    timeDonatedPercentage,
+                });
+            })
+        );
+        campaignsWithDonationsInfo.sort(
+            (a, b) =>
+                parseFloat(b.moneyDonatedPercetage) +
+                parseFloat(b.timeDonatedPercentage) -
+                (parseFloat(a.moneyDonatedPercetage) +
+                    parseFloat(a.timeDonatedPercentage))
+        );
+        res.status(200).json(campaignsWithDonationsInfo.slice(0, 3));
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getInterestingCampaigns = async (req, res) => {
+    // Interesting campaigns are those 3 ongoing campaigns with the highest percentage of money donated
+    try {
+        const campaigns = await Campaign.find({
+            status: "ongoing",
+            financialGoal: { $ne: null },
+            eliminated: false,
+        });
+        const campaignsWithDonationsInfo = await Promise.all(
+            campaigns.map(async (campaign) => {
+                const moneyDonated = await getMoneyDonated(campaign._id);
+                const moneyDonatedPercetage = await getMoneyDonatedPercentage(
+                    campaign._id
+                );
+                return Object.assign(campaign.toObject(), {
+                    moneyDonated,
+                    moneyDonatedPercetage,
+                });
+            })
+        );
+        campaignsWithDonationsInfo.sort(
+            (a, b) =>
+                parseFloat(b.moneyDonatedPercetage) -
+                parseFloat(a.moneyDonatedPercetage)
+        );
+        res.status(200).json(campaignsWithDonationsInfo.slice(0, 3));
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getCampaignsByPromoter = async (req, res) => {
+    try {
+        const campaigns = await Campaign.find({
+            "promoter.id": req.params.id,
+            eliminated: false,
+        }).sort({ createdAt: -1 });
+        res.status(200).json(campaigns);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -105,6 +203,136 @@ export const getCampaign = async (req, res) => {
     }
 };
 
+export const getCampaignCollaborators = async (req, res) => {
+    try {
+        const campaign = await Campaign.findById(req.params.id);
+
+        if (!campaign) {
+            return res.status(404).json({ message: "Campaña no encontrada" });
+        }
+
+        const financialDonations = await FinancialDonation.find({
+            campaign: campaign._id,
+        });
+
+        const timeDonations = await TimeDonation.find({
+            campaign: campaign._id,
+        });
+
+        const collaborators = [
+            ...financialDonations.map((donation) => donation.collaborator.id),
+            ...timeDonations.map((donation) => donation.collaborator.id),
+        ];
+
+        const uniqueCollaborators = Array.from(
+            new Set(collaborators.filter(Boolean))
+        );
+
+        res.status(200).json(uniqueCollaborators);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const searchCampaigns = async (req, res) => {
+    try {
+        const {
+            title,
+            tags,
+            deadline,
+            financialGoalMin,
+            financialGoalMax,
+            timeGoalMin,
+            timeGoalMax,
+            moneyRemainingMin,
+            moneyRemainingMax,
+            timeRemainingMin,
+            timeRemainingMax,
+        } = req.query;
+        const query = {};
+
+        if (title) {
+            query.title = { $regex: title, $options: "i" };
+        }
+
+        if (tags) {
+            query.tags = { $in: tags.split(",") };
+        }
+
+        if (deadline) {
+            query.deadline = { $lte: new Date(deadline) };
+        }
+
+        if (financialGoalMin || financialGoalMax) {
+            query.financialGoal = {};
+
+            if (financialGoalMin) {
+                query.financialGoal.$gte = financialGoalMin;
+            }
+
+            if (financialGoalMax) {
+                query.financialGoal.$lte = financialGoalMax;
+            }
+        }
+
+        if (timeGoalMin || timeGoalMax) {
+            query.timeGoal = {};
+
+            if (timeGoalMin) {
+                query.timeGoal.$gte = timeGoalMin;
+            }
+
+            if (timeGoalMax) {
+                query.timeGoal.$lte = timeGoalMax;
+            }
+        }
+
+        query.eliminated = false;
+        query.status = { $ne: "cancelled" };
+
+        const campaigns = await Campaign.find(query);
+
+        const campaignsWithDonationsInfo = await Promise.all(
+            campaigns.map(async (campaign) => {
+                const moneyDonated = await getMoneyDonated(campaign._id);
+                const moneyDonatedPercetage = await getMoneyDonatedPercentage(
+                    campaign._id
+                );
+                const timeDonated = await getTimeDonated(campaign._id);
+                const timeDonatedPercentage = await getTimeDonatedPercentage(
+                    campaign._id
+                );
+                return Object.assign(campaign.toObject(), {
+                    moneyDonated,
+                    moneyDonatedPercetage,
+                    timeDonated,
+                    timeDonatedPercentage,
+                });
+            })
+        );
+
+        const filteredCampaigns = campaignsWithDonationsInfo.filter(
+            (campaign) =>
+                (!moneyRemainingMin ||
+                    campaign.financialGoal - campaign.moneyDonated >=
+                        moneyRemainingMin) &&
+                (!moneyRemainingMax ||
+                    campaign.financialGoal - campaign.moneyDonated <=
+                        moneyRemainingMax) &&
+                (!timeRemainingMin ||
+                    campaign.timeGoal - campaign.timeDonated >=
+                        timeRemainingMin) &&
+                (!timeRemainingMax ||
+                    campaign.timeGoal - campaign.timeDonated <=
+                        timeRemainingMax)
+        );
+
+        res.status(200).json(filteredCampaigns);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const createCampaign = async (req, res) => {
     try {
         const {
@@ -118,6 +346,11 @@ export const createCampaign = async (req, res) => {
             tags,
         } = req.body;
         let image;
+        let ibanHash;
+
+        if (iban) {
+            ibanHash = await bcrypt.hash(iban, 10);
+        }
 
         if (!timeGoal && !financialGoal) {
             return res
@@ -162,8 +395,9 @@ export const createCampaign = async (req, res) => {
             : "User";
 
         if (req.files && req.files.image) {
-            const { public_id, secure_url } = await uploadCampaignImage(
-                req.files.image.tempFilePath
+            const { public_id, secure_url } = await uploadImage(
+                req.files.image.tempFilePath,
+                "campaigns"
             );
 
             await fs.remove(req.files.image.tempFilePath);
@@ -177,7 +411,7 @@ export const createCampaign = async (req, res) => {
             timeGoal,
             timeGoalPeriod,
             financialGoal,
-            iban,
+            iban: ibanHash,
             image,
             deadline,
             tags,

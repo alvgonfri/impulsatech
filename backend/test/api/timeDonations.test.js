@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 
 describe("Time Donation tests", () => {
     let agent;
+    let agentId;
     let campaignId;
 
     const tomorrow = new Date();
@@ -41,6 +42,8 @@ describe("Time Donation tests", () => {
 
         const campaign = await agent.get("/api/v1/campaigns");
         campaignId = campaign.body[0]._id;
+
+        agentId = res.body.user._id;
     });
 
     afterAll(async () => {
@@ -88,6 +91,15 @@ describe("Time Donation tests", () => {
         it("should return 200 OK", async () => {
             const response = await agent.get(
                 `/api/v1/time-donations/${campaignId}`
+            );
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
+    describe("GET /api/v1/time-donations/invest/:collaboratorId", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get(
+                `/api/v1/time-donations/invest/${agentId}`
             );
             expect(response.statusCode).toBe(200);
         });

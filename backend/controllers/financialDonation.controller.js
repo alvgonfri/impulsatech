@@ -14,6 +14,42 @@ export const getFinancialDonationsByCampaign = async (req, res) => {
     }
 };
 
+export const getReinvestmentsByCollaborator = async (req, res) => {
+    try {
+        const collaboratorFinancialDonations = await FinancialDonation.find({
+            "collaborator.id": req.params.collaboratorId,
+        }).populate("campaign");
+
+        const financialDonationsFromCancelledCampaigns =
+            collaboratorFinancialDonations.filter(
+                (financialDonation) =>
+                    financialDonation.campaign.status === "cancelled"
+            );
+
+        const financialDonationsFromEliminatedCampaigns =
+            collaboratorFinancialDonations.filter(
+                (financialDonation) =>
+                    financialDonation.campaign.eliminated === true &&
+                    financialDonation.campaign.status === "ongoing"
+            );
+
+        const financialDonations =
+            financialDonationsFromCancelledCampaigns.concat(
+                financialDonationsFromEliminatedCampaigns
+            );
+
+        financialDonations.sort((a, b) => {
+            if (a.updatedAt > b.updatedAt) return -1;
+            if (a.updatedAt < b.updatedAt) return 1;
+            return 0;
+        });
+
+        res.status(200).json(financialDonations);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const createFinancialDonation = async (req, res) => {
     try {
         const { amount, anonymous, campaignId } = req.body;
@@ -96,12 +132,12 @@ export const processPayment = async (req, res) => {
         const customer = await stripe.customers.create({
             metadata: {
                 anonymous,
-                collaboratorType: anonymous
+                collaboratorType: !req.subject
                     ? null
                     : (await isOrganization(req.subject.id))
                     ? "Organization"
                     : "User",
-                collaboratorId: anonymous ? null : req.subject.id,
+                collaboratorId: !req.subject ? null : req.subject.id,
                 campaignId,
             },
         });
@@ -174,4 +210,34 @@ export const webhook = async (req, res) => {
     }
 
     res.status(200).send();
+};
+
+export const updateFinancialDonation = async (req, res) => {
+    try {
+        const financialDonationInDB = await FinancialDonation.findById(
+            req.params.id
+        );
+
+        if (!financialDonationInDB) {
+            return res.status(404).json(["Donación no encontrada"]);
+        }
+
+        if (
+            req.subject.id !== financialDonationInDB.collaborator.id.toString()
+        ) {
+            return res
+                .status(403)
+                .json(["No tienes permiso para modificar esta donación"]);
+        }
+
+        const financialDonation = await FinancialDonation.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+
+        res.status(200).json(financialDonation);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };

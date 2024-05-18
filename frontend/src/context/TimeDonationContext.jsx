@@ -1,9 +1,11 @@
 import { createContext, useContext, useState } from "react";
+import PropTypes from "prop-types";
 import {
     getTimeDonationsByCampaignRequest,
+    getTimeToInvestByCollaboratorRequest,
     createTimeDonationRequest,
 } from "../api/timeDonation.js";
-import PropTypes from "prop-types";
+import { createTimeRecordRequest } from "../api/timeRecord.js";
 
 const TimeDonationContext = createContext();
 
@@ -20,12 +22,25 @@ export const useTimeDonation = () => {
 
 export const TimeDonationProvider = ({ children }) => {
     const [timeDonations, setTimeDonations] = useState([]);
+    const [timeToInvest, setTimeToInvest] = useState([]);
     const [errors, setErrors] = useState([]);
+    const [timeRecordErrors, setTimeRecordErrors] = useState([]);
 
     const getTimeDonationsByCampaign = async (campaignId) => {
         try {
             const res = await getTimeDonationsByCampaignRequest(campaignId);
             setTimeDonations(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getTimeToInvestByCollaborator = async (collaboratorId) => {
+        try {
+            const res = await getTimeToInvestByCollaboratorRequest(
+                collaboratorId
+            );
+            setTimeToInvest(res.data);
         } catch (error) {
             console.error(error);
         }
@@ -42,13 +57,27 @@ export const TimeDonationProvider = ({ children }) => {
         }
     };
 
+    const createTimeRecord = async (timeRecord) => {
+        try {
+            const res = await createTimeRecordRequest(timeRecord);
+            return res.status;
+        } catch (error) {
+            console.error(error);
+            setTimeRecordErrors(error.response.data);
+        }
+    };
+
     return (
         <TimeDonationContext.Provider
             value={{
                 timeDonations,
                 getTimeDonationsByCampaign,
+                timeToInvest,
+                getTimeToInvestByCollaborator,
                 createTimeDonation,
+                createTimeRecord,
                 errors,
+                timeRecordErrors,
             }}
         >
             {children}

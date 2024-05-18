@@ -3,15 +3,20 @@ import { useCampaign } from "../../context/CampaignContext";
 import { useFinancialDonation } from "../../context/FinancialDonationContext";
 import { useTimeDonation } from "../../context/TimeDonationContext";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { loadStripe } from "@stripe/stripe-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoins } from "@fortawesome/free-solid-svg-icons";
-import { faClock } from "@fortawesome/free-solid-svg-icons";
+import {
+    faCoins,
+    faClock,
+    faCirclePlus,
+} from "@fortawesome/free-solid-svg-icons";
+import PostCard from "../../components/PostCard";
 import Tooltip from "../../components/Tooltip";
 import Tag from "../../components/Tag";
 import Modal from "../../components/Modal";
+import Alert from "../../components/Alert";
 
 function CampaignPage() {
     const [campaign, setCampaign] = useState({});
@@ -21,13 +26,28 @@ function CampaignPage() {
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
     const [completeError, setCompleteError] = useState(false);
-    const { getCampaign, eliminateCampaign, cancelCampaign, completeCampaign } =
-        useCampaign();
-    const { processPayment, errors: financialDonationErrors } =
-        useFinancialDonation();
+    const {
+        getCampaign,
+        campaignCollaborators,
+        getCampaignCollaborators,
+        eliminateCampaign,
+        cancelCampaign,
+        completeCampaign,
+        getPostsByCampaign,
+        campaignPosts,
+    } = useCampaign();
+    const {
+        processPayment,
+        errors: financialDonationErrors,
+        collaboratorReinvestments,
+        getReinvestmentsByCollaborator,
+        reinvestFinancialDonation,
+        reinvestmentErrors,
+    } = useFinancialDonation();
     const { createTimeDonation, errors: timeDonationErrors } =
         useTimeDonation();
     const { subject, isAuthenticated } = useAuth();
+    const reinvestmentRef = useRef();
     const financialDonationRef = useRef();
     const {
         register,
@@ -35,6 +55,14 @@ function CampaignPage() {
         formState: { errors },
     } = useForm();
     const navigate = useNavigate();
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const created = searchParams.get("created");
+    const cancelled = searchParams.get("cancelled");
+    const completed = searchParams.get("completed");
+    const timeDonated = searchParams.get("timeDonated");
+    const reinvested = searchParams.get("reinvested");
+    const postCreated = searchParams.get("postCreated");
     const params = useParams();
 
     useEffect(() => {
@@ -66,12 +94,51 @@ function CampaignPage() {
 
                 setCampaign(campaign);
                 setPromoter(campaign.promoter);
+                getCampaignCollaborators(campaign._id);
             }
         }
 
         loadCampaign();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            getReinvestmentsByCollaborator(subject?._id);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated]);
+
+    useEffect(() => {
+        if (campaign._id) {
+            getPostsByCampaign(campaign._id);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [campaign]);
+
+    const onReinvestFinancialDonation = async (e) => {
+        e.preventDefault();
+
+        const reinvestment =
+            collaboratorReinvestments[
+                reinvestmentRef.current.reinvestment.value
+            ];
+        const anonymous = isAuthenticated
+            ? reinvestmentRef.current.anonymous.checked
+            : true;
+        const campaignId = campaign._id;
+
+        const status = await reinvestFinancialDonation(
+            reinvestment._id,
+            campaignId,
+            anonymous
+        );
+
+        if (status === 200) {
+            window.location.href =
+                "/campaigns/" + campaign._id + "?reinvested=true";
+        }
+    };
 
     const onSubmitFinancialDonation = async (e) => {
         e.preventDefault();
@@ -128,7 +195,8 @@ function CampaignPage() {
         const status = await createTimeDonation(timeDonation);
 
         if (status === 201) {
-            window.location.reload();
+            window.location.href =
+                "/campaigns/" + campaign._id + "?timeDonated=true";
         }
     });
 
@@ -136,7 +204,7 @@ function CampaignPage() {
         const status = await eliminateCampaign(campaign._id);
 
         if (status === 200) {
-            navigate("/campaigns");
+            navigate("/campaigns?eliminated=true");
         }
     };
 
@@ -144,7 +212,8 @@ function CampaignPage() {
         const status = await cancelCampaign(campaign._id);
 
         if (status === 200) {
-            navigate("/campaigns");
+            window.location.href =
+                "/campaigns/" + campaign._id + "?cancelled=true";
         }
     };
 
@@ -173,22 +242,43 @@ function CampaignPage() {
         const status = await completeCampaign(campaign._id);
 
         if (status === 200) {
-            navigate("/campaigns");
+            window.location.href =
+                "/campaigns/" + campaign._id + "?completed=true";
         }
     };
 
     return (
-        <div className="container mx-auto px-10 md:px-40 mb-10">
+        <div className="container mx-auto mb-10 px-10 xl:px-40">
+            {created === "true" && (
+                <Alert text="¡Campaña creada e iniciada con éxito!" />
+            )}
+            {cancelled === "true" && (
+                <Alert text="¡Campaña cancelada con éxito!" />
+            )}
+            {completed === "true" && (
+                <Alert text="¡Campaña completada con éxito!" />
+            )}
+            {timeDonated === "true" && (
+                <Alert text="¡Donación de tiempo realizada con éxito!" />
+            )}
+            {reinvested === "true" && (
+                <Alert text="¡Donación reinvertida con éxito!" />
+            )}
+            {postCreated === "true" && (
+                <Alert text="¡Post publicado con éxito!" />
+            )}
+
             <h1 className="text-3xl font-bold text-teal-800 mb-4">
                 {campaign.title}
             </h1>
-            <div className="flex flex-col gap-8 md:flex-row">
-                <div className="w-full md:w-3/5  mb-4 md:mb-0">
+
+            <div className="flex flex-col gap-8 lg:flex-row">
+                <div className="w-full lg:w-3/5 mb-4 md:mb-0">
                     {campaign.image ? (
                         <img
                             alt="Campaign"
                             src={campaign.image && campaign.image.secure_url}
-                            className="w-full h-96 rounded-md object-cover border-2 border-teal-600 mb-4"
+                            className="w-full h-72 md:h-96 rounded-md object-cover border-2 border-teal-600 mb-4"
                         />
                     ) : (
                         <img
@@ -219,38 +309,44 @@ function CampaignPage() {
                     </div>
                     <div className="mt-2 sharethis-inline-share-buttons"></div>
                 </div>
-                <div className="w-full h-fit md:w-2/5 rounded-md border-2 border-teal-600">
+                <div className="w-full h-fit lg:w-2/5 rounded-md border-2 border-teal-600">
                     <div className="flex bg-teal-600 text-white px-4 py-2">
                         <p className="font-bold">Promotor:</p>
-                        <span className="ml-2">{promoter.name}</span>
+                        <a
+                            href={`/profile/${promoter._id}`}
+                            className="ml-2 hover:underline"
+                        >
+                            {promoter.name} {promoter.surname}
+                        </a>
                     </div>
 
-                    {campaign.financialGoal && (
-                        <>
-                            <div className="text-lg text-teal-500 font-medium px-4 pt-2">
-                                {campaign.moneyDonated} € de&nbsp;
-                                {campaign.financialGoal} €
-                            </div>
-                            <div className="mt-2 flex justify-between items-center gap-2 px-4 pb-2">
-                                <div className="h-5 w-full bg-neutral-200 rounded-full">
-                                    <div
-                                        className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
-                                        style={{
-                                            width: `${campaign.moneyDonatedPercetage}%`,
-                                        }}
-                                    >
-                                        {campaign.moneyDonatedPercetage}%
-                                    </div>
+                    {campaign.financialGoal &&
+                        campaign.status !== "cancelled" && (
+                            <>
+                                <div className="text-lg text-teal-500 font-medium px-4 pt-2">
+                                    {campaign.moneyDonated} € de&nbsp;
+                                    {campaign.financialGoal} €
                                 </div>
-                                <FontAwesomeIcon
-                                    icon={faCoins}
-                                    className="text-teal-500"
-                                />
-                            </div>
-                        </>
-                    )}
+                                <div className="mt-2 flex justify-between items-center gap-2 px-4 pb-2">
+                                    <div className="h-5 w-full bg-neutral-200 rounded-full">
+                                        <div
+                                            className="h-5 bg-teal-500 p-0.5 text-center text-xs font-medium leading-none text-white rounded-full"
+                                            style={{
+                                                width: `${campaign.moneyDonatedPercetage}%`,
+                                            }}
+                                        >
+                                            {campaign.moneyDonatedPercetage}%
+                                        </div>
+                                    </div>
+                                    <FontAwesomeIcon
+                                        icon={faCoins}
+                                        className="text-teal-500"
+                                    />
+                                </div>
+                            </>
+                        )}
 
-                    {campaign.timeGoal && (
+                    {campaign.timeGoal && campaign.status !== "cancelled" && (
                         <>
                             <div className="text-lg text-indigo-500 font-medium px-4 pt-2">
                                 {campaign.timeDonated} h de&nbsp;
@@ -293,7 +389,7 @@ function CampaignPage() {
                         )}
                     </div>
 
-                    {campaign.timeGoal && (
+                    {campaign.timeGoal && campaign.status !== "cancelled" && (
                         <>
                             <div className="px-4 py-2">
                                 <p className="block text-sm text-gray-700">
@@ -354,6 +450,71 @@ function CampaignPage() {
                                     </button>
                                 </div>
                             </>
+                        )}
+
+                    {campaign.financialGoal &&
+                        campaign.status === "ongoing" &&
+                        subject?._id !== promoter._id &&
+                        isAuthenticated &&
+                        collaboratorReinvestments.length > 0 && (
+                            <form
+                                ref={reinvestmentRef}
+                                onSubmit={onReinvestFinancialDonation}
+                                className="border-t-2 border-teal-600 px-4 py-2"
+                            >
+                                <div className="mb-4">
+                                    <p className="block text-gray-700 font-bold mb-1">
+                                        Reinvertir donación económica
+                                    </p>
+
+                                    {reinvestmentErrors.map((error, i) => (
+                                        <div
+                                            className="bg-red-500 text-white text-sm p-2 rounded-lg my-2"
+                                            key={i}
+                                        >
+                                            {error}
+                                        </div>
+                                    ))}
+
+                                    <label className="block text-sm text-gray-700">
+                                        Selecciona la donación a reinvertir
+                                    </label>
+
+                                    <select
+                                        name="reinvestment"
+                                        className="w-full px-4 py-2 rounded-md border border-teal-500"
+                                    >
+                                        {collaboratorReinvestments.map(
+                                            (reinvestment, i) => (
+                                                <option key={i} value={i}>
+                                                    {reinvestment.amount} €
+                                                </option>
+                                            )
+                                        )}
+                                    </select>
+
+                                    {isAuthenticated && (
+                                        <div className="mb-4 mt-2">
+                                            <label className="flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    name="anonymous"
+                                                    className="mr-2 leading-tight"
+                                                />
+                                                <span className="text-sm text-gray-700">
+                                                    Donación anónima
+                                                </span>
+                                            </label>
+                                        </div>
+                                    )}
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                >
+                                    Reinvertir donación
+                                </button>
+                            </form>
                         )}
 
                     {campaign.financialGoal &&
@@ -429,7 +590,7 @@ function CampaignPage() {
                                         <p className="block text-gray-700 font-bold mb-1">
                                             Realizar donación de tiempo
                                         </p>
-                                        <Tooltip text="Debes autenticarte para poder realizar una donación de tiempo" />
+                                        <Tooltip text="Debes iniciar sesión para poder realizar una donación de tiempo" />
                                     </div>
 
                                     {timeDonationErrors.map((error, i) => (
@@ -500,6 +661,48 @@ function CampaignPage() {
                         )}
                 </div>
             </div>
+
+            {campaign.status === "completed" &&
+                (campaign.promoter._id === subject?._id ||
+                    campaignCollaborators.includes(subject?._id)) && (
+                    <div className="mt-8">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-teal-600 text-lg font-bold">
+                                Posts del promotor
+                            </h2>
+
+                            {campaign.promoter._id === subject?._id && (
+                                <button
+                                    onClick={() =>
+                                        navigate(
+                                            "/campaigns/" +
+                                                campaign._id +
+                                                "/posts/create"
+                                        )
+                                    }
+                                    className="bg-teal-700 hover:bg-teal-800 rounded-md text-white border border-white px-3 py-2 transition duration-500"
+                                >
+                                    <FontAwesomeIcon icon={faCirclePlus} />
+                                    <span className="hidden sm:inline">
+                                        {" "}
+                                        Nuevo post
+                                    </span>
+                                </button>
+                            )}
+                        </div>
+
+                        {campaignPosts.length > 0 ? (
+                            campaignPosts.map((post, i) => (
+                                <PostCard key={i} post={post} />
+                            ))
+                        ) : (
+                            <p className="text-gray-500 italic">
+                                No hay posts disponibles
+                            </p>
+                        )}
+                    </div>
+                )}
+
             {isEliminateModalOpen && (
                 <Modal
                     title="Eliminar campaña"

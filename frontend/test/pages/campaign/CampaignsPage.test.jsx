@@ -13,6 +13,6 @@ describe("CampaignsPage", () => {
             </CampaignProvider>
         );
 
-        expect(screen.getByText("Campañas")).toBeDefined();
+        expect(screen.getByText("Campañas en curso")).toBeDefined();
     });
 });

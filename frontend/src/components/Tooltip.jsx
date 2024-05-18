@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 function Tooltip({ text }) {
     return (
-        <div className="group cursor-pointer relative inline-block text-center">
+        <div className="group cursor-pointer hover:relative inline-block text-center">
             <FontAwesomeIcon
                 icon={faCircleInfo}
                 className="text-teal-600 text-xl"
