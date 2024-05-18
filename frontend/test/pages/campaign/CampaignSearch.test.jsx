@@ -1,18 +1,17 @@
-import CampaignsPage from "../../../src/pages/campaign/CampaignsPage";
+import CampaignSearch from "../../../src/pages/campaign/CampaignSearch";
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { CampaignProvider } from "../../../src/context/CampaignContext";
 
-describe("CampaignsPage", () => {
-    it("should render the CampaignsPage component correctly", () => {
+describe("CampaignSearch", () => {
+    it("should render the CampaignSearch component correctly", () => {
         render(
             <CampaignProvider>
                 <BrowserRouter>
-                    <CampaignsPage />
+                    <CampaignSearch />
                 </BrowserRouter>
             </CampaignProvider>
         );
-
-        expect(screen.getByText("Campañas en curso")).toBeDefined();
+        expect(screen.getByText("Búsqueda de campañas")).toBeDefined();
     });
 });

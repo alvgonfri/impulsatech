@@ -2,6 +2,7 @@ import Navbar from "../../src/components/Navbar";
 import { render, screen, fireEvent } from "@testing-library/react";
 import AuthContext from "../../src/context/AuthContext";
 import { BrowserRouter } from "react-router-dom";
+import { FinancialDonationProvider } from "../../src/context/FinancialDonationContext";
 
 describe("Navbar", () => {
     it("should render the Navbar component correctly when user is authenticated", () => {
@@ -11,9 +12,11 @@ describe("Navbar", () => {
 
         render(
             <AuthContext.Provider value={contextValue}>
-                <BrowserRouter>
-                    <Navbar />
-                </BrowserRouter>
+                <FinancialDonationProvider>
+                    <BrowserRouter>
+                        <Navbar />
+                    </BrowserRouter>
+                </FinancialDonationProvider>
             </AuthContext.Provider>
         );
 
@@ -28,9 +31,11 @@ describe("Navbar", () => {
 
         render(
             <AuthContext.Provider value={contextValue}>
-                <BrowserRouter>
-                    <Navbar />
-                </BrowserRouter>
+                <FinancialDonationProvider>
+                    <BrowserRouter>
+                        <Navbar />
+                    </BrowserRouter>
+                </FinancialDonationProvider>
             </AuthContext.Provider>
         );
 
