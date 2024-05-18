@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 
 describe("Campaign tests", () => {
     let agent;
+    let agentId;
 
     beforeAll(async () => {
         await mongoose.connect(process.env.TEST_MONGODB_URI);
@@ -19,6 +20,8 @@ describe("Campaign tests", () => {
 
         const token = res.body.token;
         agent.set("Authorization", token);
+
+        agentId = res.body.user._id;
     });
 
     afterAll(async () => {
@@ -87,6 +90,44 @@ describe("Campaign tests", () => {
         });
     });
 
+    describe("GET /api/v1/campaigns/featured", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get("/api/v1/campaigns/featured");
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/interesting", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get("/api/v1/campaigns/interesting");
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/promoter/:id", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get(
+                `/api/v1/campaigns/promoter/${agentId}`
+            );
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/search", () => {
+        it("should return 200 OK", async () => {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            const response = await agent.get(
+                "/api/v1/campaigns/search?title=test&deadline=" +
+                    tomorrow.toISOString().slice(0, 10) +
+                    "&financialGoalMin=100&financialGoalMax=1000&timeGoalMin=50&timeGoalMax=200 \
+                &moneyRemainingMin=1000&moneyRemainingMax=1500&timeRemainingMin=10&timeRemainingMax=100"
+            );
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
     describe("GET /api/v1/campaigns/:id", () => {
         it("should return 200 OK", async () => {
             const campaigns = await agent.get("/api/v1/campaigns");
@@ -99,6 +140,25 @@ describe("Campaign tests", () => {
             const randomObjectId = new mongoose.Types.ObjectId();
             const response = await agent.get(
                 "/api/v1/campaigns/" + randomObjectId
+            );
+            expect(response.statusCode).toBe(404);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/:id/collaborators", () => {
+        it("should return 200 OK", async () => {
+            const campaigns = await agent.get("/api/v1/campaigns");
+            const campaignId = campaigns.body[0]._id;
+            const response = await agent.get(
+                `/api/v1/campaigns/${campaignId}/collaborators`
+            );
+            expect(response.statusCode).toBe(200);
+        });
+
+        it("should return 404 Not Found", async () => {
+            const randomObjectId = new mongoose.Types.ObjectId();
+            const response = await agent.get(
+                "/api/v1/campaigns/" + randomObjectId + "/collaborators"
             );
             expect(response.statusCode).toBe(404);
         });

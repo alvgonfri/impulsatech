@@ -1,8 +1,9 @@
 import request from "supertest";
 import app from "../../app.js";
 import mongoose from "mongoose";
+import TimeDonation from "../../models/timeDonation.model.js";
 
-describe("Time Donation tests", () => {
+describe("Time Record tests", () => {
     let agent;
     let agentId;
     let campaignId;
@@ -20,9 +21,9 @@ describe("Time Donation tests", () => {
         agent = request.agent(app);
 
         const res = await agent.post("/api/v1/register").send({
-            name: "timeDonation-test",
-            surname: "timeDonation-test",
-            email: "timeDonation-test@gmail.com",
+            name: "timeRecord-test",
+            surname: "timeRecord-test",
+            email: "timeRecord-test@gmail.com",
             password: "12345678",
         });
 
@@ -51,7 +52,7 @@ describe("Time Donation tests", () => {
         await mongoose.connection.close();
     });
 
-    describe("POST /api/v1/time-donations", () => {
+    describe("POST /api/v1/time-records", () => {
         it("should return 201 Created", async () => {
             const other = await agent.post("/api/v1/register").send({
                 name: "other-test",
@@ -63,45 +64,26 @@ describe("Time Donation tests", () => {
             const otherToken = other.body.token;
             agent.set("Authorization", otherToken);
 
-            const response = await agent.post("/api/v1/time-donations").send({
-                amount: 10,
-                period: {
-                    startDate: futureStartDate.toISOString().slice(0, 10),
-                    endDate: futureEndDate.toISOString().slice(0, 10),
-                },
-                campaignId: campaignId,
+            const timeDonation = await agent
+                .post("/api/v1/time-donations")
+                .send({
+                    amount: 10,
+                    period: {
+                        startDate: futureStartDate.toISOString().slice(0, 10),
+                        endDate: futureEndDate.toISOString().slice(0, 10),
+                    },
+                    campaignId: campaignId,
+                });
+
+            const timeDonationId = timeDonation.body._id;
+
+            const response = await agent.post("/api/v1/time-records").send({
+                amount: 5,
+                date: futureStartDate.toISOString().slice(0, 10),
+                description: "test",
+                timeDonationId: timeDonationId,
             });
             expect(response.statusCode).toBe(201);
-        });
-
-        it("should return 400 Bad Request", async () => {
-            const response = await agent.post("/api/v1/time-donations").send({
-                amount: 0,
-                period: {
-                    startDate: futureStartDate.toISOString().slice(0, 10),
-                    endDate: futureEndDate.toISOString().slice(0, 10),
-                },
-                campaignId: campaignId,
-            });
-            expect(response.statusCode).toBe(400);
-        });
-    });
-
-    describe("GET /api/v1/time-donations/:campaignId", () => {
-        it("should return 200 OK", async () => {
-            const response = await agent.get(
-                `/api/v1/time-donations/${campaignId}`
-            );
-            expect(response.statusCode).toBe(200);
-        });
-    });
-
-    describe("GET /api/v1/time-donations/invest/:collaboratorId", () => {
-        it("should return 200 OK", async () => {
-            const response = await agent.get(
-                `/api/v1/time-donations/invest/${agentId}`
-            );
-            expect(response.statusCode).toBe(200);
         });
     });
 });

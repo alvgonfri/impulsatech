@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 
 describe("Financial Donation tests", () => {
     let agent;
+    let agentId;
     let campaignId;
     let campaignWithNoFinancialGoalId;
 
@@ -49,6 +50,8 @@ describe("Financial Donation tests", () => {
             });
 
         campaignWithNoFinancialGoalId = campaignWithNoFinancialGoal.body._id;
+
+        agentId = res.body.user._id;
     });
 
     afterAll(async () => {
@@ -133,6 +136,15 @@ describe("Financial Donation tests", () => {
         });
     });
 
+    describe("GET /api/v1/financial-donations/reinvestments/:collaboratorId", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.get(
+                `/api/v1/financial-donations/reinvestments/${agentId}`
+            );
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
     describe("POST /api/v1/financial-donations/process-payment", () => {
         it("should return 201 Created", async () => {
             const response = await agent
@@ -154,6 +166,31 @@ describe("Financial Donation tests", () => {
                     campaignId: campaignId,
                 });
             expect(response.statusCode).toBe(400);
+        });
+    });
+
+    describe("PATCH /api/v1/financial-donations/:id", () => {
+        it("should return 200 OK", async () => {
+            const financialDonations = await agent.get(
+                `/api/v1/financial-donations/${campaignId}`
+            );
+            const financialDonationId = financialDonations.body[0]._id;
+            const response = await agent
+                .patch(`/api/v1/financial-donations/${financialDonationId}`)
+                .send({
+                    anonymous: true,
+                });
+            expect(response.statusCode).toBe(200);
+        });
+
+        it("should return 404 Not Found", async () => {
+            const randomObjectId = new mongoose.Types.ObjectId();
+            const response = await agent
+                .patch(`/api/v1/financial-donations/${randomObjectId}`)
+                .send({
+                    anonymous: true,
+                });
+            expect(response.statusCode).toBe(404);
         });
     });
 });

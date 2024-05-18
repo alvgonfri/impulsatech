@@ -13,6 +13,7 @@ import {
     getTimeDonatedPercentage,
 } from "../libs/getAmountDonated.js";
 import { uploadImage } from "../libs/cloudinary.js";
+
 export const getCampaigns = async (req, res) => {
     try {
         const campaigns = await Campaign.find();
