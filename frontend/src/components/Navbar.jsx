@@ -91,7 +91,7 @@ function Navbar() {
                             onClick={toggleDropdown}
                             className="bg-teal-700 hover:bg-teal-800 flex items-center rounded-md border border-white px-3 py-1 transition duration-500"
                         >
-                            {subject.picture ? (
+                            {subject.picture?.secure_url ? (
                                 <img
                                     className="size-8 mr-2 rounded-full object-cover border border-white"
                                     src={subject.picture.secure_url}

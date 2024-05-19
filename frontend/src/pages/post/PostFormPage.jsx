@@ -63,11 +63,11 @@ function PostFormPage() {
 
     return (
         <div className="mb-10">
-            <div className="ml-40">
+            <div className="ml-4 lg:ml-40">
                 <BackButton />
             </div>
             <div className="flex justify-center">
-                <div className="mx-4 xl:w-1/3 p-10 rounded-md border border-teal-600">
+                <div className="mx-4 lg:w-1/3 p-10 rounded-md border border-teal-600">
                     <h1 className="text-teal-600 text-xl font-semibold mb-4">
                         Crea un post para{" "}
                         <span className="font-bold">{campaign.title}</span>
