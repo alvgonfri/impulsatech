@@ -22,6 +22,15 @@ export function checkIfDateIsFuture(date) {
     }
 }
 
+export function checkIfDateIsTodayOrFuture(date) {
+    try {
+        const parsedDate = new Date(date).toISOString().slice(0, 10);
+        return parsedDate >= new Date().toISOString().slice(0, 10);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 export async function checkIfTimeDonationPeriodIsValid(period, campaignId) {
     try {
         const campaign = await Campaign.findById(campaignId);

@@ -667,9 +667,12 @@ function CampaignPage() {
                     campaignCollaborators.includes(subject?._id)) && (
                     <div className="mt-8">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-teal-600 text-lg font-bold">
-                                Posts del promotor
-                            </h2>
+                            <div className="flex gap-2 items-center">
+                                <p className="text-teal-600 text-lg font-bold">
+                                    Posts del promotor
+                                </p>
+                                <Tooltip text="Cuando una campaña se completa, el promotor puede publicar posts para agradecer a los colaboradores y mostrar el impacto de la campaña" />
+                            </div>
 
                             {campaign.promoter._id === subject?._id && (
                                 <button
@@ -697,7 +700,7 @@ function CampaignPage() {
                             ))
                         ) : (
                             <p className="text-gray-500 italic">
-                                No hay posts disponibles
+                                No se han publicado posts
                             </p>
                         )}
                     </div>

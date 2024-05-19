@@ -24,7 +24,7 @@ function LoginPage() {
 
     return (
         <div className="mb-10">
-            <div className="ml-40">
+            <div className="ml-4 lg:ml-40">
                 <BackButton />
             </div>
             <div className="flex justify-center">
