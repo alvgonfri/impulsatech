@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { checkIfDateIsFuture, checkIfIbanIsValid } from "../libs/checks.js";
+import {
+    checkIfDateIsFuture,
+    checkIfDateIsTodayOrFuture,
+    checkIfIbanIsValid,
+} from "../libs/checks.js";
 
 export const createCampaignSchema = z.object({
     title: z
@@ -31,14 +35,22 @@ export const createCampaignSchema = z.object({
     timeGoalPeriod: z
         .object({
             startDate: z
-                .string({ required_error: "La fecha de inicio es requerida" })
+                .string({
+                    required_error:
+                        "La fecha de inicio del periodo de recibimiento es requerida",
+                })
                 .refine((value) => checkIfDateIsFuture(value), {
-                    message: "La fecha de inicio debe ser una fecha futura",
+                    message:
+                        "La fecha de inicio del periodo de recibimiento debe ser una fecha futura",
                 }),
             endDate: z
-                .string({ required_error: "La fecha de fin es requerida" })
+                .string({
+                    required_error:
+                        "La fecha de fin del periodo de recibimiento es requerida",
+                })
                 .refine((value) => checkIfDateIsFuture(value), {
-                    message: "La fecha de fin debe ser una fecha futura",
+                    message:
+                        "La fecha de fin del periodo de recibimiento debe ser una fecha futura",
                 }),
         })
         .optional(),
@@ -61,8 +73,8 @@ export const createCampaignSchema = z.object({
         .optional(),
     deadline: z
         .string()
-        .refine((value) => checkIfDateIsFuture(value), {
-            message: "La fecha límite debe ser una fecha futura",
+        .refine((value) => checkIfDateIsTodayOrFuture(value), {
+            message: "La fecha límite no puede ser anterior a hoy",
         })
         .optional(),
 });
@@ -112,9 +124,9 @@ export const updateCampaignSchema = z.object({
         .refine(
             (value) => {
                 const deadline = new Date(value).toISOString().slice(0, 10);
-                return deadline > new Date().toISOString().slice(0, 10);
+                return deadline >= new Date().toISOString().slice(0, 10);
             },
-            { message: "La fecha límite debe ser una fecha futura" }
+            { message: "La fecha límite no puede ser anterior a hoy" }
         )
         .optional(),
 });

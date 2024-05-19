@@ -385,6 +385,18 @@ export const createCampaign = async (req, res) => {
                 ]);
         }
 
+        if (
+            deadline &&
+            timeGoalPeriod &&
+            deadline >= timeGoalPeriod.startDate
+        ) {
+            return res
+                .status(400)
+                .json([
+                    "La fecha límite debe ser anterior al inicio del periodo de recibimiento",
+                ]);
+        }
+
         if (tags && tags.length > 3) {
             return res
                 .status(400)
@@ -406,23 +418,48 @@ export const createCampaign = async (req, res) => {
             image = { public_id, secure_url };
         }
 
-        const newCampaign = new Campaign({
-            title,
-            description,
-            timeGoal,
-            timeGoalPeriod,
-            financialGoal,
-            iban: ibanHash,
-            image,
-            deadline,
-            tags,
-            promoter: {
-                type: promoterType,
-                id: req.subject.id,
-            },
-        });
-        const campaign = await newCampaign.save();
-        res.status(201).json(campaign);
+        if (timeGoalPeriod && !deadline) {
+            let autoDeadline = new Date(timeGoalPeriod.startDate);
+            autoDeadline.setDate(autoDeadline.getDate() - 1);
+
+            const newCampaign = new Campaign({
+                title,
+                description,
+                timeGoal,
+                timeGoalPeriod,
+                financialGoal,
+                iban: ibanHash,
+                image,
+                deadline: autoDeadline,
+                tags,
+                promoter: {
+                    type: promoterType,
+                    id: req.subject.id,
+                },
+            });
+
+            const campaign = await newCampaign.save();
+            res.status(201).json(campaign);
+        } else {
+            const newCampaign = new Campaign({
+                title,
+                description,
+                timeGoal,
+                timeGoalPeriod,
+                financialGoal,
+                iban: ibanHash,
+                image,
+                deadline,
+                tags,
+                promoter: {
+                    type: promoterType,
+                    id: req.subject.id,
+                },
+            });
+
+            const campaign = await newCampaign.save();
+            res.status(201).json(campaign);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
