@@ -32,7 +32,7 @@ router.get("/cancelled", getCampaignsByStatus("cancelled"));
 
 router.get("/featured", getFeaturedCampaigns);
 
-router.get("/interesting", getInterestingCampaigns);
+router.get("/interesting", authRequired, getInterestingCampaigns);
 
 router.get("/promoter/:id", getCampaignsByPromoter);
 

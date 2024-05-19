@@ -121,12 +121,13 @@ export const getFeaturedCampaigns = async (req, res) => {
 };
 
 export const getInterestingCampaigns = async (req, res) => {
-    // Interesting campaigns are those 3 ongoing campaigns with the highest percentage of money donated
+    // Interesting campaigns are those 3 ongoing campaigns with the highest percentage of money donated and whose promoter is not the current user
     try {
         const campaigns = await Campaign.find({
             status: "ongoing",
             financialGoal: { $ne: null },
             eliminated: false,
+            "promoter.id": { $ne: req.subject.id },
         });
         const campaignsWithDonationsInfo = await Promise.all(
             campaigns.map(async (campaign) => {

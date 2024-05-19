@@ -10,7 +10,11 @@ export const getFeaturedCampaignsRequest = async () =>
     axios.get(`/campaigns/featured`);
 
 export const getInterestingCampaignsRequest = async () =>
-    axios.get(`/campaigns/interesting`);
+    axios.get(`/campaigns/interesting`, {
+        headers: {
+            Authorization: `${Cookies.get("token")}`,
+        },
+    });
 
 export const getCampaignsByPromoterRequest = async (id) =>
     axios.get(`/campaigns/promoter/${id}`);
