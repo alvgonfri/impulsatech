@@ -48,6 +48,15 @@ export const AuthProvider = ({ children }) => {
         checkUser();
     }, []);
 
+    useEffect(() => {
+        if (errors.length > 0) {
+            const timer = setTimeout(() => {
+                setErrors([]);
+            }, 30000);
+            return () => clearTimeout(timer);
+        }
+    }, [errors]);
+
     const signUp = async (user) => {
         try {
             const res = await registerRequest(user);

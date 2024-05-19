@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
     getCampaignsRequest,
     getCampaignsByStatusRequest,
@@ -36,6 +36,22 @@ export const CampaignProvider = ({ children }) => {
     const [campaignPosts, setCampaignPosts] = useState([]);
     const [errors, setErrors] = useState([]);
     const [postErrors, setPostErrors] = useState([]);
+
+    useEffect(() => {
+        if (errors.length > 0) {
+            const timer = setTimeout(() => {
+                setErrors([]);
+            }, 30000);
+            return () => clearTimeout(timer);
+        }
+
+        if (postErrors.length > 0) {
+            const timer = setTimeout(() => {
+                setPostErrors([]);
+            }, 30000);
+            return () => clearTimeout(timer);
+        }
+    }, [errors, postErrors]);
 
     const getCampaigns = async () => {
         try {
