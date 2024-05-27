@@ -6,6 +6,7 @@ import {
 
 // This function updates the campaigns that have reached their deadline
 export async function updateCampaigns() {
+    console.log("Running cron job to check campaigns");
     try {
         const campaigns = await Campaign.find({
             deadline: new Date().toISOString().slice(0, 10),
