@@ -8,8 +8,13 @@ import {
 export async function updateCampaigns() {
     console.log("Running cron job to check campaigns");
     try {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
         const campaigns = await Campaign.find({
-            deadline: new Date().toISOString().slice(0, 10),
+            deadline: {
+                $gte: new Date(yesterday.setHours(0, 0, 0, 0)),
+                $lt: new Date(yesterday.setHours(23, 59, 59, 999)),
+            },
         });
 
         const campaignsWithDonationsInfo = await Promise.all(
