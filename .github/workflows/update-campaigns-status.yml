@@ -1,0 +1,14 @@
+name: Update campaigns status
+
+on:
+  schedule:
+    - cron: '* * * * *'
+
+jobs:
+  cron-job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send PATCH request to update campaigns status
+      run: |
+        curl -X PATCH ${{ secrets.API_URL }}/campaigns/update-status
