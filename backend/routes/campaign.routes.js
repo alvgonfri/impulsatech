@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
 import { validateSchema } from "../middlewares/validator.js";
 import { parseCampign } from "../middlewares/parse.js";
+import { updateCampaigns } from "../libs/updateCampaigns.js";
 import {
     createCampaignSchema,
     updateCampaignSchema,
@@ -57,6 +58,8 @@ router.patch(
     validateSchema(updateCampaignSchema),
     updateCampaign
 );
+
+router.patch("/update-status", updateCampaigns);
 
 router.delete("/:id", authRequired, deleteCampaign);
 
