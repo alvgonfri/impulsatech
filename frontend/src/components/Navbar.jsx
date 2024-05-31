@@ -81,7 +81,7 @@ function Navbar() {
                                 to="/stats"
                                 className="hover:opacity-65 transition duration-500"
                             >
-                                Estadísticas
+                                Informe analítico
                             </Link>
                         )}
                     </div>

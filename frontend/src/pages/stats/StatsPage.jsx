@@ -57,7 +57,7 @@ function StatsPage() {
     return (
         <div className="container mx-auto mb-10 px-4 sm:px-10 xl:px-40">
             <h1 className="text-3xl font-bold text-teal-800">
-                Estadísticas de la plataforma
+                Informe analítico
             </h1>
             <div className="px-4 py-12 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl border-b-2">
                 <div className="grid grid-cols-2 row-gap-8 md:grid-cols-4">
