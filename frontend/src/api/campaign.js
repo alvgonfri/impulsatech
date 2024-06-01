@@ -27,6 +27,13 @@ export const getCampaignRequest = async (id) => axios.get(`/campaigns/${id}`);
 export const getCampaignCollaboratorsRequest = async (id) =>
     axios.get(`/campaigns/${id}/collaborators`);
 
+export const getCampaignDonationsRequest = async (id) =>
+    axios.get(`/campaigns/${id}/donations`, {
+        headers: {
+            Authorization: `${Cookies.get("token")}`,
+        },
+    });
+
 export const createCampaignRequest = async (campaign) =>
     axios.post(`/campaigns`, campaign, {
         headers: {

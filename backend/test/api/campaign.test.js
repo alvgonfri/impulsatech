@@ -1,6 +1,7 @@
 import request from "supertest";
-import app from "../../app.js";
 import mongoose from "mongoose";
+import app from "../../app.js";
+import Campaign from "../../models/campaign.model.js";
 
 describe("Campaign tests", () => {
     let agent;
@@ -161,6 +162,44 @@ describe("Campaign tests", () => {
                 "/api/v1/campaigns/" + randomObjectId + "/collaborators"
             );
             expect(response.statusCode).toBe(404);
+        });
+    });
+
+    describe("GET /api/v1/campaigns/:id/donations", () => {
+        it("should return 200 OK", async () => {
+            const campaigns = await agent.get("/api/v1/campaigns");
+            const campaignId = campaigns.body[0]._id;
+            const response = await agent.get(
+                `/api/v1/campaigns/${campaignId}/donations`
+            );
+            expect(response.statusCode).toBe(200);
+        });
+
+        it("should return 404 Not Found", async () => {
+            const randomObjectId = new mongoose.Types.ObjectId();
+            const response = await agent.get(
+                "/api/v1/campaigns/" + randomObjectId + "/donations"
+            );
+            expect(response.statusCode).toBe(404);
+        });
+    });
+
+    describe("PATCH /api/v1/campaigns/update-status", () => {
+        it("should return 200 OK", async () => {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            const campaigns = await agent.get("/api/v1/campaigns");
+            const campaignId = campaigns.body[0]._id;
+
+            await Campaign.findByIdAndUpdate(campaignId, {
+                deadline: yesterday.toISOString().slice(0, 10),
+            });
+
+            const response = await agent.patch(
+                "/api/v1/campaigns/update-status"
+            );
+            expect(response.statusCode).toBe(200);
         });
     });
 

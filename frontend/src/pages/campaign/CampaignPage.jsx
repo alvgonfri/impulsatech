@@ -310,14 +310,31 @@ function CampaignPage() {
                     <div className="mt-2 sharethis-inline-share-buttons"></div>
                 </div>
                 <div className="w-full h-fit lg:w-2/5 rounded-md border-2 border-teal-600">
-                    <div className="flex bg-teal-600 text-white px-4 py-2">
-                        <p className="font-bold">Promotor:</p>
-                        <a
-                            href={`/profile/${promoter._id}`}
-                            className="ml-2 hover:underline"
-                        >
-                            {promoter.name} {promoter.surname}
-                        </a>
+                    <div className="flex justify-between bg-teal-600 text-white px-4 py-2">
+                        <div className="flex items-center">
+                            <p className="font-bold">Promotor:</p>
+                            <a
+                                href={`/profile/${promoter._id}`}
+                                className="ml-2 hover:underline"
+                            >
+                                {promoter.name} {promoter.surname}
+                            </a>
+                        </div>
+                        {subject?._id === promoter._id &&
+                            campaign.status !== "cancelled" && (
+                                <button
+                                    onClick={() =>
+                                        navigate(
+                                            "/campaigns/" +
+                                                campaign._id +
+                                                "/donations"
+                                        )
+                                    }
+                                    className="bg-white hover:bg-gray-100 text-teal-600 py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                                >
+                                    Ver donaciones
+                                </button>
+                            )}
                     </div>
 
                     {campaign.financialGoal &&

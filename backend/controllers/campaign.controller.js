@@ -5,6 +5,7 @@ import User from "../models/user.model.js";
 import Organization from "../models/organization.model.js";
 import FinancialDonation from "../models/financialDonation.model.js";
 import TimeDonation from "../models/timeDonation.model.js";
+import TimeRecord from "../models/timeRecord.model.js";
 import { isOrganization } from "../libs/isOrganization.js";
 import {
     getMoneyDonated,
@@ -12,6 +13,7 @@ import {
     getTimeDonated,
     getTimeDonatedPercentage,
 } from "../libs/getAmountDonated.js";
+import { updateCampaigns } from "../libs/updateCampaigns.js";
 import { uploadImage } from "../libs/cloudinary.js";
 
 export const getCampaigns = async (req, res) => {
@@ -231,6 +233,77 @@ export const getCampaignCollaborators = async (req, res) => {
 
         res.status(200).json(uniqueCollaborators);
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getCampaignDonations = async (req, res) => {
+    try {
+        const campaign = await Campaign.findById(req.params.id);
+
+        if (!campaign) {
+            return res.status(404).json({ message: "Campaña no encontrada" });
+        }
+
+        const financialDonations = await FinancialDonation.find({
+            campaign: campaign._id,
+        }).sort({ updatedAt: -1 });
+
+        let financialDonationsWithCollaborators = [];
+
+        for (let donation of financialDonations) {
+            if (!donation.anonymous) {
+                const model =
+                    donation.collaborator.type === "User" ? User : Organization;
+                const collaborator = await model.findById(
+                    donation.collaborator.id
+                );
+
+                financialDonationsWithCollaborators.push({
+                    ...donation.toObject(),
+                    collaboratorName: collaborator.name,
+                });
+            } else {
+                financialDonationsWithCollaborators.push({
+                    ...donation.toObject(),
+                });
+            }
+        }
+
+        const timeDonations = await TimeDonation.find({
+            campaign: campaign._id,
+        })
+            .sort({ updatedAt: -1 })
+            .populate("campaign");
+
+        const timeDonationsWithTimeRecords = await Promise.all(
+            timeDonations.map(async (timeDonation) => {
+                const timeRecords = await TimeRecord.find({
+                    timeDonation: timeDonation._id,
+                });
+                return { ...timeDonation._doc, timeRecords };
+            })
+        );
+
+        let timeDonationsWithCollaborators = [];
+
+        for (let donation of timeDonationsWithTimeRecords) {
+            const model =
+                donation.collaborator.type === "User" ? User : Organization;
+            const collaborator = await model.findById(donation.collaborator.id);
+
+            timeDonationsWithCollaborators.push({
+                ...donation,
+                collaboratorName: collaborator.name,
+            });
+        }
+
+        res.status(200).json({
+            financialDonations: financialDonationsWithCollaborators,
+            timeDonations: timeDonationsWithCollaborators,
+        });
+    } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -460,6 +533,15 @@ export const createCampaign = async (req, res) => {
             const campaign = await newCampaign.save();
             res.status(201).json(campaign);
         }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updateCampaignsStatus = async (req, res) => {
+    try {
+        await updateCampaigns();
+        res.status(200).send();
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
