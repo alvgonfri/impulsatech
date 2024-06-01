@@ -54,6 +54,8 @@ router.post(
     createCampaign
 );
 
+router.patch("/update-status", updateCampaigns);
+
 router.patch(
     "/:id",
     authRequired,
@@ -61,8 +63,6 @@ router.patch(
     validateSchema(updateCampaignSchema),
     updateCampaign
 );
-
-router.patch("/update-status", updateCampaigns);
 
 router.delete("/:id", authRequired, deleteCampaign);
 
