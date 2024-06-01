@@ -1,6 +1,7 @@
 import request from "supertest";
-import app from "../../app.js";
 import mongoose from "mongoose";
+import app from "../../app.js";
+import Campaign from "../../models/campaign.model.js";
 
 describe("Campaign tests", () => {
     let agent;
@@ -185,6 +186,16 @@ describe("Campaign tests", () => {
 
     describe("PATCH /api/v1/campaigns/update-status", () => {
         it("should return 200 OK", async () => {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            const campaigns = await agent.get("/api/v1/campaigns");
+            const campaignId = campaigns.body[0]._id;
+
+            await Campaign.findByIdAndUpdate(campaignId, {
+                deadline: yesterday.toISOString().slice(0, 10),
+            });
+
             const response = await agent.patch(
                 "/api/v1/campaigns/update-status"
             );

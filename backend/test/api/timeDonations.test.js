@@ -52,6 +52,18 @@ describe("Time Donation tests", () => {
     });
 
     describe("POST /api/v1/time-donations", () => {
+        it("should return 400 Bad Request because you cannot donate to your own campaign", async () => {
+            const response = await agent.post("/api/v1/time-donations").send({
+                amount: 10,
+                period: {
+                    startDate: futureStartDate.toISOString().slice(0, 10),
+                    endDate: futureEndDate.toISOString().slice(0, 10),
+                },
+                campaignId: campaignId,
+            });
+            expect(response.statusCode).toBe(400);
+        });
+
         it("should return 201 Created", async () => {
             const other = await agent.post("/api/v1/register").send({
                 name: "other-test",
@@ -74,9 +86,58 @@ describe("Time Donation tests", () => {
             expect(response.statusCode).toBe(201);
         });
 
-        it("should return 400 Bad Request", async () => {
+        it("should return 400 Bad Request because amount is 0", async () => {
             const response = await agent.post("/api/v1/time-donations").send({
                 amount: 0,
+                period: {
+                    startDate: futureStartDate.toISOString().slice(0, 10),
+                    endDate: futureEndDate.toISOString().slice(0, 10),
+                },
+                campaignId: campaignId,
+            });
+            expect(response.statusCode).toBe(400);
+        });
+
+        it("should return 404 Not Found because campaign does not exist", async () => {
+            const randomObjectId = new mongoose.Types.ObjectId();
+            const response = await agent.post("/api/v1/time-donations").send({
+                amount: 10,
+                period: {
+                    startDate: futureStartDate.toISOString().slice(0, 10),
+                    endDate: futureEndDate.toISOString().slice(0, 10),
+                },
+                campaignId: randomObjectId,
+            });
+            expect(response.statusCode).toBe(404);
+        });
+
+        it("should return 400 Bad Request because start date is after end date", async () => {
+            const response = await agent.post("/api/v1/time-donations").send({
+                amount: 10,
+                period: {
+                    startDate: futureEndDate.toISOString().slice(0, 10),
+                    endDate: futureStartDate.toISOString().slice(0, 10),
+                },
+                campaignId: campaignId,
+            });
+            expect(response.statusCode).toBe(400);
+        });
+
+        it("should return 400 Bad Request because the donation period is not within the campaign period", async () => {
+            const response = await agent.post("/api/v1/time-donations").send({
+                amount: 10,
+                period: {
+                    startDate: tomorrow.toISOString().slice(0, 10),
+                    endDate: futureEndDate.toISOString().slice(0, 10),
+                },
+                campaignId: campaignId,
+            });
+            expect(response.statusCode).toBe(400);
+        });
+
+        it("should return 400 Bad Request because amount is greater than the hours of the period", async () => {
+            const response = await agent.post("/api/v1/time-donations").send({
+                amount: 49,
                 period: {
                     startDate: futureStartDate.toISOString().slice(0, 10),
                     endDate: futureEndDate.toISOString().slice(0, 10),
