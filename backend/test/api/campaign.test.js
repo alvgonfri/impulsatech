@@ -164,6 +164,34 @@ describe("Campaign tests", () => {
         });
     });
 
+    describe("GET /api/v1/campaigns/:id/donations", () => {
+        it("should return 200 OK", async () => {
+            const campaigns = await agent.get("/api/v1/campaigns");
+            const campaignId = campaigns.body[0]._id;
+            const response = await agent.get(
+                `/api/v1/campaigns/${campaignId}/donations`
+            );
+            expect(response.statusCode).toBe(200);
+        });
+
+        it("should return 404 Not Found", async () => {
+            const randomObjectId = new mongoose.Types.ObjectId();
+            const response = await agent.get(
+                "/api/v1/campaigns/" + randomObjectId + "/donations"
+            );
+            expect(response.statusCode).toBe(404);
+        });
+    });
+
+    describe("PATCH /api/v1/campaigns/update-status", () => {
+        it("should return 200 OK", async () => {
+            const response = await agent.patch(
+                "/api/v1/campaigns/update-status"
+            );
+            expect(response.statusCode).toBe(200);
+        });
+    });
+
     describe("PATCH /api/v1/campaigns/:id", () => {
         it("should return 200 OK", async () => {
             const tomorrow = new Date();

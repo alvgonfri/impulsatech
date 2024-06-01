@@ -2,7 +2,6 @@ import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
 import { validateSchema } from "../middlewares/validator.js";
 import { parseCampign } from "../middlewares/parse.js";
-import { updateCampaigns } from "../libs/updateCampaigns.js";
 import {
     createCampaignSchema,
     updateCampaignSchema,
@@ -18,6 +17,7 @@ import {
     getCampaignDonations,
     searchCampaigns,
     createCampaign,
+    updateCampaignsStatus,
     updateCampaign,
     deleteCampaign,
 } from "../controllers/campaign.controller.js";
@@ -54,7 +54,7 @@ router.post(
     createCampaign
 );
 
-router.patch("/update-status", updateCampaigns);
+router.patch("/update-status", updateCampaignsStatus);
 
 router.patch(
     "/:id",

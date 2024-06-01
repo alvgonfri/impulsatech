@@ -13,6 +13,7 @@ import {
     getTimeDonated,
     getTimeDonatedPercentage,
 } from "../libs/getAmountDonated.js";
+import { updateCampaigns } from "../libs/updateCampaigns.js";
 import { uploadImage } from "../libs/cloudinary.js";
 
 export const getCampaigns = async (req, res) => {
@@ -532,6 +533,15 @@ export const createCampaign = async (req, res) => {
             const campaign = await newCampaign.save();
             res.status(201).json(campaign);
         }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updateCampaignsStatus = async (req, res) => {
+    try {
+        await updateCampaigns();
+        res.status(200).send();
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
