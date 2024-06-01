@@ -16,6 +16,7 @@ import CampaignsPage from "./pages/campaign/CampaignsPage";
 import CancelledCampaignsPage from "./pages/campaign/CancelledCampaignsPage";
 import CompletedCampaignsPage from "./pages/campaign/CompletedCampaignsPage";
 import CampaignPage from "./pages/campaign/CampaignPage";
+import CampaignDonations from "./pages/campaign/CampaignDonations";
 import CampaignFormPage from "./pages/campaign/CampaignFormPage";
 import CampaignSearch from "./pages/campaign/CampaignSearch";
 import FinancialDonationSuccess from "./pages/financialDonation/FinancialDonationSuccess";
@@ -110,6 +111,10 @@ function App() {
                                             <Route
                                                 path="/time-record"
                                                 element={<TimeRecordPage />}
+                                            />
+                                            <Route
+                                                path="/campaigns/:id/donations"
+                                                element={<CampaignDonations />}
                                             />
                                             <Route
                                                 path="/campaigns/:id/posts/create"

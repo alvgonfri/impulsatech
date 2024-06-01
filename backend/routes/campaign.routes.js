@@ -15,6 +15,7 @@ import {
     getCampaignsByPromoter,
     getCampaign,
     getCampaignCollaborators,
+    getCampaignDonations,
     searchCampaigns,
     createCampaign,
     updateCampaign,
@@ -42,6 +43,8 @@ router.get("/search", searchCampaigns);
 router.get("/:id", getCampaign);
 
 router.get("/:id/collaborators", getCampaignCollaborators);
+
+router.get("/:id/donations", authRequired, getCampaignDonations);
 
 router.post(
     "",

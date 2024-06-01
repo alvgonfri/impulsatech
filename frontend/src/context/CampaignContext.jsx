@@ -8,6 +8,7 @@ import {
     searchCampaignsRequest,
     getCampaignRequest,
     getCampaignCollaboratorsRequest,
+    getCampaignDonationsRequest,
     createCampaignRequest,
     updateCampaignRequest,
 } from "../api/campaign.js";
@@ -33,6 +34,9 @@ export const CampaignProvider = ({ children }) => {
     const [promoterCampaigns, setPromoterCampaigns] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [campaignCollaborators, setCampaignCollaborators] = useState([]);
+    const [campaignFinancialDonations, setCampaignFinancialDonations] =
+        useState([]);
+    const [campaignTimeDonations, setCampaignTimeDonations] = useState([]);
     const [campaignPosts, setCampaignPosts] = useState([]);
     const [errors, setErrors] = useState([]);
     const [postErrors, setPostErrors] = useState([]);
@@ -127,6 +131,16 @@ export const CampaignProvider = ({ children }) => {
         }
     };
 
+    const getCampaignDonations = async (id) => {
+        try {
+            const res = await getCampaignDonationsRequest(id);
+            setCampaignFinancialDonations(res.data.financialDonations);
+            setCampaignTimeDonations(res.data.timeDonations);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const createCampaign = async (campaign) => {
         try {
             const res = await createCampaignRequest(campaign);
@@ -204,7 +218,6 @@ export const CampaignProvider = ({ children }) => {
 
     const createPost = async (post) => {
         try {
-            console.log(post);
             const res = await createPostRequest(post);
             setCampaignPosts([...campaignPosts, res.data]);
             return res.status;
@@ -232,6 +245,9 @@ export const CampaignProvider = ({ children }) => {
                 getCampaign,
                 campaignCollaborators,
                 getCampaignCollaborators,
+                campaignFinancialDonations,
+                campaignTimeDonations,
+                getCampaignDonations,
                 createCampaign,
                 eliminateCampaign,
                 cancelCampaign,
