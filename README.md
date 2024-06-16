@@ -2,6 +2,16 @@
 
 ImpulsaTech is a crowdfunding web platform focused on causes aimed at closing the digital divide. ImpulsaTech allows individuals and organizations to create campaigns to support initiatives that promote the use of information and communication technologies among those who face difficulties accessing or using these technologies. Additionally, the platform manages both monetary donations and time donations, enabling users to contribute financial resources or volunteer work to advance these initiatives.
 
+## Table of contents
+
+- [Main features](#main-features)
+- [Technologies](#technologies)
+- [Installation](#installation)
+  - [Pre-requisites](#pre-requisites)
+  - [Project setup](#project-setup)
+  - [Stripe setup](#stripe-setup)
+  - [Cloudinary setup](#cloudinary-setup)
+
 ## Main features
 
 - **Campaign creation**: create a campaign providing a motivating description, a representative image and choosing a deadline to reach the goals. Decide if you want to set an economic, time goal or both.
