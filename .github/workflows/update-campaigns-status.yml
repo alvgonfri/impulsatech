@@ -3,7 +3,7 @@ name: Update campaigns status
 on:
   schedule:
     # Run every hour
-    - cron: '0 * * * *'
+    # - cron: '0 * * * *' # Disabled
 
 jobs:
   cron-job:
